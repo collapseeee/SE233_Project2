@@ -5,6 +5,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import se233.se233_project2.Launcher;
+import se233.se233_project2.model.EnemyCharacter;
 import se233.se233_project2.model.GameCharacter;
 import se233.se233_project2.model.Keys;
 
@@ -16,8 +17,9 @@ public class GameStage extends Pane {
     public static final int HEIGHT = 400;
     public final static int GROUND = 300;
     private Image gameStageImg;
-    private List<GameCharacter> characterList = new ArrayList<>();
+    private List<EnemyCharacter> enemyList = new ArrayList<>();
     private GameCharacter mainCharacter;
+    private EnemyCharacter enemyCharacter;
     private Score score;
     private Keys keys;
 
@@ -29,19 +31,22 @@ public class GameStage extends Pane {
         backgroundImg.setFitWidth(WIDTH);
 
         keys = new Keys();
-        mainCharacter = new GameCharacter(0,30, 30,"assets/character/player/Character.png", 4, 3 ,2, 111,97, KeyCode.A, KeyCode.D, KeyCode.W);
-        characterList.add(mainCharacter);
+        mainCharacter = new GameCharacter(0,30, 30,"assets/character/player/Character.png", 4, 3 ,2, 111,97, KeyCode.A, KeyCode.D, KeyCode.W, 3);
         score = new Score(30, GROUND+30);
+
+        enemyCharacter = new EnemyCharacter(1, 500, 30, "assets/character/enemy/Minion.png", 4, 4 ,1, 129,66, 20);
+        enemyList.add(enemyCharacter);
 
         getChildren().add(backgroundImg);
         getChildren().addAll(mainCharacter);
+        getChildren().addAll(enemyCharacter);
         getChildren().addAll(score);
     }
     public GameCharacter getMainCharacter() {
         return mainCharacter;
     }
-    public List<GameCharacter> getCharacterList() {
-        return characterList;
+    public List<EnemyCharacter> getEnemyList() {
+        return enemyList;
     }
     public Keys getKeys() {
         return keys;

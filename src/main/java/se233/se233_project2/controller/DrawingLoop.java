@@ -1,5 +1,6 @@
 package se233.se233_project2.controller;
 
+import se233.se233_project2.model.EnemyCharacter;
 import se233.se233_project2.model.GameCharacter;
 import se233.se233_project2.view.GameStage;
 
@@ -16,16 +17,25 @@ public class DrawingLoop implements Runnable {
         interval = 1000.0f / frameRate; // 1000 ms = 1 second
         running = true;
     }
-    private void checkDrawCollisions(List<GameCharacter> gameCharacterList) {
-        for (GameCharacter gameCharacter : gameCharacterList) {
-            gameCharacter.checkReachGameWall();
-            gameCharacter.checkReachHighest();
-            gameCharacter.checkReachFloor();
+    private void checkMainCharacterDrawCollisions(GameCharacter gameCharacter) {
+        gameCharacter.checkReachGameWall();
+        gameCharacter.checkReachHighest();
+        gameCharacter.checkReachFloor();
+    }
+    private void checkEnemyCharacterDrawCollisions(List<EnemyCharacter> enemyCharacterList) {
+        for (EnemyCharacter enemyCharacter : enemyCharacterList) {
+            enemyCharacter.checkReachGameWall();
+            enemyCharacter.checkReachHighest();
+            enemyCharacter.checkReachFloor();
         }
     }
-    private void paint(List<GameCharacter> gameCharacterList) {
-        for (GameCharacter gameCharacter : gameCharacterList) {
-            gameCharacter.repaint();
+
+    private void paintMainCharacter(GameCharacter gameCharacter) {
+        gameCharacter.repaint();
+    }
+    private void paintEnemy(List<EnemyCharacter> enemyCharacterList) {
+        for (EnemyCharacter enemyCharacter : enemyCharacterList) {
+            enemyCharacter.repaint();
         }
     }
     @Override
@@ -33,8 +43,10 @@ public class DrawingLoop implements Runnable {
         while (running) {
             float time = System.currentTimeMillis();
 
-            checkDrawCollisions(gameStage.getCharacterList());
-            paint(gameStage.getCharacterList());
+            checkMainCharacterDrawCollisions(gameStage.getMainCharacter());
+            checkEnemyCharacterDrawCollisions(gameStage.getEnemyList());
+            paintMainCharacter(gameStage.getMainCharacter());
+            paintEnemy(gameStage.getEnemyList());
 
             time = System.currentTimeMillis() - time;
             if (time < interval) {

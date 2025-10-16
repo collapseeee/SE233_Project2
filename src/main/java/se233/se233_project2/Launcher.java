@@ -1,6 +1,7 @@
 package se233.se233_project2;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import se233.se233_project2.controller.DrawingLoop;
@@ -9,6 +10,7 @@ import se233.se233_project2.view.GameStage;
 
 public class Launcher extends Application {
     public static void main(String[] args) { launch(args); }
+
     @Override
     public void start(Stage primaryStage) {
         GameStage gameStage = new GameStage();
@@ -23,6 +25,10 @@ public class Launcher extends Application {
         (new Thread(gameLoop)).start();
         (new Thread(drawingLoop)).start();
 
-
+        primaryStage.setOnCloseRequest(event -> {
+            primaryStage.close();
+            Platform.exit();
+            System.exit(0);
+        });
     }
 }

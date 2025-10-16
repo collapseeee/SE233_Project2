@@ -8,21 +8,17 @@ import se233.se233_project2.view.GameStage;
 
 import java.util.concurrent.TimeUnit;
 
-public class GameCharacter extends Pane {
-    private final Image characterImg;
+public class EnemyCharacter extends Pane {
+    private final Image enemyImg;
     private final AnimatedSprite imageView;
-    private int life;
+    private int hp;
     private int x;
     private int y;
     private final int startX;
     private final int startY;
-    private int characterWidth;
-    private int characterHeight;
-    private int score = 0;
-    private final KeyCode leftKey;
-    private final KeyCode rightKey;
-    private final KeyCode upKey;
-    int xVelocity = 5;
+    private final int enemyWidth;
+    private final int enemyHeight;
+    int xVelocity = 0;
     int yVelocity = 0;
     int xAcceleration = 1;
     int yAcceleration = 1;
@@ -33,29 +29,22 @@ public class GameCharacter extends Pane {
     boolean isFalling = true;
     boolean canJump = false;
     boolean isJumping = false;
-    boolean canCrawl = false;
-    boolean isCrawling = false;
-    boolean isShooting = false;
-    boolean isDead = false;
 
-    public GameCharacter(int id, int x, int y, String imgName, int count, int column, int row, int width, int height, KeyCode leftKey, KeyCode rightKey, KeyCode upKey, int life) {
+    public EnemyCharacter(int id, int x, int y, String imgName, int count, int column, int row, int width, int height, int hp) {
         this.startX = x;
         this.startY = y;
         this.x = x;
         this.y = y;
+        this.hp = hp;
         this.setTranslateX(x);
         this.setTranslateY(y);
-        this.characterWidth = width;
-        this.characterHeight = height;
-        this.characterImg = new Image(Launcher.class.getResourceAsStream(imgName));
-        this.imageView = new AnimatedSprite(characterImg, count, column, row, 0, 0, width, height);
+        this.enemyWidth = width;
+        this.enemyHeight = height;
+        this.enemyImg = new Image(Launcher.class.getResourceAsStream(imgName));
+        this.imageView = new AnimatedSprite(enemyImg, count, column, row, 0, 0, width, height);
         this.imageView.setFitWidth((int) (width * 1.2));
         this.imageView.setFitHeight((int) (height * 1.2));
-        this.leftKey = leftKey;
-        this.rightKey = rightKey;
-        this.upKey = upKey;
         this.getChildren().addAll(this.imageView);
-        this.life = life;
         setScaleX(id % 2 * 2 - 1);
     }
 
@@ -117,7 +106,7 @@ public class GameCharacter extends Pane {
         }
     }
     public void checkReachFloor() {
-        if(isFalling && y >= GameStage.GROUND - this.characterHeight) {
+        if(isFalling && y >= GameStage.GROUND - this.enemyHeight) {
             isFalling = false;
             canJump = true;
             yVelocity = 0;
@@ -132,12 +121,11 @@ public class GameCharacter extends Pane {
             this.x = Math.max(this.x, c.getX() + c.getCharacterWidth());
             this.stop();
         } else if (this.isMoveRight && this.x < c.getX()) {
-            this.x = Math.max(this.x, c.getX() - this.characterWidth);
+            this.x = Math.max(this.x, c.getX() - this.enemyWidth);
             this.stop();
         }
         if (this.isFalling && this.y < c.getY()) {
-            score++;
-            this.y = Math.min(GameStage.GROUND - this.characterHeight, c.getY());
+            this.y = Math.min(GameStage.GROUND - this.enemyHeight, c.getY());
             this.repaint();
             c.collapsed();
             c.respawn();
@@ -147,7 +135,7 @@ public class GameCharacter extends Pane {
     }
     public void collapsed() {
         this.imageView.setFitHeight(5);
-        this.y = this.y + this.characterHeight - 5;
+        this.y = this.y + this.enemyHeight - 5;
         this.repaint();
         try {
             TimeUnit.MILLISECONDS.sleep(300);
@@ -158,22 +146,13 @@ public class GameCharacter extends Pane {
     public void respawn() {
         this.x = startX;
         this.y = startY;
-        this.imageView.setFitWidth(this.characterWidth);
-        this.imageView.setFitHeight(this.characterHeight);
+        this.imageView.setFitWidth(this.enemyWidth);
+        this.imageView.setFitHeight(this.enemyHeight);
         this.isMoveRight = false;
         this.isMoveLeft = false;
         this.isFalling = true;
         this.canJump = false;
         this.isJumping = false;
-    }
-    public KeyCode getLeftKey() {
-        return leftKey;
-    }
-    public KeyCode getRightKey() {
-        return rightKey;
-    }
-    public KeyCode getUpKey() {
-        return upKey;
     }
     public AnimatedSprite getImageView() {
         return imageView;
@@ -184,13 +163,10 @@ public class GameCharacter extends Pane {
     public int getY() {
         return this.y;
     }
-    public int getCharacterWidth() {
-        return characterWidth;
+    public int getEnemyWidth() {
+        return enemyWidth;
     }
-    public int getCharacterHeight() {
-        return characterHeight;
-    }
-    public int getScore() {
-        return this.score;
+    public int getEnemyHeight() {
+        return enemyHeight;
     }
 }
