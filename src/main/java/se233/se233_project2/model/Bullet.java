@@ -1,19 +1,46 @@
 package se233.se233_project2.model;
 
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
+import se233.se233_project2.Launcher;
 
-public class Bullet {
-    private final Image bulletImage = new Image(getClass().getResourceAsStream("/assets/player/Bullet.png"));
+public class Bullet extends Pane {
+    private final Image bulletImage = new Image(Launcher.class.getResourceAsStream("assets/character/player/Character.png"));;
     private int x;
     private int y;
     private int speed;
-    private int damage;
-    private int direction;
-    public Bullet(int x, int y, int speed, int damage, int direction) {
+    public Bullet(int x, int y, int speed) {
         this.x = x;
         this.y = y;
         this.speed = speed;
-        this.damage = damage;
-        this.direction = direction;
+
+    }
+
+    public Image getBulletImage() {
+        return bulletImage;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 }

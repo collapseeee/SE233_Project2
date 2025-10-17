@@ -1,10 +1,14 @@
 package se233.se233_project2.controller;
 
+import se233.se233_project2.ContraDemoWithEnemies;
+import se233.se233_project2.model.Bullet;
 import se233.se233_project2.model.EnemyCharacter;
 import se233.se233_project2.model.GameCharacter;
 import se233.se233_project2.view.GameStage;
 import se233.se233_project2.view.Score;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class GameLoop implements Runnable {
@@ -49,21 +53,55 @@ public class GameLoop implements Runnable {
 
     // Enemy Character
     private void updateEnemyCharacter(EnemyCharacter enemyCharacter) {
-        boolean goLeft = enemyCharacter.getX() > gameStage.getMainCharacter().getX() + (gameStage.getMainCharacter().getCharacterWidth()/2) + 100;
-        boolean goRight = enemyCharacter.getX() < gameStage.getMainCharacter().getX() - (gameStage.getMainCharacter().getCharacterWidth()/2) - 100;
-        boolean jump = enemyCharacter.getY() < gameStage.getMainCharacter().getY() - gameStage.getMainCharacter().getCharacterHeight() - 5;
-        if (goLeft) {
-            enemyCharacter.getImageView().tick();
-            enemyCharacter.moveLeft();
-        } else if (goRight) {
-            enemyCharacter.getImageView().tick();
-            enemyCharacter.moveRight();
-        } else {
-            enemyCharacter.stop();
+        if (enemyCharacter.getIsAlive()) {
+            boolean goLeft = enemyCharacter.getX() > gameStage.getMainCharacter().getX() + (gameStage.getMainCharacter().getCharacterWidth()/2) + 100;
+            boolean goRight = enemyCharacter.getX() < gameStage.getMainCharacter().getX() - (gameStage.getMainCharacter().getCharacterWidth()/2) - 100;
+            boolean jump = enemyCharacter.getY() < gameStage.getMainCharacter().getY() - gameStage.getMainCharacter().getCharacterHeight() - 5;
+            if (goLeft) {
+                enemyCharacter.getImageView().tick();
+                enemyCharacter.moveLeft();
+            } else if (goRight) {
+                enemyCharacter.getImageView().tick();
+                enemyCharacter.moveRight();
+            } else {
+                enemyCharacter.stop();
+            }
+
+            if (jump) {
+                enemyCharacter.jump();
+            }
+        }
+    }
+
+    // Bullet
+    private void updateBullets(GameCharacter gameCharacter) {
+        List<Bullet> bullets = gameStage.getBulletList();
+        Iterator<Bullet> bulletIterator = bullets.iterator();
+        boolean shooting = gameStage.getKeys().isPressed(gameCharacter.getShootKey());
+
+        if (shooting) {
+            bullets.add(new Bullet((int)(gameStage.getMainCharacter().getX() + gameStage.getMainCharacter().getWidth()),  (int)(gameStage.getMainCharacter().getY() - gameStage.getMainCharacter().getHeight() / 2), 4));
         }
 
-        if (jump) {
-            enemyCharacter.jump();
+        while(bulletIterator.hasNext()) {
+            Bullet bullet = bulletIterator.next();
+            bullet.setX(bullet.getX()+bullet.getSpeed());
+            if (bullet.getX()>gameStage.getWidth() || bullet.getX()<0) {
+                bulletIterator.remove();
+                continue;
+            }
+
+            for (EnemyCharacter enemy : gameStage.getEnemyList()) {
+                if (enemy.getIsAlive() &&
+                        bullet.getX() < enemy.getX() + enemy.getWidth() &&
+                        bullet.getX() + 10 > enemy.getX() &&
+                        bullet.getY() < enemy.getY() &&
+                        bullet.getY() + 5 > enemy.getY() - enemy.getHeight()) {
+                    enemy.setIsAlive(false);
+                    bulletIterator.remove();
+                    break;
+                }
+            }
         }
     }
 
@@ -74,6 +112,7 @@ public class GameLoop implements Runnable {
             updateMainCharacter(gameStage.getMainCharacter());
             updateEnemyCharacter(gameStage.getEnemyList().get(0));
             updateScore(gameStage.getScore(), gameStage.getMainCharacter());
+            updateBullets(gameStage.getMainCharacter());
             time = System.currentTimeMillis() - time;
             if (time < interval) {
                 try {

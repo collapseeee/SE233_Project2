@@ -22,6 +22,8 @@ public class GameCharacter extends Pane {
     private final KeyCode leftKey;
     private final KeyCode rightKey;
     private final KeyCode upKey;
+    private final KeyCode shootKey;
+    private final KeyCode crawlKey;
     int xVelocity = 5;
     int yVelocity = 0;
     int xAcceleration = 1;
@@ -38,7 +40,8 @@ public class GameCharacter extends Pane {
     boolean isShooting = false;
     boolean isDead = false;
 
-    public GameCharacter(int id, int x, int y, String imgName, int count, int column, int row, int width, int height, KeyCode leftKey, KeyCode rightKey, KeyCode upKey, int life) {
+    public GameCharacter(int id, int x, int y, String imgName, int count, int column, int row, int width, int height,
+                         KeyCode leftKey, KeyCode rightKey, KeyCode upKey, KeyCode shootKey, KeyCode crawlKey ,int life) {
         this.startX = x;
         this.startY = y;
         this.x = x;
@@ -54,6 +57,8 @@ public class GameCharacter extends Pane {
         this.leftKey = leftKey;
         this.rightKey = rightKey;
         this.upKey = upKey;
+        this.shootKey = shootKey;
+        this.crawlKey = crawlKey;
         this.getChildren().addAll(this.imageView);
         this.life = life;
         setScaleX(id % 2 * 2 - 1);
@@ -175,6 +180,8 @@ public class GameCharacter extends Pane {
     public KeyCode getUpKey() {
         return upKey;
     }
+    public KeyCode getShootKey() { return shootKey;}
+    public KeyCode getCrawlKey() { return crawlKey; }
     public AnimatedSprite getImageView() {
         return imageView;
     }
@@ -193,4 +200,5 @@ public class GameCharacter extends Pane {
     public int getScore() {
         return this.score;
     }
+    public int getLife() { return this.life; }
 }

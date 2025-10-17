@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 public class EnemyCharacter extends Pane {
     private final Image enemyImg;
     private final AnimatedSprite imageView;
-    private int hp;
     private int x;
     private int y;
     private final int startX;
@@ -24,18 +23,18 @@ public class EnemyCharacter extends Pane {
     int yAcceleration = 1;
     int xMaxVelocity = 7;
     int yMaxVelocity = 17;
+    boolean isAlive = true;
     boolean isMoveLeft = false;
     boolean isMoveRight = false;
     boolean isFalling = true;
     boolean canJump = false;
     boolean isJumping = false;
 
-    public EnemyCharacter(int id, int x, int y, String imgName, int count, int column, int row, int width, int height, int hp) {
+    public EnemyCharacter(int id, int x, int y, String imgName, int count, int column, int row, int width, int height) {
         this.startX = x;
         this.startY = y;
         this.x = x;
         this.y = y;
-        this.hp = hp;
         this.setTranslateX(x);
         this.setTranslateY(y);
         this.enemyWidth = width;
@@ -169,4 +168,6 @@ public class EnemyCharacter extends Pane {
     public int getEnemyHeight() {
         return enemyHeight;
     }
+    public boolean getIsAlive() { return isAlive; }
+    public void setIsAlive(boolean isAlive) { this.isAlive = isAlive; }
 }
