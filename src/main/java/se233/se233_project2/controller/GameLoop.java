@@ -1,6 +1,6 @@
 package se233.se233_project2.controller;
 
-import se233.se233_project2.ContraDemoWithEnemies;
+import javafx.application.Platform;
 import se233.se233_project2.model.Bullet;
 import se233.se233_project2.model.EnemyCharacter;
 import se233.se233_project2.model.GameCharacter;
@@ -8,7 +8,6 @@ import se233.se233_project2.view.GameStage;
 import se233.se233_project2.view.Score;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class GameLoop implements Runnable {
@@ -52,56 +51,89 @@ public class GameLoop implements Runnable {
     }
 
     // Enemy Character
-    private void updateEnemyCharacter(EnemyCharacter enemyCharacter) {
-        if (enemyCharacter.getIsAlive()) {
-            boolean goLeft = enemyCharacter.getX() > gameStage.getMainCharacter().getX() + (gameStage.getMainCharacter().getCharacterWidth()/2) + 100;
-            boolean goRight = enemyCharacter.getX() < gameStage.getMainCharacter().getX() - (gameStage.getMainCharacter().getCharacterWidth()/2) - 100;
-            boolean jump = enemyCharacter.getY() < gameStage.getMainCharacter().getY() - gameStage.getMainCharacter().getCharacterHeight() - 5;
-            if (goLeft) {
-                enemyCharacter.getImageView().tick();
-                enemyCharacter.moveLeft();
-            } else if (goRight) {
-                enemyCharacter.getImageView().tick();
-                enemyCharacter.moveRight();
-            } else {
-                enemyCharacter.stop();
-            }
+    private void updateEnemyCharacter(List<EnemyCharacter> enemyCharacterList) {
+        for (EnemyCharacter enemyCharacter : enemyCharacterList) {
+            if (enemyCharacter.getIsAlive()) {
+                boolean goLeft = enemyCharacter.getX() > gameStage.getMainCharacter().getX() + (gameStage.getMainCharacter().getCharacterWidth()/2) + 100;
+                boolean goRight = enemyCharacter.getX() < gameStage.getMainCharacter().getX() - (gameStage.getMainCharacter().getCharacterWidth()/2) - 100;
+                boolean jump = enemyCharacter.getY() < gameStage.getMainCharacter().getY() - gameStage.getMainCharacter().getCharacterHeight() - 5;
+                if (goLeft) {
+                    enemyCharacter.getImageView().tick();
+                    enemyCharacter.moveLeft();
+                } else if (goRight) {
+                    enemyCharacter.getImageView().tick();
+                    enemyCharacter.moveRight();
+                } else {
+                    enemyCharacter.stop();
+                }
 
-            if (jump) {
-                enemyCharacter.jump();
+                if (jump) {
+                    enemyCharacter.jump();
+                }
             }
         }
     }
 
     // Bullet
+    long lastShootTime = 0;
+    final long shootCooldown = 500;
     private void updateBullets(GameCharacter gameCharacter) {
         List<Bullet> bullets = gameStage.getBulletList();
-        Iterator<Bullet> bulletIterator = bullets.iterator();
         boolean shooting = gameStage.getKeys().isPressed(gameCharacter.getShootKey());
 
-        if (shooting) {
-            bullets.add(new Bullet((int)(gameStage.getMainCharacter().getX() + gameStage.getMainCharacter().getWidth()),  (int)(gameStage.getMainCharacter().getY() - gameStage.getMainCharacter().getHeight() / 2), 4));
+        if (shooting && System.currentTimeMillis() - lastShootTime > shootCooldown) {
+            int direction = gameStage.getMainCharacter().getScaleX() == 1 ? -1 : 1; // left = -1, right = +1
+            int bulletSpeed = 20 * direction;
+
+            int bulletX = (int)(gameStage.getMainCharacter().getX()
+                    + (direction == 1 ? gameStage.getMainCharacter().getWidth() : -10));
+            int bulletY = (int)(gameStage.getMainCharacter().getY()
+                    + gameStage.getMainCharacter().getHeight() / 2);
+
+            Bullet bullet = new Bullet(bulletX, bulletY, bulletSpeed);
+            Platform.runLater(() -> {
+                bullets.add(bullet);
+                gameStage.getChildren().add(bullet);
+            });
+            lastShootTime = System.currentTimeMillis();
         }
 
-        while(bulletIterator.hasNext()) {
-            Bullet bullet = bulletIterator.next();
-            bullet.setX(bullet.getX()+bullet.getSpeed());
-            if (bullet.getX()>gameStage.getWidth() || bullet.getX()<0) {
-                bulletIterator.remove();
+        List<Bullet> toRemove = new ArrayList<>();
+        for (Bullet bullet : bullets) {
+            bullet.setX(bullet.getX() + bullet.getSpeed());
+            bullet.setLayoutX(bullet.getX());
+            bullet.setLayoutY(bullet.getY());
+
+            if (bullet.getX() > GameStage.WIDTH || bullet.getX() < 0) {
+                toRemove.add(bullet);
                 continue;
             }
 
             for (EnemyCharacter enemy : gameStage.getEnemyList()) {
-                if (enemy.getIsAlive() &&
-                        bullet.getX() < enemy.getX() + enemy.getWidth() &&
+                if (!enemy.getIsAlive()) continue;
+
+                // Basic bounding-box collision check (bullet overlaps enemy)
+                boolean hit = bullet.getX() < enemy.getX() + enemy.getEnemyWidth() &&
                         bullet.getX() + 10 > enemy.getX() &&
-                        bullet.getY() < enemy.getY() &&
-                        bullet.getY() + 5 > enemy.getY() - enemy.getHeight()) {
+                        bullet.getY() < enemy.getY() + enemy.getEnemyHeight() &&
+                        bullet.getY() + 5 > enemy.getY();
+
+                if (hit) {
                     enemy.setIsAlive(false);
-                    bulletIterator.remove();
+                    toRemove.add(bullet);
+
+                    Platform.runLater(() -> gameStage.getChildren().remove(enemy));
+
                     break;
                 }
             }
+        }
+
+        if (!toRemove.isEmpty()) {
+            Platform.runLater(() -> {
+                bullets.removeAll(toRemove);
+                gameStage.getChildren().removeAll(toRemove);
+            });
         }
     }
 
@@ -109,8 +141,9 @@ public class GameLoop implements Runnable {
     public void run() {
         while (running) {
             float time = System.currentTimeMillis();
+
             updateMainCharacter(gameStage.getMainCharacter());
-            updateEnemyCharacter(gameStage.getEnemyList().get(0));
+            updateEnemyCharacter(gameStage.getEnemyList());
             updateScore(gameStage.getScore(), gameStage.getMainCharacter());
             updateBullets(gameStage.getMainCharacter());
             time = System.currentTimeMillis() - time;

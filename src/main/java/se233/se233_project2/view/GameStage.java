@@ -32,11 +32,11 @@ public class GameStage extends Pane {
         backgroundImg.setFitWidth(WIDTH);
 
         keys = new Keys();
-        mainCharacter = new GameCharacter(0,30, 30,"assets/character/player/Character.png", 4, 3 ,2, 80,120,
+        mainCharacter = new GameCharacter(0,30, 30,"assets/character/player/Character.png", 4, 3 ,2, 40,120,
                 KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.SPACE, KeyCode.S, 3);
         score = new Score(30, GROUND+30);
 
-        enemyCharacter = new EnemyCharacter(1, 500, 30, "assets/character/enemy/Minion.png", 4, 4 ,1, 80,110);
+        enemyCharacter = new EnemyCharacter(1, 500, 30, "assets/character/enemy/Minion.png", 4, 4 ,1, 40,110);
         enemyList.add(enemyCharacter);
 
         getChildren().add(backgroundImg);

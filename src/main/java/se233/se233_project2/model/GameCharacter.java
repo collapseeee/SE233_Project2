@@ -81,11 +81,9 @@ public class GameCharacter extends Pane {
     public void moveX() {
         setTranslateX(x);
         if(isMoveLeft) {
-            xVelocity = xVelocity>=xMaxVelocity? xMaxVelocity : xVelocity+xAcceleration;
             x = x - xVelocity;
         }
         if(isMoveRight) {
-            xVelocity = xVelocity>=xMaxVelocity? xMaxVelocity : xVelocity+xAcceleration;
             x = x + xVelocity;
         }
     }

@@ -1,11 +1,13 @@
 package se233.se233_project2.model;
 
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import se233.se233_project2.Launcher;
 
 public class Bullet extends Pane {
     private final Image bulletImage = new Image(Launcher.class.getResourceAsStream("assets/character/player/Character.png"));;
+    private final ImageView imageView;
     private int x;
     private int y;
     private int speed;
@@ -14,6 +16,13 @@ public class Bullet extends Pane {
         this.y = y;
         this.speed = speed;
 
+        imageView = new ImageView(bulletImage);
+        imageView.setFitWidth(30);
+        imageView.setFitHeight(30);
+        getChildren().add(imageView);
+
+        setLayoutX(x);
+        setLayoutY(y);
     }
 
     public Image getBulletImage() {

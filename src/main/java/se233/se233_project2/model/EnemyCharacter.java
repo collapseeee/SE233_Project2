@@ -17,12 +17,8 @@ public class EnemyCharacter extends Pane {
     private final int startY;
     private final int enemyWidth;
     private final int enemyHeight;
-    int xVelocity = 0;
-    int yVelocity = 0;
-    int xAcceleration = 1;
-    int yAcceleration = 1;
-    int xMaxVelocity = 7;
-    int yMaxVelocity = 17;
+    int xVelocity = 5;
+    int yVelocity = 5;
     boolean isAlive = true;
     boolean isMoveLeft = false;
     boolean isMoveRight = false;
@@ -64,21 +60,17 @@ public class EnemyCharacter extends Pane {
     public void moveX() {
         setTranslateX(x);
         if(isMoveLeft) {
-            xVelocity = xVelocity>=xMaxVelocity? xMaxVelocity : xVelocity+xAcceleration;
             x = x - xVelocity;
         }
         if(isMoveRight) {
-            xVelocity = xVelocity>=xMaxVelocity? xMaxVelocity : xVelocity+xAcceleration;
             x = x + xVelocity;
         }
     }
     public void moveY() {
         setTranslateY(y);
         if(isFalling) {
-            yVelocity = yVelocity >= yMaxVelocity? yMaxVelocity : yVelocity+yAcceleration;
             y = y + yVelocity;
         } else if(isJumping) {
-            yVelocity = yVelocity <= 0 ? 0 : yVelocity-yAcceleration;
             y = y - yVelocity;
         }
     }
@@ -91,7 +83,6 @@ public class EnemyCharacter extends Pane {
     }
     public void jump() {
         if (canJump) {
-            yVelocity = yMaxVelocity;
             canJump = false;
             isJumping = true;
             isFalling = false;
