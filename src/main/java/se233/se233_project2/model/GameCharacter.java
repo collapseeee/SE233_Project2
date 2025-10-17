@@ -1,12 +1,12 @@
 package se233.se233_project2.model;
 
+import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.view.GameStage;
-
-import java.util.concurrent.TimeUnit;
 
 public class GameCharacter extends Pane {
     private final Image characterImg;
@@ -19,17 +19,19 @@ public class GameCharacter extends Pane {
     private int characterWidth;
     private int characterHeight;
     private int score = 0;
+    private int facing = 1; // Left: -1, Right: 1
+
     private final KeyCode leftKey;
     private final KeyCode rightKey;
     private final KeyCode upKey;
     private final KeyCode shootKey;
     private final KeyCode crawlKey;
-    int xVelocity = 5;
-    int yVelocity = 0;
-    int xAcceleration = 1;
-    int yAcceleration = 1;
-    int xMaxVelocity = 7;
-    int yMaxVelocity = 17;
+
+    private final int WALK_SPEED = 5;
+    private final int JUMP_SPEED = 17;
+    private final int GRAVITY = 1;
+    private int yVelocity = 0;
+
     boolean isMoveLeft = false;
     boolean isMoveRight = false;
     boolean isFalling = true;
@@ -37,10 +39,9 @@ public class GameCharacter extends Pane {
     boolean isJumping = false;
     boolean canCrawl = false;
     boolean isCrawling = false;
-    boolean isShooting = false;
     boolean isDead = false;
 
-    public GameCharacter(int id, int x, int y, String imgName, int count, int column, int row, int width, int height,
+    public GameCharacter(int x, int y, String imgName, int count, int column, int row, int width, int height,
                          KeyCode leftKey, KeyCode rightKey, KeyCode upKey, KeyCode shootKey, KeyCode crawlKey ,int life) {
         this.startX = x;
         this.startY = y;
@@ -61,16 +62,18 @@ public class GameCharacter extends Pane {
         this.crawlKey = crawlKey;
         this.getChildren().addAll(this.imageView);
         this.life = life;
-        setScaleX(id % 2 * 2 - 1);
     }
 
+    // Movement
     public void moveLeft() {
         setScaleX(1);
+        facing = -1;
         isMoveLeft = true;
         isMoveRight = false;
     }
     public void moveRight() {
         setScaleX(-1);
+        facing = 1;
         isMoveLeft = false;
         isMoveRight = true;
     }
@@ -81,35 +84,37 @@ public class GameCharacter extends Pane {
     public void moveX() {
         setTranslateX(x);
         if(isMoveLeft) {
-            x = x - xVelocity;
+            x = x - WALK_SPEED;
         }
         if(isMoveRight) {
-            x = x + xVelocity;
+            x = x + WALK_SPEED;
         }
     }
     public void moveY() {
         setTranslateY(y);
         if(isFalling) {
-            yVelocity = yVelocity >= yMaxVelocity? yMaxVelocity : yVelocity+yAcceleration;
+            yVelocity = yVelocity >= JUMP_SPEED ? JUMP_SPEED : yVelocity+GRAVITY;
             y = y + yVelocity;
         } else if(isJumping) {
-            yVelocity = yVelocity <= 0 ? 0 : yVelocity-yAcceleration;
+            yVelocity = yVelocity <= 0 ? 0 : yVelocity - GRAVITY;
             y = y - yVelocity;
         }
     }
+    public void jump() {
+        if (canJump) {
+            yVelocity = JUMP_SPEED;
+            canJump = false;
+            isJumping = true;
+            isFalling = false;
+        }
+    }
+
+    // Collision
     public void checkReachGameWall() {
         if(x <= 0) {
             x = 0;
         } else if( x+getWidth() >= GameStage.WIDTH) {
             x = GameStage.WIDTH-(int)getWidth();
-        }
-    }
-    public void jump() {
-        if (canJump) {
-            yVelocity = yMaxVelocity;
-            canJump = false;
-            isJumping = true;
-            isFalling = false;
         }
     }
     public void checkReachHighest () {
@@ -120,44 +125,31 @@ public class GameCharacter extends Pane {
         }
     }
     public void checkReachFloor() {
-        if(isFalling && y >= GameStage.GROUND - this.characterHeight) {
+        int floorY = GameStage.GROUND - this.characterHeight;
+        if(y >=  floorY && isFalling) {
+            y = floorY;
             isFalling = false;
             canJump = true;
             yVelocity = 0;
         }
     }
+
+    // Painting
     public void repaint() {
         moveX();
         moveY();
     }
-    public boolean collided (GameCharacter c) {
-        if (this.isMoveLeft && this.x > c.getX()) {
-            this.x = Math.max(this.x, c.getX() + c.getCharacterWidth());
-            this.stop();
-        } else if (this.isMoveRight && this.x < c.getX()) {
-            this.x = Math.max(this.x, c.getX() - this.characterWidth);
-            this.stop();
-        }
-        if (this.isFalling && this.y < c.getY()) {
-            score++;
-            this.y = Math.min(GameStage.GROUND - this.characterHeight, c.getY());
-            this.repaint();
-            c.collapsed();
-            c.respawn();
-            return true;
-        }
-        return false;
-    }
     public void collapsed() {
-        this.imageView.setFitHeight(5);
-        this.y = this.y + this.characterHeight - 5;
+        double oldHeight = this.imageView.getFitHeight();
+        this.imageView.setFitHeight(oldHeight * 0.4);
+        this.y += (oldHeight * 0.6);
         this.repaint();
-        try {
-            TimeUnit.MILLISECONDS.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        PauseTransition delay = new PauseTransition(Duration.millis(300));
+        delay.setOnFinished(e -> this.imageView.setFitHeight(oldHeight));
+        delay.play();
     }
+
+    // Life
     public void respawn() {
         this.x = startX;
         this.y = startY;
@@ -168,7 +160,33 @@ public class GameCharacter extends Pane {
         this.isFalling = true;
         this.canJump = false;
         this.isJumping = false;
+        this.isDead = false;
     }
+    public void loseLife() {
+        life--;
+        if (life <= 0) isDead = true;
+    }
+
+    // Attacking
+    private long lastShootTime = 0;
+    private final long shootCooldown = 500; // ms
+    public boolean canShoot() {
+        return System.currentTimeMillis() - lastShootTime > shootCooldown;
+    }
+    public void markShoot() {
+        lastShootTime =  System.currentTimeMillis();
+    }
+
+    private long lastSpecialTime = 0;
+    private final long specialCooldown = 5000; //ms
+    public boolean canSpecial() {
+        return System.currentTimeMillis() - lastSpecialTime > specialCooldown;
+    }
+    public void markSpecial() {
+        lastSpecialTime = System.currentTimeMillis();
+    }
+
+    // Getter Setter
     public KeyCode getLeftKey() {
         return leftKey;
     }
@@ -198,5 +216,9 @@ public class GameCharacter extends Pane {
     public int getScore() {
         return this.score;
     }
+    public void addScore(int score) {
+        this.score+=score;
+    }
     public int getLife() { return this.life; }
+    public int getFacing() { return this.facing; }
 }

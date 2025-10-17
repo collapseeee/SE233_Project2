@@ -90,7 +90,7 @@ public class GameLoop implements Runnable {
             int bulletY = (int)(gameStage.getMainCharacter().getY()
                     + gameStage.getMainCharacter().getHeight() / 2);
 
-            Bullet bullet = new Bullet(bulletX, bulletY, bulletSpeed);
+            Bullet bullet = new Bullet(bulletX, bulletY, bulletSpeed, 1);
             Platform.runLater(() -> {
                 bullets.add(bullet);
                 gameStage.getChildren().add(bullet);

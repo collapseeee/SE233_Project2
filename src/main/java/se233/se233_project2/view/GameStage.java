@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameStage extends Pane {
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 400;
+    public static final int WIDTH = 1200;
+    public static final int HEIGHT = 800;
     public final static int GROUND = 300;
     private Image gameStageImg;
     private List<EnemyCharacter> enemyList = new ArrayList<>();
@@ -26,17 +26,17 @@ public class GameStage extends Pane {
     private Keys keys;
 
     public GameStage() {
-        gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/Background.png"));
+        gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/backgroundStage1.png"));
         ImageView backgroundImg = new ImageView(gameStageImg);
         backgroundImg.setFitHeight(HEIGHT);
         backgroundImg.setFitWidth(WIDTH);
 
         keys = new Keys();
-        mainCharacter = new GameCharacter(0,30, 30,"assets/character/player/Character.png", 4, 3 ,2, 40,120,
+        mainCharacter = new GameCharacter(30, 30,"assets/character/player/Character.png", 4, 3 ,2, 40,120,
                 KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.SPACE, KeyCode.S, 3);
         score = new Score(30, GROUND+30);
 
-        enemyCharacter = new EnemyCharacter(1, 500, 30, "assets/character/enemy/Minion.png", 4, 4 ,1, 40,110);
+        enemyCharacter = new EnemyCharacter(500, 30, "assets/character/enemy/Minion.png", 4, 4 ,1, 40,110);
         enemyList.add(enemyCharacter);
 
         getChildren().add(backgroundImg);
