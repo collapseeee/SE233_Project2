@@ -1,5 +1,6 @@
 package se233.se233_project2.controller;
 
+import javafx.application.Platform;
 import se233.se233_project2.model.EnemyCharacter;
 import se233.se233_project2.model.GameCharacter;
 import se233.se233_project2.view.GameStage;
@@ -11,12 +12,17 @@ public class DrawingLoop implements Runnable {
     private int frameRate;
     private float interval;
     private boolean running;
+
+    private int heartFrameCounter = 0;
+    private static final int HEART_TICK_INTERVAL = 30; // tick every 30 frames ≈ 0.5s at 60 FPS
+
     public DrawingLoop(GameStage gameStage) {
         this.gameStage = gameStage;
         frameRate = 60;
         interval = 1000.0f / frameRate; // 1000 ms = 1 second
         running = true;
     }
+
     private void checkMainCharacterDrawCollisions(GameCharacter gameCharacter) {
         gameCharacter.checkReachGameWall();
         gameCharacter.checkReachHighest();
@@ -38,6 +44,7 @@ public class DrawingLoop implements Runnable {
             enemyCharacter.repaint();
         }
     }
+
     @Override
     public void run() {
         while (running) {
@@ -47,6 +54,8 @@ public class DrawingLoop implements Runnable {
             checkEnemyCharacterDrawCollisions(gameStage.getEnemyList());
             paintMainCharacter(gameStage.getMainCharacter());
             paintEnemy(gameStage.getEnemyList());
+
+            Platform.runLater(() -> gameStage.getLife().tick());
 
             time = System.currentTimeMillis() - time;
             if (time < interval) {

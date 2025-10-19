@@ -24,12 +24,19 @@ public class GameCharacter extends Pane {
     private final KeyCode leftKey;
     private final KeyCode rightKey;
     private final KeyCode upKey;
+    private final KeyCode downKey;
+    private final KeyCode jumpKey;
     private final KeyCode shootKey;
     private final KeyCode crawlKey;
+    private final KeyCode runKey;
 
-    private final int WALK_SPEED = 5;
+    private final int WALK_SPEED = 6;
+    private final int CRAWL_SPEED = 2;
+    private final int RUN_SPEED = 10;
+    private final int RUN_CRAWL_SPEED = 5;
     private final int JUMP_SPEED = 17;
     private final int GRAVITY = 1;
+    private int xVelocity = 0;
     private int yVelocity = 0;
 
     boolean isMoveLeft = false;
@@ -40,39 +47,46 @@ public class GameCharacter extends Pane {
     boolean canCrawl = false;
     boolean isCrawling = false;
     boolean isDead = false;
+    boolean isRunning = false;
 
     public GameCharacter(int x, int y, String imgName, int count, int column, int row, int width, int height,
-                         KeyCode leftKey, KeyCode rightKey, KeyCode upKey, KeyCode shootKey, KeyCode crawlKey ,int life) {
+                         KeyCode leftKey, KeyCode rightKey, KeyCode upKey, KeyCode downKey,
+                         KeyCode shootKey, KeyCode jumpKey, KeyCode crawlKey, KeyCode runKey, int life) {
         this.startX = x;
         this.startY = y;
         this.x = x;
         this.y = y;
+        this.life = life;
+        this.xVelocity = WALK_SPEED;
         this.setTranslateX(x);
         this.setTranslateY(y);
-        this.characterWidth = width;
-        this.characterHeight = height;
+        this.characterWidth = width*2;
+        this.characterHeight = height*2;
         this.characterImg = new Image(Launcher.class.getResourceAsStream(imgName));
         this.imageView = new AnimatedSprite(characterImg, count, column, row, 0, 0, width, height);
-        this.imageView.setFitWidth((int) (width * 1.2));
-        this.imageView.setFitHeight((int) (height * 1.2));
+        this.imageView.setFitWidth((int) (width*2));
+        this.imageView.setFitHeight((int) (height*2));
+        this.getChildren().addAll(this.imageView);
+
         this.leftKey = leftKey;
         this.rightKey = rightKey;
         this.upKey = upKey;
+        this.downKey = downKey;
         this.shootKey = shootKey;
+        this.jumpKey = jumpKey;
         this.crawlKey = crawlKey;
-        this.getChildren().addAll(this.imageView);
-        this.life = life;
+        this.runKey = runKey;
     }
 
     // Movement
     public void moveLeft() {
-        setScaleX(1);
+        setScaleX(-1);
         facing = -1;
         isMoveLeft = true;
         isMoveRight = false;
     }
     public void moveRight() {
-        setScaleX(-1);
+        setScaleX(1);
         facing = 1;
         isMoveLeft = false;
         isMoveRight = true;
@@ -84,10 +98,10 @@ public class GameCharacter extends Pane {
     public void moveX() {
         setTranslateX(x);
         if(isMoveLeft) {
-            x = x - WALK_SPEED;
+            x = x - xVelocity;
         }
         if(isMoveRight) {
-            x = x + WALK_SPEED;
+            x = x + xVelocity;
         }
     }
     public void moveY() {
@@ -106,7 +120,43 @@ public class GameCharacter extends Pane {
             canJump = false;
             isJumping = true;
             isFalling = false;
+            canCrawl = false;
         }
+    }
+    public void crawl() {
+        if (canCrawl && !isCrawling) {
+            isCrawling = true;
+            canCrawl = false;
+            xVelocity = CRAWL_SPEED;
+            imageView.setFitHeight(characterHeight*0.6);
+            y += characterHeight*0.6;
+        }
+    }
+    public void stopCrawl() {
+        if (isCrawling) {
+            isCrawling = false;
+            canCrawl = true;
+            xVelocity = WALK_SPEED;
+            imageView.setFitHeight(characterHeight);
+            y -= characterHeight * 0.6;
+        }
+    }
+    public void run() {
+        if (!isRunning) {
+            isRunning = true;
+            xVelocity = RUN_SPEED;
+            System.out.println("is running");
+        }
+    }
+    public void runCrawl() {
+        if (!isRunning) {
+            isRunning = true;
+            xVelocity = RUN_CRAWL_SPEED;
+        }
+    }
+    public void stopRun() {
+        isRunning = false;
+        xVelocity = WALK_SPEED;
     }
 
     // Collision
@@ -130,6 +180,7 @@ public class GameCharacter extends Pane {
             y = floorY;
             isFalling = false;
             canJump = true;
+            canCrawl = true;
             yVelocity = 0;
         }
     }
@@ -187,38 +238,22 @@ public class GameCharacter extends Pane {
     }
 
     // Getter Setter
-    public KeyCode getLeftKey() {
-        return leftKey;
-    }
-    public KeyCode getRightKey() {
-        return rightKey;
-    }
-    public KeyCode getUpKey() {
-        return upKey;
-    }
-    public KeyCode getShootKey() { return shootKey;}
+    public KeyCode getLeftKey() { return leftKey; }
+    public KeyCode getRightKey() { return rightKey; }
+    public KeyCode getUpKey() { return upKey; }
+    public KeyCode getDownKey() { return downKey; }
+    public KeyCode getShootKey() { return shootKey; }
+    public KeyCode getJumpKey() { return jumpKey; }
     public KeyCode getCrawlKey() { return crawlKey; }
-    public AnimatedSprite getImageView() {
-        return imageView;
-    }
-    public int getX() {
-        return this.x;
-    }
-    public int getY() {
-        return this.y;
-    }
-    public int getCharacterWidth() {
-        return characterWidth;
-    }
-    public int getCharacterHeight() {
-        return characterHeight;
-    }
-    public int getScore() {
-        return this.score;
-    }
-    public void addScore(int score) {
-        this.score+=score;
-    }
+    public KeyCode getRunKey() { return runKey; }
+    public AnimatedSprite getImageView() { return imageView; }
+    public int getX() { return this.x; }
+    public int getY() { return this.y; }
+    public int getCharacterWidth() { return characterWidth; }
+    public int getCharacterHeight() { return characterHeight; }
+    public int getScore() { return this.score; }
+    public void addScore(int score) { this.score+=score; }
     public int getLife() { return this.life; }
     public int getFacing() { return this.facing; }
+    public void setFacing(int facing) { this.facing = facing; }
 }

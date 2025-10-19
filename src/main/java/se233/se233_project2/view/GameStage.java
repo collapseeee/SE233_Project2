@@ -5,23 +5,21 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import se233.se233_project2.Launcher;
-import se233.se233_project2.model.Bullet;
-import se233.se233_project2.model.EnemyCharacter;
-import se233.se233_project2.model.GameCharacter;
-import se233.se233_project2.model.Keys;
+import se233.se233_project2.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameStage extends Pane {
     public static final int WIDTH = 1200;
-    public static final int HEIGHT = 800;
+    public static final int HEIGHT = 600;
     public final static int GROUND = 300;
     private Image gameStageImg;
     private List<EnemyCharacter> enemyList = new ArrayList<>();
     private List<Bullet> bulletList = new ArrayList<>();
     private GameCharacter mainCharacter;
     private EnemyCharacter enemyCharacter;
+    private Life playerLife;
     private Score score;
     private Keys keys;
 
@@ -32,8 +30,12 @@ public class GameStage extends Pane {
         backgroundImg.setFitWidth(WIDTH);
 
         keys = new Keys();
-        mainCharacter = new GameCharacter(30, 30,"assets/character/player/Character.png", 4, 3 ,2, 40,120,
-                KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.SPACE, KeyCode.S, 3);
+        SpriteAsset playerAsset = SpriteAsset.PLAYER_IDLE;
+        mainCharacter = new GameCharacter(30, 30,playerAsset.getPath(), playerAsset.getFrameCount(), playerAsset.getColumns(), playerAsset.getRows(), playerAsset.getWidth(), playerAsset.getHeight(),
+                KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S, KeyCode.SPACE, KeyCode.Z, KeyCode.X, KeyCode.SHIFT, 3);
+        playerLife = new Life(5);
+        playerLife.setLayoutX(20);
+        playerLife.setLayoutY(20);
         score = new Score(30, GROUND+30);
 
         enemyCharacter = new EnemyCharacter(500, 30, "assets/character/enemy/Minion.png", 4, 4 ,1, 40,110);
@@ -44,6 +46,7 @@ public class GameStage extends Pane {
         getChildren().addAll(enemyCharacter);
         getChildren().addAll(bulletList);
         getChildren().addAll(score);
+        getChildren().addAll(playerLife);
     }
     public GameCharacter getMainCharacter() {
         return mainCharacter;
@@ -51,6 +54,7 @@ public class GameStage extends Pane {
     public List<EnemyCharacter> getEnemyList() {
         return enemyList;
     }
+    public void removeEnemyFromList(EnemyCharacter enemy) { enemyList.remove(enemy); }
     public List<Bullet> getBulletList() { return bulletList; }
     public void addBulletList(Bullet bullet) {
         bulletList.add(bullet);
@@ -61,4 +65,5 @@ public class GameStage extends Pane {
     public Score getScore() {
         return score;
     }
+    public Life getLife() { return playerLife; }
 }

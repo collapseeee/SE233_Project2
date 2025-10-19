@@ -22,7 +22,7 @@ public class EnemyCharacter extends Pane {
     private final int enemyWidth;
     private final int enemyHeight;
 
-    private final int WALK_SPEED = 5;
+    private final int WALK_SPEED = 2;
     private final int JUMP_SPEED = 17;
     private final int GRAVITY = 1;
     private int yVelocity = 0;
@@ -52,14 +52,14 @@ public class EnemyCharacter extends Pane {
 
     // Movement
     public void moveLeft() {
-        setScaleX(1);
+        setScaleX(-1);
         facing = -1;
         isMoveLeft = true;
         isMoveRight = false;
     }
     public void moveRight() {
         facing = 1;
-        setScaleX(-1);
+        setScaleX(1);
         isMoveLeft = false;
         isMoveRight = true;
     }
