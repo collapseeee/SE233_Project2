@@ -7,16 +7,16 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 public class Score extends Pane {
-    Label point;
+    Label score;
     public Score(int x, int y) {
-        point = new Label("0");
+        score = new Label("0");
         setTranslateX(x);
         setTranslateY(y);
-        point.setFont(Font.font("Verdana", FontWeight.BOLD, 30));
-        point.setTextFill(Color.web("#FFF"));
-        getChildren().addAll(point);
+        score.setFont(Font.font("Consolas", FontWeight.BOLD, 30));
+        score.setTextFill(Color.web("#FFF"));
+        getChildren().add(score);
     }
-    public void setPoint(int score) {
-        this.point.setText(Integer.toString(score));
+    public void setScore(int score) {
+        this.score.setText("Score: " + score);
     }
 }

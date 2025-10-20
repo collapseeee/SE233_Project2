@@ -1,9 +1,12 @@
 package se233.se233_project2.controller;
 
 import javafx.application.Platform;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se233.se233_project2.model.Bullet;
 import se233.se233_project2.model.EnemyCharacter;
 import se233.se233_project2.model.GameCharacter;
+import se233.se233_project2.model.GamePhase;
 import se233.se233_project2.view.GameStage;
 import se233.se233_project2.view.Life;
 import se233.se233_project2.view.Score;
@@ -13,12 +16,17 @@ import java.util.List;
 
 public class GameLoop implements Runnable {
     private GameStage gameStage;
+    private StageManager stageManager;
+
     private int frameRate;
     private float interval;
     private boolean running;
 
+    Logger logger = LogManager.getLogger(GameLoop.class);
+
     public GameLoop(GameStage gameStage) {
         this.gameStage = gameStage;
+        this.stageManager = new StageManager(gameStage);
         frameRate = 10;
         interval = 1000.0f / frameRate;
         running = true;
@@ -65,7 +73,7 @@ public class GameLoop implements Runnable {
     }
     private void updateScore(Score score, GameCharacter mainCharacter) {
         javafx.application.Platform.runLater(() -> {
-            score.setPoint(mainCharacter.getScore());
+            score.setScore(mainCharacter.getScore());
         });
     }
     private void updateLife(Life life, GameCharacter mainCharacter) {
@@ -131,6 +139,7 @@ public class GameLoop implements Runnable {
                 gameStage.getBulletList().add(bullet);
                 gameStage.getChildren().add(bullet);
             });
+            logger.info("Bullet fires at X: {}, Y {}", bulletX, bulletY);
             gameCharacter.markShoot();
         }
 
@@ -146,19 +155,19 @@ public class GameLoop implements Runnable {
             for (EnemyCharacter enemy : gameStage.getEnemyList()) {
                 if (!enemy.getIsAlive()) continue;
 
-                // Basic bounding-box collision check (bullet overlaps enemy)
-                boolean hit = bullet.getX() < enemy.getX() + enemy.getEnemyWidth() &&
-                        bullet.getX() + 10 > enemy.getX() &&
-                        bullet.getY() < enemy.getY() + enemy.getEnemyHeight() &&
-                        bullet.getY() + 5 > enemy.getY();
+                boolean hit =
+                        (bullet.getX() >= enemy.getX() && bullet.getX() <= enemy.getX() + enemy.getWidth()) && // Must hit the hitbox.
+                        (bullet.getY() >= enemy.getY() && bullet.getY() <= enemy.getY() + enemy.getHeight()); // Must hit the hitbox not above or below.
 
                 if (hit) {
-                    System.out.println("A Bullet hit an enemy.");
+                    logger.info("Bullet hits an enemy.");
+                    gameCharacter.addScore(1);
+                    logger.info("Score added. Current score: {}", gameCharacter.getScore());
+
                     enemy.setIsAlive(false);
                     toRemove.add(bullet);
-
                     Platform.runLater(() -> {
-                        System.out.println("Removing an enemy from list and scene." + enemy);
+                        logger.info("Remove the enemy type {}.", enemy.getType());
                         gameStage.getChildren().remove(enemy);
                         gameStage.removeEnemyFromList(enemy);
                     });
@@ -170,7 +179,7 @@ public class GameLoop implements Runnable {
 
         if (!toRemove.isEmpty()) {
             Platform.runLater(() -> {
-                System.out.println("Removing " + toRemove.size() + " bullets." + toRemove);
+                logger.info("Remove {} bullet from the stage.", toRemove.size());
                 gameStage.getBulletList().removeAll(toRemove);
                 gameStage.getChildren().removeAll(toRemove);
             });
@@ -182,11 +191,15 @@ public class GameLoop implements Runnable {
         while (running) {
             float time = System.currentTimeMillis();
 
-            updateMainCharacter(gameStage.getMainCharacter());
-            updateEnemyCharacter(gameStage.getEnemyList());
-            updateLife(gameStage.getLife(), gameStage.getMainCharacter());
-            updateScore(gameStage.getScore(), gameStage.getMainCharacter());
-            updateBullets(gameStage.getMainCharacter());
+            stageManager.update();
+
+            if (gameStage.getMainCharacter() != null && gameStage.getCurrentGamePhase() != GamePhase.START_MENU) {
+                updateMainCharacter(gameStage.getMainCharacter());
+                updateEnemyCharacter(gameStage.getEnemyList());
+                updateLife(gameStage.getLife(), gameStage.getMainCharacter());
+                updateScore(gameStage.getScore(), gameStage.getMainCharacter());
+                updateBullets(gameStage.getMainCharacter());
+            }
 
             time = System.currentTimeMillis() - time;
             if (time < interval) {

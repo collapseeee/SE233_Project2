@@ -8,6 +8,8 @@ import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.view.GameStage;
 
+import java.util.List;
+
 public class GameCharacter extends Pane {
     private final Image characterImg;
     private final AnimatedSprite imageView;
@@ -34,7 +36,7 @@ public class GameCharacter extends Pane {
     private final int CRAWL_SPEED = 2;
     private final int RUN_SPEED = 10;
     private final int RUN_CRAWL_SPEED = 5;
-    private final int JUMP_SPEED = 17;
+    private final int JUMP_SPEED = 25;
     private final int GRAVITY = 1;
     private int xVelocity = 0;
     private int yVelocity = 0;
@@ -174,16 +176,54 @@ public class GameCharacter extends Pane {
             yVelocity = 0;
         }
     }
-    public void checkReachFloor() {
-        int floorY = GameStage.GROUND - this.characterHeight;
-        if(y >=  floorY && isFalling) {
-            y = floorY;
-            isFalling = false;
-            canJump = true;
-            canCrawl = true;
-            yVelocity = 0;
+    public void checkReachPlatform(List<Platform> platforms) {
+        double bottomY = this.y + this.characterHeight;
+        double nextY = bottomY + yVelocity;
+
+        Platform landedPlatform = null;
+        double landingY = GameStage.HEIGHT;
+
+        for (Platform platform : platforms) {
+            double platTop = platform.getY();
+            double platLeft = platform.getX();
+            double platRight = platLeft + platform.getWidth();
+
+            boolean withinX =
+                    (this.x + this.characterWidth > platLeft) &&
+                            (this.x < platRight);
+
+            boolean crossingPlatform =
+                    withinX && bottomY <= platTop && nextY >= platTop && yVelocity >= 0;
+
+            if (crossingPlatform && platTop < landingY) {
+                // Choose the closest platform under the character
+                landingY = platTop;
+                landedPlatform = platform;
+            }
+        }
+
+        if (landedPlatform != null) {
+            this.y = (int) landingY - this.characterHeight;
+            this.isFalling = false;
+            this.canJump = true;
+            this.yVelocity = 0;
+        } else {
+            this.isFalling = true;
         }
     }
+    // This logic is boo, fix this later by adapting this old method:
+    /**
+     *     public void checkReachFloor() {
+     *         int floorY = GameStage.GROUND - this.characterHeight;
+     *         if(y >=  floorY && isFalling) {
+     *             y = floorY;
+     *             isFalling = false;
+     *             canJump = true;
+     *             canCrawl = true;
+     *             yVelocity = 0;
+     *         }
+     *     }
+     */
 
     // Painting
     public void repaint() {

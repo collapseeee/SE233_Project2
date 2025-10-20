@@ -7,7 +7,7 @@ import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.view.GameStage;
 
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 public class EnemyCharacter extends Pane {
     private final Image enemyImg;
@@ -45,8 +45,8 @@ public class EnemyCharacter extends Pane {
         this.enemyHeight = height;
         this.enemyImg = new Image(Launcher.class.getResourceAsStream(imgName));
         this.imageView = new AnimatedSprite(enemyImg, count, column, row, 0, 0, width, height);
-        this.imageView.setFitWidth((int) (width * 1.2));
-        this.imageView.setFitHeight((int) (height * 1.2));
+        this.imageView.setFitWidth((int) (width));
+        this.imageView.setFitHeight((int) (height));
         this.getChildren().addAll(this.imageView);
     }
 
@@ -124,13 +124,39 @@ public class EnemyCharacter extends Pane {
             yVelocity = 0;
         }
     }
-    public void checkReachFloor() {
-        int floorY = GameStage.GROUND - this.enemyHeight;
-        if(y >=  floorY && isFalling) {
-            y = floorY;
-            isFalling = false;
-            canJump = true;
-            yVelocity = 0;
+    public void checkReachPlatform(List<Platform> platforms) {
+        double bottomY = this.y + this.enemyHeight;
+        double nextY = bottomY + yVelocity;
+
+        Platform landedPlatform = null;
+        double landingY = GameStage.HEIGHT;
+
+        for (Platform platform : platforms) {
+            double platTop = platform.getY();
+            double platLeft = platform.getX();
+            double platRight = platLeft + platform.getWidth();
+
+            boolean withinX =
+                    (this.x + this.enemyWidth > platLeft) &&
+                            (this.x < platRight);
+
+            boolean crossingPlatform =
+                    withinX && bottomY <= platTop && nextY >= platTop;
+
+            if (crossingPlatform && platTop < landingY) {
+                // Choose the closest platform under the character
+                landingY = platTop;
+                landedPlatform = platform;
+            }
+        }
+
+        if (landedPlatform != null) {
+            this.y = (int) landingY - this.enemyHeight;
+            this.isFalling = false;
+            this.canJump = true;
+            this.yVelocity = 0;
+        } else {
+            this.isFalling = true;
         }
     }
 

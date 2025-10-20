@@ -3,6 +3,7 @@ package se233.se233_project2.controller;
 import javafx.application.Platform;
 import se233.se233_project2.model.EnemyCharacter;
 import se233.se233_project2.model.GameCharacter;
+import se233.se233_project2.model.GamePhase;
 import se233.se233_project2.view.GameStage;
 
 import java.util.List;
@@ -23,13 +24,13 @@ public class DrawingLoop implements Runnable {
     private void checkMainCharacterDrawCollisions(GameCharacter gameCharacter) {
         gameCharacter.checkReachGameWall();
         gameCharacter.checkReachHighest();
-        gameCharacter.checkReachFloor();
+        gameCharacter.checkReachPlatform(gameStage.getPlatformList());
     }
     private void checkEnemyCharacterDrawCollisions(List<EnemyCharacter> enemyCharacterList) {
         for (EnemyCharacter enemyCharacter : enemyCharacterList) {
             enemyCharacter.checkReachGameWall();
             enemyCharacter.checkReachHighest();
-            enemyCharacter.checkReachFloor();
+            enemyCharacter.checkReachPlatform(gameStage.getPlatformList());
         }
     }
 
@@ -47,12 +48,14 @@ public class DrawingLoop implements Runnable {
         while (running) {
             float time = System.currentTimeMillis();
 
-            checkMainCharacterDrawCollisions(gameStage.getMainCharacter());
-            checkEnemyCharacterDrawCollisions(gameStage.getEnemyList());
-            paintMainCharacter(gameStage.getMainCharacter());
-            paintEnemy(gameStage.getEnemyList());
+            if (gameStage.getMainCharacter() != null && gameStage.getCurrentGamePhase() != GamePhase.START_MENU) {
+                checkMainCharacterDrawCollisions(gameStage.getMainCharacter());
+                paintMainCharacter(gameStage.getMainCharacter());
+                Platform.runLater(() -> gameStage.getLife().tick());
+            }
 
-            Platform.runLater(() -> gameStage.getLife().tick());
+            checkEnemyCharacterDrawCollisions(gameStage.getEnemyList());
+            paintEnemy(gameStage.getEnemyList());
 
             time = System.currentTimeMillis() - time;
             if (time < interval) {
