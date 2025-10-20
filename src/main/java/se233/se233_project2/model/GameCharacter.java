@@ -60,12 +60,12 @@ public class GameCharacter extends Pane {
         this.xVelocity = WALK_SPEED;
         this.setTranslateX(x);
         this.setTranslateY(y);
-        this.characterWidth = width*2;
-        this.characterHeight = height*2;
+        this.characterWidth = width;
+        this.characterHeight = height;
         this.characterImg = new Image(Launcher.class.getResourceAsStream(imgName));
         this.imageView = new AnimatedSprite(characterImg, count, column, row, 0, 0, width, height);
-        this.imageView.setFitWidth((int) (width*2));
-        this.imageView.setFitHeight((int) (height*2));
+        this.imageView.setFitWidth((int) (width));
+        this.imageView.setFitHeight((int) (height));
         this.getChildren().addAll(this.imageView);
 
         this.leftKey = leftKey;

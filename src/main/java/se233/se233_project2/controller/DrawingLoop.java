@@ -13,9 +13,6 @@ public class DrawingLoop implements Runnable {
     private float interval;
     private boolean running;
 
-    private int heartFrameCounter = 0;
-    private static final int HEART_TICK_INTERVAL = 30; // tick every 30 frames ≈ 0.5s at 60 FPS
-
     public DrawingLoop(GameStage gameStage) {
         this.gameStage = gameStage;
         frameRate = 60;

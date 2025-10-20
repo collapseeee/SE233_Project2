@@ -12,8 +12,8 @@ import java.util.List;
 
 public class GameStage extends Pane {
     public static final int WIDTH = 1200;
-    public static final int HEIGHT = 600;
-    public final static int GROUND = 300;
+    public static final int HEIGHT = 800;
+    public final static int GROUND = 500;
     private Image gameStageImg;
     private List<EnemyCharacter> enemyList = new ArrayList<>();
     private List<Bullet> bulletList = new ArrayList<>();
@@ -24,7 +24,7 @@ public class GameStage extends Pane {
     private Keys keys;
 
     public GameStage() {
-        gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/backgroundStage1.png"));
+        gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/Stage1_Background.png"));
         ImageView backgroundImg = new ImageView(gameStageImg);
         backgroundImg.setFitHeight(HEIGHT);
         backgroundImg.setFitWidth(WIDTH);
@@ -36,7 +36,7 @@ public class GameStage extends Pane {
         playerLife = new Life(5);
         playerLife.setLayoutX(20);
         playerLife.setLayoutY(20);
-        score = new Score(30, GROUND+30);
+        score = new Score(WIDTH - 50, 30);
 
         enemyCharacter = new EnemyCharacter(500, 30, "assets/character/enemy/Minion.png", 4, 4 ,1, 40,110);
         enemyList.add(enemyCharacter);
@@ -56,9 +56,6 @@ public class GameStage extends Pane {
     }
     public void removeEnemyFromList(EnemyCharacter enemy) { enemyList.remove(enemy); }
     public List<Bullet> getBulletList() { return bulletList; }
-    public void addBulletList(Bullet bullet) {
-        bulletList.add(bullet);
-    }
     public Keys getKeys() {
         return keys;
     }
