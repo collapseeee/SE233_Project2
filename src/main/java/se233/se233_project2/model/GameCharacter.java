@@ -108,12 +108,14 @@ public class GameCharacter extends Pane {
     }
     public void moveY() {
         setTranslateY(y);
+        // Apply gravity when falling or jumping
         if(isFalling) {
-            yVelocity = yVelocity >= JUMP_SPEED ? JUMP_SPEED : yVelocity+GRAVITY;
-            y = y + yVelocity;
+            yVelocity += GRAVITY;
+            if(yVelocity > JUMP_SPEED) yVelocity = JUMP_SPEED; // Terminal velocity
+            y += yVelocity;
         } else if(isJumping) {
-            yVelocity = yVelocity <= 0 ? 0 : yVelocity - GRAVITY;
-            y = y - yVelocity;
+            y -= yVelocity;
+            yVelocity -= GRAVITY;
         }
     }
     public void jump() {
@@ -127,27 +129,32 @@ public class GameCharacter extends Pane {
     }
     public void crawl() {
         if (canCrawl && !isCrawling) {
+            double oldHeight = characterHeight;
             isCrawling = true;
             canCrawl = false;
             xVelocity = CRAWL_SPEED;
             imageView.setFitHeight(characterHeight*0.6);
-            y += characterHeight*0.6;
+            // Move character DOWN by the difference in height
+            y += (int)(oldHeight * 0.4); // Move down by 40% of height
+            setTranslateY(y); // Update position immediately
         }
     }
     public void stopCrawl() {
         if (isCrawling) {
+            double oldHeight = characterHeight;
             isCrawling = false;
             canCrawl = true;
             xVelocity = WALK_SPEED;
             imageView.setFitHeight(characterHeight);
-            y -= characterHeight * 0.6;
+            // Move character UP by the difference in height
+            y -= (int)(oldHeight * 0.4); // Move up by 40% of height
+            setTranslateY(y); // Update position immediately
         }
     }
     public void run() {
         if (!isRunning) {
             isRunning = true;
             xVelocity = RUN_SPEED;
-            System.out.println("is running");
         }
     }
     public void runCrawl() {
@@ -177,8 +184,8 @@ public class GameCharacter extends Pane {
         }
     }
     public void checkReachPlatform(List<Platform> platforms) {
-        double bottomY = this.y + this.characterHeight;
-        double nextY = bottomY + yVelocity;
+        double bottomY = this.y + (isCrawling ? this.characterHeight * 0.6 : this.characterHeight);
+        double nextBottomY = bottomY + yVelocity;
 
         Platform landedPlatform = null;
         double landingY = GameStage.HEIGHT;
@@ -192,38 +199,30 @@ public class GameCharacter extends Pane {
                     (this.x + this.characterWidth > platLeft) &&
                             (this.x < platRight);
 
-            boolean crossingPlatform =
-                    withinX && bottomY <= platTop && nextY >= platTop && yVelocity >= 0;
+            // Check if standing on platform
+            boolean standingOn = withinX && Math.abs(bottomY - platTop) <= 2 && !isJumping;
 
-            if (crossingPlatform && platTop < landingY) {
-                // Choose the closest platform under the character
+            // Check if falling onto platform - ONLY when falling, not jumping
+            boolean landingOn = withinX && bottomY <= platTop && nextBottomY >= platTop && isFalling && yVelocity > 0;
+
+            if ((standingOn || landingOn) && platTop < landingY) {
                 landingY = platTop;
                 landedPlatform = platform;
             }
         }
 
         if (landedPlatform != null) {
-            this.y = (int) landingY - this.characterHeight;
+            double currentHeight = isCrawling ? this.characterHeight * 0.6 : this.characterHeight;
+            this.y = (int)(landingY - currentHeight);
             this.isFalling = false;
             this.canJump = true;
+            this.canCrawl = true;
             this.yVelocity = 0;
-        } else {
+        } else if (!isJumping) {
             this.isFalling = true;
+            this.canJump = false;
         }
     }
-    // This logic is boo, fix this later by adapting this old method:
-    /**
-     *     public void checkReachFloor() {
-     *         int floorY = GameStage.GROUND - this.characterHeight;
-     *         if(y >=  floorY && isFalling) {
-     *             y = floorY;
-     *             isFalling = false;
-     *             canJump = true;
-     *             canCrawl = true;
-     *             yVelocity = 0;
-     *         }
-     *     }
-     */
 
     // Painting
     public void repaint() {

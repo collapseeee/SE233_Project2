@@ -38,6 +38,13 @@ public class Bullet extends Pane {
         setLayoutY(y);
     }
 
+    public boolean collidesWith(EnemyCharacter enemy) {
+        return (this.getX() + this.getWidth() > enemy.getX() &&
+                this.getX() < enemy.getX() + enemy.getWidth()) &&
+                (this.getY() + this.getHeight() > enemy.getY() &&
+                        this.getY() < enemy.getY() + enemy.getHeight());
+    }
+
     public int getX() { return x; }
     public void setX(int x) { this.x = x; }
     public int getY() { return y; }

@@ -8,6 +8,6 @@ public class Platform extends Rectangle {
         super(width, height);
         setX(x);
         setY(y);
-        setFill(Color.RED);
+        setFill(Color.TRANSPARENT);
     }
 }

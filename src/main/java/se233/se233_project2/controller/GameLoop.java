@@ -27,7 +27,7 @@ public class GameLoop implements Runnable {
     public GameLoop(GameStage gameStage) {
         this.gameStage = gameStage;
         this.stageManager = new StageManager(gameStage);
-        frameRate = 10;
+        frameRate = 30;
         interval = 1000.0f / frameRate;
         running = true;
     }
@@ -147,6 +147,8 @@ public class GameLoop implements Runnable {
         for (Bullet bullet : bullets) {
             bullet.move();
 
+
+            // Bullet hit bounds
             if (bullet.getX() > GameStage.WIDTH || bullet.getX() < 0+bullet.getWidth() || bullet.getY() > GameStage.HEIGHT - bullet.getHeight() ||  bullet.getY() < 0+bullet.getHeight()) {
                 toRemove.add(bullet);
                 continue;
@@ -155,11 +157,7 @@ public class GameLoop implements Runnable {
             for (EnemyCharacter enemy : gameStage.getEnemyList()) {
                 if (!enemy.getIsAlive()) continue;
 
-                boolean hit =
-                        (bullet.getX() >= enemy.getX() && bullet.getX() <= enemy.getX() + enemy.getWidth()) && // Must hit the hitbox.
-                        (bullet.getY() >= enemy.getY() && bullet.getY() <= enemy.getY() + enemy.getHeight()); // Must hit the hitbox not above or below.
-
-                if (hit) {
+                if (bullet.collidesWith(enemy)) {
                     logger.info("Bullet hits an enemy.");
                     gameCharacter.addScore(1);
                     logger.info("Score added. Current score: {}", gameCharacter.getScore());
