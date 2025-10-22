@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
+import se233.se233_project2.model.enemy.EnemyType;
 import se233.se233_project2.view.GameStage;
 
 import java.util.List;
@@ -12,9 +13,10 @@ import java.util.List;
 public class EnemyCharacter extends Pane {
     private final Image enemyImg;
     private final AnimatedSprite imageView;
-    private String type = "MINION"; // default
+    private EnemyType type;
     private int facing = -1;
-    private int hp = 1;
+    private int hp;
+    private final int shootDelay;
     private int x;
     private int y;
     private final int startX;
@@ -22,10 +24,11 @@ public class EnemyCharacter extends Pane {
     private final int enemyWidth;
     private final int enemyHeight;
 
-    private final int WALK_SPEED = 2;
-    private final int JUMP_SPEED = 17;
+    private final int JUMP_SPEED = 15;
     private final int GRAVITY = 1;
     private int yVelocity = 0;
+    private int speed;
+    private long lastShotTime = 0;
 
     boolean isAlive = true;
     boolean isMoveLeft = false;
@@ -34,19 +37,26 @@ public class EnemyCharacter extends Pane {
     boolean canJump = false;
     boolean isJumping = false;
 
-    public EnemyCharacter(int x, int y, String imgName, int count, int column, int row, int width, int height) {
+    public EnemyCharacter(int x, int y, EnemyType enemyType) {
+        SpriteAsset spriteAsset = type.getSpriteAsset();
         this.startX = x;
         this.startY = y;
         this.x = x;
         this.y = y;
+        this.type = enemyType;
+        this.hp = type.getHp();
+        this.speed = type.getSpeed();
+        this.shootDelay= type.getShootDelay();
+
         this.setTranslateX(x);
         this.setTranslateY(y);
-        this.enemyWidth = width;
-        this.enemyHeight = height;
-        this.enemyImg = new Image(Launcher.class.getResourceAsStream(imgName));
-        this.imageView = new AnimatedSprite(enemyImg, count, column, row, 0, 0, width, height);
-        this.imageView.setFitWidth((int) (width));
-        this.imageView.setFitHeight((int) (height));
+        this.enemyWidth = spriteAsset.getWidth();
+        this.enemyHeight = spriteAsset.getHeight();
+        this.enemyImg = new Image(Launcher.class.getResourceAsStream(spriteAsset.getPath()));
+        this.imageView = new AnimatedSprite(enemyImg, spriteAsset.getFrameCount(), spriteAsset.getColumns(), spriteAsset.getRows(),
+                0, 0, spriteAsset.getWidth(), spriteAsset.getHeight());
+        this.imageView.setFitWidth(spriteAsset.getWidth());
+        this.imageView.setFitHeight(spriteAsset.getHeight());
         this.getChildren().addAll(this.imageView);
     }
 
@@ -70,10 +80,10 @@ public class EnemyCharacter extends Pane {
     public void moveX() {
         setTranslateX(x);
         if(isMoveLeft) {
-            x = x - WALK_SPEED;
+            x = x - speed;
         }
         if(isMoveRight) {
-            x = x + WALK_SPEED;
+            x = x + speed;
         }
     }
     public void moveY() {
@@ -94,7 +104,7 @@ public class EnemyCharacter extends Pane {
             isFalling = false;
         }
     }
-    public void updateAI(GameCharacter gameCharacter) {
+    public void updateMovingAI(GameCharacter gameCharacter) {
         if (x > gameCharacter.getX() + (gameCharacter.getCharacterWidth()/2) + 150) {
             this.getImageView().tick();
             this.moveLeft();
@@ -160,6 +170,16 @@ public class EnemyCharacter extends Pane {
         }
     }
 
+    // Shooting
+    public boolean canShoot() {
+        long current = System.currentTimeMillis();
+        if (current - lastShotTime >= shootDelay) {
+            lastShotTime = current;
+            return true;
+        }
+        return false;
+    }
+
     // Damage
     public void takeDamage(int dmg) {
         hp -= dmg;
@@ -213,6 +233,5 @@ public class EnemyCharacter extends Pane {
     public int getFacing() { return facing; }
     public int getHp() { return hp; }
     public void setHp(int hp) { this.hp = hp; }
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public EnemyType getType() { return type; }
 }

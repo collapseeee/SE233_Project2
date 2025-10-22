@@ -3,10 +3,7 @@ package se233.se233_project2.controller;
 import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import se233.se233_project2.model.Bullet;
-import se233.se233_project2.model.EnemyCharacter;
-import se233.se233_project2.model.GameCharacter;
-import se233.se233_project2.model.GamePhase;
+import se233.se233_project2.model.*;
 import se233.se233_project2.view.GameStage;
 import se233.se233_project2.view.Life;
 import se233.se233_project2.view.Score;
@@ -148,17 +145,23 @@ public class GameLoop implements Runnable {
             bullet.move();
 
 
-            // Bullet hit bounds
+            // Bullet hit a bound
             if (bullet.getX() > GameStage.WIDTH || bullet.getX() < 0+bullet.getWidth() || bullet.getY() > GameStage.HEIGHT - bullet.getHeight() ||  bullet.getY() < 0+bullet.getHeight()) {
                 toRemove.add(bullet);
                 continue;
             }
 
+            // Bullet hit an enemy
             for (EnemyCharacter enemy : gameStage.getEnemyList()) {
                 if (!enemy.getIsAlive()) continue;
 
                 if (bullet.collidesWith(enemy)) {
                     logger.info("Bullet hits an enemy.");
+
+                    Platform.runLater(() -> {
+                        bullet.explode(bullet, gameStage);
+                    });
+
                     gameCharacter.addScore(1);
                     logger.info("Score added. Current score: {}", gameCharacter.getScore());
 

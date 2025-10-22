@@ -61,14 +61,10 @@ public class GameStage extends Pane {
         platforms.add(new Platform(437,260,345,20)); // Top
         getChildren().addAll(platforms);
 
-        enemyCharacter = new EnemyCharacter(500, 30, "assets/character/enemy/Minion.png", 4, 4 ,1, 40,110);
-        enemyList.add(enemyCharacter);
-
         getChildren().add(mainCharacter);
         getChildren().add(playerLife);
         getChildren().add(score);
-        getChildren().addAll(enemyCharacter);
-
+        
         FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), this);
         fadeIn.setFromValue(0);
         fadeIn.setToValue(1);

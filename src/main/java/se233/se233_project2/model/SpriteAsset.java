@@ -8,6 +8,7 @@ public enum SpriteAsset {
     PLAYER_CRAWL("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
     PLAYER_SHOOT("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
     BULLET_AMMO("assets/character/player/Bullet.png",30, 30),
+    BULLET_EXPLODE("assets/character/player/Bullet_Effect.png",3, 3, 1, 0, 0,32, 32),
 
     // Enemy
     ENEMY_MINION1("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
