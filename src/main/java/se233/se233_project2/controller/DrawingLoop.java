@@ -1,7 +1,7 @@
 package se233.se233_project2.controller;
 
 import javafx.application.Platform;
-import se233.se233_project2.model.EnemyCharacter;
+import se233.se233_project2.model.enemy.EnemyCharacter;
 import se233.se233_project2.model.GameCharacter;
 import se233.se233_project2.model.GamePhase;
 import se233.se233_project2.view.GameStage;
@@ -31,6 +31,7 @@ public class DrawingLoop implements Runnable {
             enemyCharacter.checkReachGameWall();
             enemyCharacter.checkReachHighest();
             enemyCharacter.checkReachPlatform(gameStage.getPlatformList());
+            enemyCharacter.checkFallenOff();
         }
     }
 

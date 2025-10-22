@@ -8,6 +8,8 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.model.*;
+import se233.se233_project2.model.enemy.EnemyCharacter;
+import se233.se233_project2.model.sprite.SpriteAsset;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,6 @@ import java.util.List;
 public class GameStage extends Pane {
     public static final int WIDTH = 1200;
     public static final int HEIGHT = 800;
-    public final static int GROUND = 500;
     private List<Platform> platforms = new ArrayList<>();
     private Image gameStageImg;
     private List<EnemyCharacter> enemyList = new ArrayList<>();
@@ -25,7 +26,7 @@ public class GameStage extends Pane {
     private Life playerLife;
     private Score score;
     private Keys keys;
-    private GamePhase currentGamePhase = GamePhase.START_MENU;
+    private GamePhase currentGamePhase;
 
     public GameStage() {
         keys = new Keys();
@@ -64,7 +65,7 @@ public class GameStage extends Pane {
         getChildren().add(mainCharacter);
         getChildren().add(playerLife);
         getChildren().add(score);
-        
+
         FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), this);
         fadeIn.setFromValue(0);
         fadeIn.setToValue(1);

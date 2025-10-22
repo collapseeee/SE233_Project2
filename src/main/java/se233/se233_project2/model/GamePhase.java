@@ -3,11 +3,11 @@ package se233.se233_project2.model;
 public enum GamePhase {
     START_MENU,
     STAGE1,
-    MINION_1, BOSS_1,
+    MINION1, BOSS1,
     STAGE2,
-    MINION_2, BOSS_2,
+    MINION2, BOSS2,
     STAGE3,
-    MINION_3, BOSS_3,
+    MINION3, BOSS3,
     DEFEAT,
     VICTORY;
 }

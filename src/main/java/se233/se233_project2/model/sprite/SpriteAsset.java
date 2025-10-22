@@ -1,8 +1,8 @@
-package se233.se233_project2.model;
+package se233.se233_project2.model.sprite;
 
 public enum SpriteAsset {
     // Player
-    PLAYER_IDLE("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
+    PLAYER_IDLE("assets/character/player/Player_Idle.png", 6, 3, 3, 0, 0, 64, 64),
     PLAYER_RUN("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
     PLAYER_JUMP("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
     PLAYER_CRAWL("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
@@ -12,7 +12,7 @@ public enum SpriteAsset {
 
     // Enemy
     ENEMY_MINION1("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
-    ENEMY_BOSS1("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
+    ENEMY_BOSS1("assets/character/boss/Boss1_IDLE.png", 1, 1, 1, 0, 0, 112, 800),
     ENEMY_MINION2("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
     ENEMY_BOSS2("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
     ENEMY_MINION3("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),

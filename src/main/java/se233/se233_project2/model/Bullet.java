@@ -1,11 +1,15 @@
 package se233.se233_project2.model;
 
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
+import se233.se233_project2.model.enemy.EnemyCharacter;
+import se233.se233_project2.model.sprite.AnimatedSprite;
+import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;
 
 public class Bullet extends Pane {
@@ -16,18 +20,16 @@ public class Bullet extends Pane {
     private int speedX;
     private int speedY;
     private int damage;
-    private boolean friendly;
 
     SpriteAsset explodeAsset = SpriteAsset.BULLET_EXPLODE;
     AnimatedSprite explodeSprite = new AnimatedSprite(new Image(Launcher.class.getResourceAsStream(explodeAsset.getPath())), explodeAsset.getFrameCount(), explodeAsset.getColumns(), explodeAsset.getRows(), explodeAsset.getOffsetX(), explodeAsset.getOffsetY(), explodeAsset.getWidth(), explodeAsset.getHeight());
 
-    public Bullet(int x, int y, int speedX, int speedY, int damage, boolean friendly) {
+    public Bullet(int x, int y, int speedX, int speedY, int damage) {
         this.x = x;
         this.y = y;
         this.speedX = speedX;
         this.speedY = speedY;
         this.damage = damage;
-        this.friendly = friendly;
 
         imageView = new ImageView(bulletImage);
         imageView.setFitWidth(15);
@@ -44,11 +46,15 @@ public class Bullet extends Pane {
         setLayoutY(y);
     }
 
-    public boolean collidesWith(EnemyCharacter enemy) {
+    public boolean collidesWithEnemy(EnemyCharacter enemy) {
         return (this.getX() + this.getWidth() > enemy.getX() &&
                 this.getX() < enemy.getX() + enemy.getWidth()) &&
                 (this.getY() + this.getHeight() > enemy.getY() &&
                         this.getY() < enemy.getY() + enemy.getHeight());
+    }
+
+    public boolean collidesWithBound() {
+        return x > GameStage.WIDTH || x < getWidth() || y > GameStage.HEIGHT - getHeight() ||  y < getHeight();
     }
 
     public void explode(Bullet bullet, GameStage gameStage) {
@@ -58,13 +64,17 @@ public class Bullet extends Pane {
         explodeSprite.setY(y);
         explodeSprite.setFitHeight(64);
         explodeSprite.setFitWidth(64);
-        gameStage.getChildren().add(explodeSprite);
 
-        FadeTransition fade = new FadeTransition(Duration.seconds(0.5), explodeSprite);
-        fade.setFromValue(1);
-        fade.setToValue(0);
-        fade.setOnFinished(e -> gameStage.getChildren().remove(explodeSprite));
-        fade.play();
+        Platform.runLater(() -> {
+            gameStage.getChildren().add(explodeSprite);
+            FadeTransition fade = new FadeTransition(Duration.seconds(0.5), explodeSprite);
+            fade.setFromValue(1);
+            fade.setToValue(0);
+            fade.setOnFinished(e -> gameStage.getChildren().remove(explodeSprite));
+            fade.play();
+        });
+
+
     }
 
     public void gunshotVFX() {

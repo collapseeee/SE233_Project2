@@ -1,11 +1,15 @@
-package se233.se233_project2.model;
+package se233.se233_project2.model.enemy;
 
 import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
-import se233.se233_project2.model.enemy.EnemyType;
+import se233.se233_project2.model.Bullet;
+import se233.se233_project2.model.GameCharacter;
+import se233.se233_project2.model.Platform;
+import se233.se233_project2.model.sprite.AnimatedSprite;
+import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;
 
 import java.util.List;
@@ -23,6 +27,7 @@ public class EnemyCharacter extends Pane {
     private final int startY;
     private final int enemyWidth;
     private final int enemyHeight;
+    private final int score;
 
     private final int JUMP_SPEED = 15;
     private final int GRAVITY = 1;
@@ -38,7 +43,7 @@ public class EnemyCharacter extends Pane {
     boolean isJumping = false;
 
     public EnemyCharacter(int x, int y, EnemyType enemyType) {
-        SpriteAsset spriteAsset = type.getSpriteAsset();
+        SpriteAsset spriteAsset = enemyType.getSpriteAsset();
         this.startX = x;
         this.startY = y;
         this.x = x;
@@ -47,6 +52,7 @@ public class EnemyCharacter extends Pane {
         this.hp = type.getHp();
         this.speed = type.getSpeed();
         this.shootDelay= type.getShootDelay();
+        this.score = type.getScore();
 
         this.setTranslateX(x);
         this.setTranslateY(y);
@@ -104,7 +110,7 @@ public class EnemyCharacter extends Pane {
             isFalling = false;
         }
     }
-    public void updateMovingAI(GameCharacter gameCharacter) {
+    public void updateMovingAI(GameCharacter gameCharacter) { // For MINION_2 and MINION_3
         if (x > gameCharacter.getX() + (gameCharacter.getCharacterWidth()/2) + 150) {
             this.getImageView().tick();
             this.moveLeft();
@@ -169,6 +175,11 @@ public class EnemyCharacter extends Pane {
             this.isFalling = true;
         }
     }
+    public void checkFallenOff() {
+        if (this.y > GameStage.HEIGHT) {
+            this.isAlive = false;
+        }
+    }
 
     // Shooting
     public boolean canShoot() {
@@ -179,6 +190,40 @@ public class EnemyCharacter extends Pane {
         }
         return false;
     }
+    public void shoot(GameStage gameStage, GameCharacter target) {
+        // shoot only if delay passed
+        if (!canShoot()) return;
+
+        // bullet starting position (enemy center)
+        int bulletX = (int) (this.x + this.enemyWidth / 2);
+        int bulletY = (int) (this.y + this.enemyHeight / 2);
+
+        // target position (player center)
+        int targetX = (int) (target.getX() + target.getCharacterWidth() / 2);
+        int targetY = (int) (target.getY() + target.getCharacterHeight() / 2);
+
+        // direction vector toward player
+        double dx = targetX - bulletX;
+        double dy = targetY - bulletY;
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance == 0) return; // avoid divide by zero
+        dx /= distance;
+        dy /= distance;
+
+        // bullet speed (pixels per tick)
+        int speed = 50;
+        int velocityX = (int) (dx * speed);
+        int velocityY = (int) (dy * speed);
+
+        // create and add bullet
+        Bullet bullet = new Bullet(bulletX, bulletY, velocityX, velocityY, 1);
+
+        javafx.application.Platform.runLater(() -> {
+            gameStage.getBulletList().add(bullet);
+            gameStage.getChildren().add(bullet);
+        });
+    }
+
 
     // Damage
     public void takeDamage(int dmg) {
@@ -192,9 +237,9 @@ public class EnemyCharacter extends Pane {
         moveY();
     }
     public void collapsed() {
-        double oldHeight = this.imageView.getFitHeight();
+        int oldHeight = (int) this.imageView.getFitHeight();
         this.imageView.setFitHeight(oldHeight * 0.4);
-        this.y += (oldHeight * 0.6);
+        this.y += oldHeight * 0.6;
         this.repaint();
         PauseTransition delay = new PauseTransition(Duration.millis(300));
         delay.setOnFinished(e -> this.imageView.setFitHeight(oldHeight));
@@ -234,4 +279,5 @@ public class EnemyCharacter extends Pane {
     public int getHp() { return hp; }
     public void setHp(int hp) { this.hp = hp; }
     public EnemyType getType() { return type; }
+    public int getScore() { return score; }
 }

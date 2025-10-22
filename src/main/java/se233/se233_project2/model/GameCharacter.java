@@ -6,6 +6,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
+import se233.se233_project2.model.sprite.AnimatedSprite;
 import se233.se233_project2.view.GameStage;
 
 import java.util.List;

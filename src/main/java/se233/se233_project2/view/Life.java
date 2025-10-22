@@ -3,8 +3,8 @@ package se233.se233_project2.view;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import se233.se233_project2.Launcher;
-import se233.se233_project2.model.AnimatedSprite;
-import se233.se233_project2.model.SpriteAsset;
+import se233.se233_project2.model.sprite.AnimatedSprite;
+import se233.se233_project2.model.sprite.SpriteAsset;
 
 public class Life extends HBox {
     private static final int HEART_SIZE = 16;

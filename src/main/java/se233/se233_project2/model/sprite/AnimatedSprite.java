@@ -1,4 +1,4 @@
-package se233.se233_project2.model;
+package se233.se233_project2.model.sprite;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;

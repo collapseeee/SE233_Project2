@@ -4,12 +4,15 @@ import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se233.se233_project2.model.*;
+import se233.se233_project2.model.enemy.EnemyCharacter;
 import se233.se233_project2.view.GameStage;
 import se233.se233_project2.view.Life;
 import se233.se233_project2.view.Score;
 
 import java.util.ArrayList;
 import java.util.List;
+
+// TODO: Parallelize update logic using executor.
 
 public class GameLoop implements Runnable {
     private GameStage gameStage;
@@ -27,6 +30,8 @@ public class GameLoop implements Runnable {
         frameRate = 30;
         interval = 1000.0f / frameRate;
         running = true;
+
+        logger.info("Available Processor: {}" , Runtime.getRuntime().availableProcessors());
     }
 
     // Main Character
@@ -81,23 +86,16 @@ public class GameLoop implements Runnable {
 
     // Enemy Character
     private void updateEnemyCharacter(List<EnemyCharacter> enemyCharacterList) {
-        for (EnemyCharacter enemyCharacter : enemyCharacterList) {
-            if (enemyCharacter.getIsAlive()) {
-                boolean goLeft = enemyCharacter.getX() > gameStage.getMainCharacter().getX() + (gameStage.getMainCharacter().getCharacterWidth()/2) + 100;
-                boolean goRight = enemyCharacter.getX() < gameStage.getMainCharacter().getX() - (gameStage.getMainCharacter().getCharacterWidth()/2) - 100;
-                boolean jump = enemyCharacter.getY() > gameStage.getMainCharacter().getY() - gameStage.getMainCharacter().getCharacterHeight() + 50;
-                if (goLeft) {
-                    enemyCharacter.getImageView().tick();
-                    enemyCharacter.moveLeft();
-                } else if (goRight) {
-                    enemyCharacter.getImageView().tick();
-                    enemyCharacter.moveRight();
-                } else {
-                    enemyCharacter.stop();
-                }
-                if (jump) {
-                    enemyCharacter.jump();
-                }
+        for (EnemyCharacter enemy : enemyCharacterList) {
+            if (!enemy.getIsAlive()) {
+                enemy.collapsed();
+                Platform.runLater(() -> {
+                    logger.info("{} is killed and removed.", enemy.getType());
+                    gameStage.getChildren().remove(enemy);
+                    gameStage.removeEnemyFromList(enemy);
+                });
+            } else {
+                enemy.updateMovingAI(gameStage.getMainCharacter());
             }
         }
     }
@@ -131,7 +129,7 @@ public class GameLoop implements Runnable {
             int bulletX = (int)(gameStage.getMainCharacter().getX() + gameStage.getMainCharacter().getWidth()/2);
             int bulletY = (int)(gameStage.getMainCharacter().getY() + gameStage.getMainCharacter().getHeight()/2);
 
-            Bullet bullet = new Bullet(bulletX, bulletY, speedX, speedY, 1, true);
+            Bullet bullet = new Bullet(bulletX, bulletY, speedX, speedY, 1);
             Platform.runLater(() -> {
                 gameStage.getBulletList().add(bullet);
                 gameStage.getChildren().add(bullet);
@@ -144,36 +142,28 @@ public class GameLoop implements Runnable {
         for (Bullet bullet : bullets) {
             bullet.move();
 
-
             // Bullet hit a bound
-            if (bullet.getX() > GameStage.WIDTH || bullet.getX() < 0+bullet.getWidth() || bullet.getY() > GameStage.HEIGHT - bullet.getHeight() ||  bullet.getY() < 0+bullet.getHeight()) {
+            if (bullet.collidesWithBound()) {
                 toRemove.add(bullet);
                 continue;
             }
 
             // Bullet hit an enemy
             for (EnemyCharacter enemy : gameStage.getEnemyList()) {
-                if (!enemy.getIsAlive()) continue;
-
-                if (bullet.collidesWith(enemy)) {
-                    logger.info("Bullet hits an enemy.");
+                if (bullet.collidesWithEnemy(enemy)) {
+                    logger.info("Bullet hits {} at X:{}, Y:{}.", enemy.getType(), bullet.getX(), bullet.getY());
 
                     Platform.runLater(() -> {
                         bullet.explode(bullet, gameStage);
                     });
 
-                    gameCharacter.addScore(1);
-                    logger.info("Score added. Current score: {}", gameCharacter.getScore());
-
-                    enemy.setIsAlive(false);
+                    enemy.takeDamage(bullet.getDamage());
                     toRemove.add(bullet);
-                    Platform.runLater(() -> {
-                        logger.info("Remove the enemy type {}.", enemy.getType());
-                        gameStage.getChildren().remove(enemy);
-                        gameStage.removeEnemyFromList(enemy);
-                    });
 
-                    break;
+                    if (!enemy.getIsAlive()) {
+                        gameCharacter.addScore(enemy.getScore());
+                        logger.info("{} killed, Score added {}, Current score: {} ", enemy.getType(), enemy.getScore(), gameCharacter.getScore());
+                    }
                 }
             }
         }
