@@ -1,5 +1,6 @@
 package se233.se233_project2.model.enemy;
 
+import se233.se233_project2.model.GameCharacter;
 import se233.se233_project2.model.Platform;
 import se233.se233_project2.view.GameStage;
 
@@ -9,6 +10,11 @@ public class StaticBoss extends EnemyCharacter {
 
     public StaticBoss(int x, int y, EnemyType enemyType) {
         super(x, y, enemyType);
+
+        setScaleX(1);
+        setFacing(1);
+        isMoveLeft = false;
+        isMoveRight = false;
     }
 
     @Override
@@ -23,6 +29,11 @@ public class StaticBoss extends EnemyCharacter {
     @Override
     public void moveY() {
         // Disable gravity/jumping entirely
+    }
+
+    @Override
+    public void updateMovingAI(GameCharacter gameCharacter) {
+        // Disable moving AI
     }
 
     @Override

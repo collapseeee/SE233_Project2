@@ -280,4 +280,5 @@ public class EnemyCharacter extends Pane {
     public void setHp(int hp) { this.hp = hp; }
     public EnemyType getType() { return type; }
     public int getScore() { return score; }
+    public void setFacing(int facing) { this.facing = facing; }
 }

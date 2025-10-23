@@ -4,9 +4,9 @@ import se233.se233_project2.model.sprite.SpriteAsset;
 
 public enum EnemyType {
     // MINION
-    MINION_1(SpriteAsset.ENEMY_MINION1, 2, 1, 1000, 1),
+    MINION_1(SpriteAsset.ENEMY_MINION1_IDLE, 2, 1, 1000, 1),
     MINION_2(SpriteAsset.ENEMY_MINION2, 4, 1, 800, 1),
-    MINION_3(SpriteAsset.ENEMY_MINION1, 7, 1, 500, 1),
+    MINION_3(SpriteAsset.ENEMY_MINION3, 7, 1, 500, 1),
 
     // BOSS
     BOSS_1(SpriteAsset.ENEMY_BOSS1, 0, 10, 700, 5),

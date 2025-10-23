@@ -22,7 +22,6 @@ public class GameStage extends Pane {
     private List<EnemyCharacter> enemyList = new ArrayList<>();
     private List<Bullet> bulletList = new ArrayList<>();
     private GameCharacter mainCharacter;
-    private EnemyCharacter enemyCharacter;
     private Life playerLife;
     private Score score;
     private Keys keys;
@@ -40,7 +39,7 @@ public class GameStage extends Pane {
         playerLife = new Life(3);
         playerLife.setLayoutX(20);
         playerLife.setLayoutY(20);
-        score = new Score(WIDTH - 180, 30);
+        score = new Score( 300, 30);
     }
 
     public void initStage1Environment() {
