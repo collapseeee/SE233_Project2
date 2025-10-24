@@ -16,6 +16,7 @@ public class Score extends Pane {
         score.setTextFill(Color.web("#FFF"));
         getChildren().add(score);
     }
+
     public void setScore(int score) {
         this.score.setText("Score: " + score);
     }

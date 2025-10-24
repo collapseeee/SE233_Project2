@@ -5,6 +5,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
@@ -144,6 +146,31 @@ public class GameStage extends Pane {
         fadeIn.setFromValue(0);
         fadeIn.setToValue(1);
         fadeIn.play();
+    }
+
+    public void initVictoryScreen() {
+        setCurrentGamePhase(GamePhase.VICTORY);
+        getChildren().clear();
+        bulletList.clear();
+        platforms.clear();
+        getChildren().remove(mainCharacter);
+
+        gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/Victory_Screen.png"));
+        audioManager.playBGM("assets/bgm/Victory.wav");
+        ImageView backgroundImg = new ImageView(gameStageImg);
+        backgroundImg.setFitHeight(HEIGHT);
+        backgroundImg.setFitWidth(WIDTH);
+        getChildren().add(backgroundImg);
+
+        getChildren().add(score);
+
+        Text arrow = new Text("▶");
+        arrow.setScaleX(5);
+        arrow.setScaleY(5);
+        arrow.setFill(Color.YELLOW);
+        arrow.setX(400);
+        arrow.setY(400);
+        getChildren().add(arrow);
     }
 
     public GameCharacter getMainCharacter() {

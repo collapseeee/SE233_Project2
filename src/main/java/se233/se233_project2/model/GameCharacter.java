@@ -260,6 +260,7 @@ public class GameCharacter extends Pane {
 
     // Life
     public void respawn() {
+        spawnSFX();
         this.x = startX;
         this.y = startY;
         this.imageView.setFitWidth(this.characterWidth);
