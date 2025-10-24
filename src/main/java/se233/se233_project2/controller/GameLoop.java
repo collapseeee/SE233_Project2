@@ -88,7 +88,7 @@ public class GameLoop implements Runnable {
     private void updateEnemyCharacter(List<EnemyCharacter> enemyCharacterList) {
         for (EnemyCharacter enemy : enemyCharacterList) {
             if (!enemy.getIsAlive()) {
-                enemy.collapsed();
+                enemy.deadSFX();
                 Platform.runLater(() -> {
                     logger.info("{} is killed and removed.", enemy.getType());
                     gameStage.getChildren().remove(enemy);
@@ -133,6 +133,7 @@ public class GameLoop implements Runnable {
             Platform.runLater(() -> {
                 gameStage.getBulletList().add(bullet);
                 gameStage.getChildren().add(bullet);
+                bullet.gunshotVFX();
             });
             logger.info("Bullet fires at X: {}, Y {}", bulletX, bulletY);
             gameCharacter.markShoot();
@@ -154,13 +155,15 @@ public class GameLoop implements Runnable {
                     logger.info("Bullet hits {} at X:{}, Y:{}.", enemy.getType(), bullet.getX(), bullet.getY());
 
                     Platform.runLater(() -> {
-                        bullet.explode(bullet, gameStage);
+                        bullet.explodeVFX();
+                        bullet.explode(gameStage);
                     });
 
                     enemy.takeDamage(bullet.getDamage());
                     toRemove.add(bullet);
 
                     if (!enemy.getIsAlive()) {
+                        enemy.collapsed();
                         gameCharacter.addScore(enemy.getScore());
                         logger.info("{} killed, Score added {}, Current score: {} ", enemy.getType(), enemy.getScore(), gameCharacter.getScore());
                     }

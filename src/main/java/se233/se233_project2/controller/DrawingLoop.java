@@ -25,6 +25,7 @@ public class DrawingLoop implements Runnable {
         gameCharacter.checkReachGameWall();
         gameCharacter.checkReachHighest();
         gameCharacter.checkReachPlatform(gameStage.getPlatformList());
+        gameCharacter.checkFallenOff();
     }
     private void checkEnemyCharacterDrawCollisions(List<EnemyCharacter> enemyCharacterList) {
         for (EnemyCharacter enemyCharacter : enemyCharacterList) {

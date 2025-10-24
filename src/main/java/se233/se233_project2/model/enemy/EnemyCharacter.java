@@ -1,10 +1,12 @@
 package se233.se233_project2.model.enemy;
 
 import javafx.animation.PauseTransition;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
+import se233.se233_project2.audio.AudioManager;
 import se233.se233_project2.model.Bullet;
 import se233.se233_project2.model.GameCharacter;
 import se233.se233_project2.model.Platform;
@@ -15,6 +17,7 @@ import se233.se233_project2.view.GameStage;
 import java.util.List;
 
 public class EnemyCharacter extends Pane {
+    private final AudioManager audioManager =  new AudioManager();
     private final Image enemyImg;
     private final AnimatedSprite imageView;
     private EnemyType type;
@@ -224,11 +227,23 @@ public class EnemyCharacter extends Pane {
         });
     }
 
-
     // Damage
     public void takeDamage(int dmg) {
         hp -= dmg;
-        if(hp <= 0) isAlive = false;
+        ColorAdjust flash = new ColorAdjust();
+        flash.setHue(-0.5); // shifts color towards red
+        getImageView().setEffect(flash);
+
+        PauseTransition flashTimer = new PauseTransition(Duration.millis(150));
+        flashTimer.setOnFinished(e -> getImageView().setEffect(null));
+        flashTimer.play();
+
+        if (hp <= 0) {
+            isAlive = false;
+        }
+    }
+    public void deadSFX() {
+        audioManager.playSFX("assets/character/enemy/Dead.wav");
     }
 
     // Painting
@@ -244,17 +259,6 @@ public class EnemyCharacter extends Pane {
         PauseTransition delay = new PauseTransition(Duration.millis(300));
         delay.setOnFinished(e -> this.imageView.setFitHeight(oldHeight));
         delay.play();
-    }
-    public void respawn() { // maybe not be used.
-        this.x = startX;
-        this.y = startY;
-        this.imageView.setFitWidth(this.enemyWidth);
-        this.imageView.setFitHeight(this.enemyHeight);
-        this.isMoveRight = false;
-        this.isMoveLeft = false;
-        this.isFalling = true;
-        this.canJump = false;
-        this.isJumping = false;
     }
 
     // Getter Setter

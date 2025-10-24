@@ -6,12 +6,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
+import se233.se233_project2.audio.AudioManager;
 import se233.se233_project2.model.sprite.AnimatedSprite;
 import se233.se233_project2.view.GameStage;
 
 import java.util.List;
 
 public class GameCharacter extends Pane {
+    private final AudioManager audioManager = new AudioManager();
     private final Image characterImg;
     private final AnimatedSprite imageView;
     private int life;
@@ -79,6 +81,7 @@ public class GameCharacter extends Pane {
         this.jumpKey = jumpKey;
         this.crawlKey = crawlKey;
         this.runKey = runKey;
+        setManaged(false);
     }
 
     // Movement
@@ -224,6 +227,21 @@ public class GameCharacter extends Pane {
             this.canJump = false;
         }
     }
+    public void checkFallenOff() {
+        if (this.y > GameStage.HEIGHT) {
+            deadSFX();
+            loseLife();
+            respawn();
+        }
+    }
+
+    // SFX
+    public void deadSFX() {
+        audioManager.playSFX("assets/character/player/Dead.wav");
+    }
+    public void spawnSFX() {
+        audioManager.playSFX("assets/character/player/Spawn.wav");
+    }
 
     // Painting
     public void repaint() {
@@ -254,6 +272,7 @@ public class GameCharacter extends Pane {
         this.isDead = false;
     }
     public void loseLife() {
+
         life--;
         if (life <= 0) isDead = true;
     }

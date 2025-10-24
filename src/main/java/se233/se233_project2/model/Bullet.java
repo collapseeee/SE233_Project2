@@ -7,12 +7,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
+import se233.se233_project2.audio.AudioManager;
 import se233.se233_project2.model.enemy.EnemyCharacter;
 import se233.se233_project2.model.sprite.AnimatedSprite;
 import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;
 
 public class Bullet extends Pane {
+    private final AudioManager audioManager = new AudioManager();
     private final Image bulletImage = new Image(Launcher.class.getResourceAsStream("assets/character/player/Bullet.png"));;
     private final ImageView imageView;
     private int x;
@@ -22,7 +24,6 @@ public class Bullet extends Pane {
     private int damage;
 
     SpriteAsset explodeAsset = SpriteAsset.BULLET_EXPLODE;
-    AnimatedSprite explodeSprite = new AnimatedSprite(new Image(Launcher.class.getResourceAsStream(explodeAsset.getPath())), explodeAsset.getFrameCount(), explodeAsset.getColumns(), explodeAsset.getRows(), explodeAsset.getOffsetX(), explodeAsset.getOffsetY(), explodeAsset.getWidth(), explodeAsset.getHeight());
 
     public Bullet(int x, int y, int speedX, int speedY, int damage) {
         this.x = x;
@@ -57,28 +58,42 @@ public class Bullet extends Pane {
         return x > GameStage.WIDTH || x < getWidth() || y > GameStage.HEIGHT - getHeight() ||  y < getHeight();
     }
 
-    public void explode(Bullet bullet, GameStage gameStage) {
-        int x = (int) (bullet.getX() - (bullet.getWidth()/2));
-        int y = (int) (bullet.getY() - (bullet.getHeight()/2));
-        explodeSprite.setX(x);
-        explodeSprite.setY(y);
-        explodeSprite.setFitHeight(64);
+    public void explode(GameStage gameStage) {
+        SpriteAsset explodeAsset = SpriteAsset.BULLET_EXPLODE;
+        AnimatedSprite explodeSprite = new AnimatedSprite(
+                new Image(Launcher.class.getResourceAsStream(explodeAsset.getPath())),
+                explodeAsset.getFrameCount(),
+                explodeAsset.getColumns(),
+                explodeAsset.getRows(),
+                explodeAsset.getOffsetX(),
+                explodeAsset.getOffsetY(),
+                explodeAsset.getWidth(),
+                explodeAsset.getHeight()
+        );
+
+        explodeSprite.setX(this.x - (explodeAsset.getWidth() / 2.0));
+        explodeSprite.setY(this.y - (explodeAsset.getHeight() / 2.0));
         explodeSprite.setFitWidth(64);
+        explodeSprite.setFitHeight(64);
 
         Platform.runLater(() -> {
             gameStage.getChildren().add(explodeSprite);
-            FadeTransition fade = new FadeTransition(Duration.seconds(0.5), explodeSprite);
-            fade.setFromValue(1);
-            fade.setToValue(0);
-            fade.setOnFinished(e -> gameStage.getChildren().remove(explodeSprite));
-            fade.play();
         });
 
-
+        FadeTransition fade = new FadeTransition(Duration.seconds(0.5), explodeSprite);
+        fade.setFromValue(1);
+        fade.setToValue(0);
+        fade.setOnFinished(e ->
+                Platform.runLater(() -> gameStage.getChildren().remove(explodeSprite))
+        );
+        fade.play();
     }
 
     public void gunshotVFX() {
-
+        audioManager.playSFX("assets/character/player/Gunshot.wav");
+    }
+    public void explodeVFX() {
+        audioManager.playSFX("assets/character/player/Explode.wav");
     }
 
     public int getX() { return x; }
