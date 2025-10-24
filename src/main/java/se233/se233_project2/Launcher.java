@@ -3,6 +3,7 @@ package se233.se233_project2;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import se233.se233_project2.controller.DrawingLoop;
 import se233.se233_project2.controller.GameLoop;
@@ -19,7 +20,8 @@ public class Launcher extends Application {
         Scene scene = new Scene(gameStage, gameStage.WIDTH, gameStage.HEIGHT);
         scene.setOnKeyPressed(event-> gameStage.getKeys().add(event.getCode()));
         scene.setOnKeyReleased(event ->  gameStage.getKeys().remove(event.getCode()));
-        primaryStage.setTitle("2D Platformer");
+        primaryStage.setTitle("Contiam");
+        primaryStage.getIcons().add(new Image(Launcher.class.getResourceAsStream("assets/icon.png")));
         primaryStage.setScene(scene);
         primaryStage.show();
         (new Thread(gameLoop)).start();
