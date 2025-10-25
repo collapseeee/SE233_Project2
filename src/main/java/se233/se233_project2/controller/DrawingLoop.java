@@ -5,13 +5,15 @@ import se233.se233_project2.model.enemy.EnemyCharacter;
 import se233.se233_project2.model.GameCharacter;
 import se233.se233_project2.model.GamePhase;
 import se233.se233_project2.view.GameStage;
+import se233.se233_project2.view.Life;
+import se233.se233_project2.view.Score;
 
 import java.util.List;
 
 public class DrawingLoop implements Runnable {
     private GameStage gameStage;
-    private int frameRate;
-    private float interval;
+    private final int frameRate;
+    private final float interval;
     private boolean running;
 
     public DrawingLoop(GameStage gameStage) {
@@ -45,14 +47,28 @@ public class DrawingLoop implements Runnable {
         }
     }
 
+    private void updateScoreDisplay(Score score, GameCharacter mainCharacter) {
+        Platform.runLater(() -> score.setScore(mainCharacter.getScore()));
+    }
+
+    private void updateLifeDisplay(Life life, GameCharacter mainCharacter) {
+        Platform.runLater(() -> life.updateHearts(mainCharacter.getLife()));
+    }
+
     @Override
     public void run() {
         while (running) {
             float time = System.currentTimeMillis();
 
-            if (gameStage.getMainCharacter() != null && gameStage.getCurrentGamePhase() != GamePhase.START_MENU) {
+            if (gameStage.getMainCharacter() != null
+                    && gameStage.getCurrentGamePhase() != GamePhase.START_MENU
+                    && gameStage.getCurrentGamePhase() != GamePhase.VICTORY
+                    && gameStage.getCurrentGamePhase() != GamePhase.DEFEAT) {
                 checkMainCharacterDrawCollisions(gameStage.getMainCharacter());
                 paintMainCharacter(gameStage.getMainCharacter());
+
+                updateScoreDisplay(gameStage.getScore(), gameStage.getMainCharacter());
+                updateLifeDisplay(gameStage.getLife(), gameStage.getMainCharacter());
                 Platform.runLater(() -> gameStage.getLife().tick());
             }
 

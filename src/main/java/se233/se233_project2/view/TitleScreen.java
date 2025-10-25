@@ -19,7 +19,6 @@ public class TitleScreen extends Pane {
 
     private final ImageView background;
     private final Text arrow;
-    private final String[] options = {"START", "STAGE", "QUIT"};
     private int selectedIndex = 0;
 
     private final int OPTION_X = 250;
@@ -77,10 +76,10 @@ public class TitleScreen extends Pane {
                 });
             }
             case 1 -> {
-                logger.info("STAGE selected");
+                logger.debug("STAGE selected");
             }
             case 2 -> {
-                logger.info("QUIT selected");
+                logger.debug("QUIT selected");
                 Platform.exit();
                 System.exit(0);
             }

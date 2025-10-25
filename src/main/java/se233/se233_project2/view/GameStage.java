@@ -16,6 +16,7 @@ import se233.se233_project2.model.sprite.SpriteAsset;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameStage extends Pane {
     public static final int WIDTH = 1200;
@@ -23,8 +24,8 @@ public class GameStage extends Pane {
     private static final AudioManager audioManager = new AudioManager();
     private List<Platform> platforms = new ArrayList<>();
     private Image gameStageImg;
-    private List<EnemyCharacter> enemyList = new ArrayList<>();
-    private List<Bullet> bulletList = new ArrayList<>();
+    private List<EnemyCharacter> enemyList = new CopyOnWriteArrayList<>();
+    private List<Bullet> bulletList = new CopyOnWriteArrayList<>();
     private GameCharacter mainCharacter;
     private Life playerLife;
     private Score score;
@@ -48,12 +49,6 @@ public class GameStage extends Pane {
 
     public static void playTitleScreenBGM() {
         audioManager.playBGM("assets/bgm/Title_Screen.wav");
-    }
-    public static void playVictoryBGM() {
-        audioManager.playBGM("assets/bgm/Victory.wav");
-    }
-    public static void playDefeatedBGM() {
-        audioManager.playBGM("assets/bgm/Defeated.wav");
     }
 
     public void initStage1Environment() {
@@ -163,14 +158,22 @@ public class GameStage extends Pane {
         getChildren().add(backgroundImg);
 
         getChildren().add(score);
+        score.setTranslateX(520);
+        score.setTranslateY(335);
 
         Text arrow = new Text("▶");
         arrow.setScaleX(5);
         arrow.setScaleY(5);
         arrow.setFill(Color.YELLOW);
-        arrow.setX(400);
-        arrow.setY(400);
+        arrow.setX(370);
+        arrow.setY(585);
         getChildren().add(arrow);
+
+        this.setOnKeyPressed(key -> {
+            if (key.getCode() == KeyCode.ESCAPE ||  key.getCode() == KeyCode.SPACE ||  key.getCode() == KeyCode.ENTER) {
+                currentGamePhase = GamePhase.START_MENU;
+            }
+        });
     }
 
     public GameCharacter getMainCharacter() {

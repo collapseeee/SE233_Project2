@@ -6,8 +6,6 @@ import org.apache.logging.log4j.Logger;
 import se233.se233_project2.model.*;
 import se233.se233_project2.model.enemy.EnemyCharacter;
 import se233.se233_project2.view.GameStage;
-import se233.se233_project2.view.Life;
-import se233.se233_project2.view.Score;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,16 +70,6 @@ public class GameLoop implements Runnable {
         } else {
             gameCharacter.stopRun();
         }
-    }
-    private void updateScore(Score score, GameCharacter mainCharacter) {
-        javafx.application.Platform.runLater(() -> {
-            score.setScore(mainCharacter.getScore());
-        });
-    }
-    private void updateLife(Life life, GameCharacter mainCharacter) {
-        javafx.application.Platform.runLater(() -> {
-            life.updateHearts(mainCharacter.getLife());
-        });
     }
 
     // Enemy Character
@@ -150,7 +138,8 @@ public class GameLoop implements Runnable {
             }
 
             // Bullet hit an enemy
-            for (EnemyCharacter enemy : gameStage.getEnemyList()) {
+            List<EnemyCharacter> enemies = new ArrayList<>(gameStage.getEnemyList());
+            for (EnemyCharacter enemy : enemies) {
                 if (bullet.collidesWithEnemy(enemy)) {
                     logger.info("Bullet hits {} at X:{}, Y:{}.", enemy.getType(), bullet.getX(), bullet.getY());
 
@@ -167,6 +156,7 @@ public class GameLoop implements Runnable {
                         gameCharacter.addScore(enemy.getScore());
                         logger.info("{} killed, Score added {}, Current score: {} ", enemy.getType(), enemy.getScore(), gameCharacter.getScore());
                     }
+                    break;
                 }
             }
         }
@@ -187,11 +177,12 @@ public class GameLoop implements Runnable {
 
             stageManager.update();
 
-            if (gameStage.getMainCharacter() != null && gameStage.getCurrentGamePhase() != GamePhase.START_MENU) {
+            if (gameStage.getMainCharacter() != null
+                && gameStage.getCurrentGamePhase() != GamePhase.START_MENU
+                && gameStage.getCurrentGamePhase() != GamePhase.VICTORY
+                && gameStage.getCurrentGamePhase() != GamePhase.DEFEAT) {
                 updateMainCharacter(gameStage.getMainCharacter());
                 updateEnemyCharacter(gameStage.getEnemyList());
-                updateLife(gameStage.getLife(), gameStage.getMainCharacter());
-                updateScore(gameStage.getScore(), gameStage.getMainCharacter());
                 updateBullets(gameStage.getMainCharacter());
             }
 

@@ -8,10 +8,11 @@ public enum EnemyType {
     MINION_2(SpriteAsset.ENEMY_MINION2, 4, 1, 800, 1),
     MINION_3(SpriteAsset.ENEMY_MINION3, 7, 1, 500, 1),
 
+    // TODO: Change Bosses HP Back to 10,15,20 before submit.
     // BOSS
-    BOSS_1(SpriteAsset.ENEMY_BOSS1, 0, 10, 700, 5),
-    BOSS_2(SpriteAsset.ENEMY_BOSS2, 0, 15, 500, 5),
-    BOSS_3(SpriteAsset.ENEMY_BOSS3, 0, 20, 400, 5);
+    BOSS_1(SpriteAsset.ENEMY_BOSS1, 0, 1, 700, 5),
+    BOSS_2(SpriteAsset.ENEMY_BOSS2, 0, 1, 500, 5),
+    BOSS_3(SpriteAsset.ENEMY_BOSS3, 0, 2, 400, 5);
 
     private final SpriteAsset spriteAsset;
     private final int speed;
