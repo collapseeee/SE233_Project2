@@ -1,4 +1,4 @@
-package se233.se233_project2.model;
+package se233.se233_project2.model.character;
 
 import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;
@@ -7,6 +7,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
+import se233.se233_project2.model.Platform;
 import se233.se233_project2.model.sprite.AnimatedSprite;
 import se233.se233_project2.view.GameStage;
 
@@ -176,8 +177,8 @@ public class GameCharacter extends Pane {
     public void checkReachGameWall() {
         if(x <= 0) {
             x = 0;
-        } else if( x+getWidth() >= GameStage.WIDTH) {
-            x = GameStage.WIDTH-(int)getWidth();
+        } else if( x+characterWidth >= GameStage.WIDTH) {
+            x = GameStage.WIDTH-characterWidth;
         }
     }
     public void checkReachHighest () {

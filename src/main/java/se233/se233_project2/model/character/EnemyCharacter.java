@@ -1,4 +1,4 @@
-package se233.se233_project2.model.enemy;
+package se233.se233_project2.model.character;
 
 import javafx.animation.PauseTransition;
 import javafx.scene.effect.ColorAdjust;
@@ -8,7 +8,6 @@ import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
 import se233.se233_project2.model.Bullet;
-import se233.se233_project2.model.GameCharacter;
 import se233.se233_project2.model.Platform;
 import se233.se233_project2.model.sprite.AnimatedSprite;
 import se233.se233_project2.model.sprite.SpriteAsset;

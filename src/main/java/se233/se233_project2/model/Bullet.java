@@ -8,7 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
-import se233.se233_project2.model.enemy.EnemyCharacter;
+import se233.se233_project2.model.character.EnemyCharacter;
 import se233.se233_project2.model.sprite.AnimatedSprite;
 import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;

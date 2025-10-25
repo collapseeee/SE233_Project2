@@ -1,8 +1,8 @@
 package se233.se233_project2.controller;
 
 import javafx.application.Platform;
-import se233.se233_project2.model.enemy.EnemyCharacter;
-import se233.se233_project2.model.GameCharacter;
+import se233.se233_project2.model.character.EnemyCharacter;
+import se233.se233_project2.model.character.GameCharacter;
 import se233.se233_project2.model.GamePhase;
 import se233.se233_project2.view.GameStage;
 import se233.se233_project2.view.Life;

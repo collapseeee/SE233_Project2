@@ -11,10 +11,10 @@ import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
 import se233.se233_project2.model.*;
-import se233.se233_project2.model.enemy.EnemyCharacter;
+import se233.se233_project2.model.character.EnemyCharacter;
+import se233.se233_project2.model.character.GameCharacter;
 import se233.se233_project2.model.sprite.SpriteAsset;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -22,14 +22,16 @@ public class GameStage extends Pane {
     public static final int WIDTH = 1200;
     public static final int HEIGHT = 800;
     private static final AudioManager audioManager = new AudioManager();
-    private List<Platform> platforms = new ArrayList<>();
-    private Image gameStageImg;
+
+    private List<Platform> platforms = new CopyOnWriteArrayList<>();
     private List<EnemyCharacter> enemyList = new CopyOnWriteArrayList<>();
     private List<Bullet> bulletList = new CopyOnWriteArrayList<>();
-    private GameCharacter mainCharacter;
-    private Life playerLife;
-    private Score score;
-    private Keys keys;
+
+    private Image gameStageImg;
+    private final GameCharacter mainCharacter;
+    private final Life playerLife;
+    private final Score score;
+    private final Keys keys;
     private GamePhase currentGamePhase;
 
     public GameStage() {
@@ -169,7 +171,7 @@ public class GameStage extends Pane {
         arrow.setY(585);
         getChildren().add(arrow);
 
-        this.setOnKeyPressed(key -> {
+        setOnKeyPressed(key -> {
             if (key.getCode() == KeyCode.ESCAPE ||  key.getCode() == KeyCode.SPACE ||  key.getCode() == KeyCode.ENTER) {
                 currentGamePhase = GamePhase.START_MENU;
             }

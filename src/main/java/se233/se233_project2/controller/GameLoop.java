@@ -4,7 +4,8 @@ import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se233.se233_project2.model.*;
-import se233.se233_project2.model.enemy.EnemyCharacter;
+import se233.se233_project2.model.character.EnemyCharacter;
+import se233.se233_project2.model.character.GameCharacter;
 import se233.se233_project2.view.GameStage;
 
 import java.util.ArrayList;
@@ -74,17 +75,26 @@ public class GameLoop implements Runnable {
 
     // Enemy Character
     private void updateEnemyCharacter(List<EnemyCharacter> enemyCharacterList) {
-        for (EnemyCharacter enemy : enemyCharacterList) {
+        List<EnemyCharacter> enemies = new ArrayList<>(enemyCharacterList);
+        List<EnemyCharacter> enemiesToRemove = new ArrayList<>();
+        for (EnemyCharacter enemy : enemies) {
             if (!enemy.getIsAlive()) {
                 enemy.deadSFX();
-                Platform.runLater(() -> {
-                    logger.info("{} is killed and removed.", enemy.getType());
-                    gameStage.getChildren().remove(enemy);
-                    gameStage.removeEnemyFromList(enemy);
-                });
+                enemiesToRemove.add(enemy);
             } else {
                 enemy.updateMovingAI(gameStage.getMainCharacter());
             }
+        }
+        if (!enemiesToRemove.isEmpty()) {
+            Platform.runLater(() -> {
+                synchronized (gameStage.getChildren()) {
+                    for (EnemyCharacter enemy : enemiesToRemove) {
+                        logger.info("{} is killed and removed.", enemy.getType());
+                        gameStage.getChildren().remove(enemy);
+                        gameStage.removeEnemyFromList(enemy);
+                    }
+                }
+            });
         }
     }
 
@@ -118,8 +128,8 @@ public class GameLoop implements Runnable {
             int bulletY = (int)(gameStage.getMainCharacter().getY() + gameStage.getMainCharacter().getHeight()/2);
 
             Bullet bullet = new Bullet(bulletX, bulletY, speedX, speedY, 1);
+            gameStage.getBulletList().add(bullet);
             Platform.runLater(() -> {
-                gameStage.getBulletList().add(bullet);
                 gameStage.getChildren().add(bullet);
                 bullet.gunshotVFX();
             });
@@ -162,9 +172,10 @@ public class GameLoop implements Runnable {
         }
 
         if (!toRemove.isEmpty()) {
+            gameStage.getBulletList().removeAll(toRemove);
+
             Platform.runLater(() -> {
                 logger.info("Remove {} bullet from the stage.", toRemove.size());
-                gameStage.getBulletList().removeAll(toRemove);
                 gameStage.getChildren().removeAll(toRemove);
             });
         }

@@ -1,4 +1,4 @@
-package se233.se233_project2.model.enemy;
+package se233.se233_project2.model.character;
 
 import se233.se233_project2.model.sprite.SpriteAsset;
 

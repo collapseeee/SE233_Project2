@@ -8,17 +8,18 @@ import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AudioManager {
     Logger logger = LogManager.getLogger(AudioManager.class);
 
-    private static final Map<String, Clip> bgmMap = new HashMap<>();
+    private static final ExecutorService sfxExecutor = Executors.newFixedThreadPool(4);
+
     private static Clip currentBGM;
 
     public void playSFX(String path) {
-        new Thread(() -> {
+        sfxExecutor.submit(() -> {
             try {
                 AudioInputStream ais = AudioSystem.getAudioInputStream(getResource(path));
                 Clip clip = AudioSystem.getClip();
@@ -31,7 +32,7 @@ public class AudioManager {
             } catch (IOException e) {
                 logger.error("SFX IO Exception: {}", e.toString());
             }
-        }).start();
+        });
     }
 
     public void playBGM(String path) {
@@ -73,6 +74,11 @@ public class AudioManager {
             currentBGM.close();
             currentBGM = null;
         }
+    }
+
+    public void shutdown() {
+        sfxExecutor.shutdown();
+        stopBGM();
     }
 
     public static InputStream getResource(String path) {
