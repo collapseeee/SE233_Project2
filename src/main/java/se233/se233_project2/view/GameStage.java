@@ -170,12 +170,33 @@ public class GameStage extends Pane {
         arrow.setX(370);
         arrow.setY(585);
         getChildren().add(arrow);
+    }
 
-        setOnKeyPressed(key -> {
-            if (key.getCode() == KeyCode.ESCAPE ||  key.getCode() == KeyCode.SPACE ||  key.getCode() == KeyCode.ENTER) {
-                currentGamePhase = GamePhase.START_MENU;
-            }
-        });
+    public void initDefeatScreen() {
+        setCurrentGamePhase(GamePhase.DEFEAT);
+        getChildren().clear();
+        bulletList.clear();
+        platforms.clear();
+        getChildren().remove(mainCharacter);
+
+        gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/Defeat_Screen.png"));
+        audioManager.playBGM("assets/bgm/Defeated.wav");
+        ImageView backgroundImg = new ImageView(gameStageImg);
+        backgroundImg.setFitHeight(HEIGHT);
+        backgroundImg.setFitWidth(WIDTH);
+        getChildren().add(backgroundImg);
+
+        getChildren().add(score);
+        score.setTranslateX(520);
+        score.setTranslateY(335);
+
+        Text arrow = new Text("▶");
+        arrow.setScaleX(5);
+        arrow.setScaleY(5);
+        arrow.setFill(Color.YELLOW);
+        arrow.setX(370);
+        arrow.setY(585);
+        getChildren().add(arrow);
     }
 
     public GameCharacter getMainCharacter() {

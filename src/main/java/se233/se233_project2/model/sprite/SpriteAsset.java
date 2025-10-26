@@ -15,7 +15,8 @@ public enum SpriteAsset {
     ENEMY_MINION1_AIM_HORIZONTAL("assets/character/enemy/Minion1_IDLE.png", 6, 3, 2, 0, 0, 32, 64),
     ENEMY_BOSS1("assets/character/boss/Boss1_IDLE.png", 112, 800),
     ENEMY_MINION2("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
-    ENEMY_BOSS2("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
+    ENEMY_BOSS2("assets/character/boss/Boss2_IDLE.png", 112, 96),
+    ENEMY_BOSS2_SHOOT("assets/character/boss/Boss2_SHOOT.png", 112, 113),
     ENEMY_MINION3("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
     ENEMY_BOSS3("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
 

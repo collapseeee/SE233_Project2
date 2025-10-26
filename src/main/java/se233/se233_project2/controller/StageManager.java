@@ -1,6 +1,7 @@
 package se233.se233_project2.controller;
 
 import javafx.application.Platform;
+import javafx.scene.input.KeyCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se233.se233_project2.model.character.EnemyCharacter;
@@ -160,7 +161,7 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter boss2 = new StaticBoss(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_1);
+            EnemyCharacter boss2 = new StaticBoss(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_2);
             logger.info("{} spawns at X:{}, Y:{}.", boss2.getType(), boss2.getX(), boss2.getY());
 
             gameStage.getEnemyList().add(boss2);
@@ -238,7 +239,22 @@ public class StageManager {
 
     // Defeat & Victory
     public void handleDefeat() {
+        if (!phaseInitialized) {
+            Platform.runLater(() -> {
+                logger.warn("Initializing Defeat Screen.");
+                gameStage.initDefeatScreen();
+            });
+            logger.debug("Defeat Screen has been initialized.");
+            phaseInitialized = true;
+        }
+        boolean spacePressed = gameStage.getKeys().isPressed(KeyCode.SPACE);
+        boolean enterPressed = gameStage.getKeys().isPressed(KeyCode.ENTER);
+        boolean escPressed = gameStage.getKeys().isPressed(KeyCode.ESCAPE);
 
+        if (spacePressed || enterPressed || escPressed) {
+            logger.info("Returning to start menu from defeat screen");
+            gameStage.setCurrentGamePhase(GamePhase.START_MENU);
+        }
     }
     public void handleVictory() {
         if (!phaseInitialized) {
@@ -248,6 +264,14 @@ public class StageManager {
             });
             logger.debug("Victory Screen has been initialized.");
             phaseInitialized = true;
+        }
+        boolean spacePressed = gameStage.getKeys().isPressed(KeyCode.SPACE);
+        boolean enterPressed = gameStage.getKeys().isPressed(KeyCode.ENTER);
+        boolean escPressed = gameStage.getKeys().isPressed(KeyCode.ESCAPE);
+
+        if (spacePressed || enterPressed || escPressed) {
+            logger.info("Returning to start menu from victory screen");
+            gameStage.setCurrentGamePhase(GamePhase.START_MENU);
         }
     }
 

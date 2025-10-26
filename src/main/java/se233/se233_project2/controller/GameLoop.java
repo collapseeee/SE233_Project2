@@ -35,6 +35,11 @@ public class GameLoop implements Runnable {
 
     // Main Character
     private void updateMainCharacter(GameCharacter gameCharacter) {
+        if (gameCharacter.getLife() == 0) {
+            logger.info("Main character is dead!");
+            gameStage.setCurrentGamePhase(GamePhase.DEFEAT);
+            return;
+        }
         boolean leftPressed = gameStage.getKeys().isPressed(gameCharacter.getLeftKey());
         boolean rightPressed = gameStage.getKeys().isPressed(gameCharacter.getRightKey());
         boolean jumpPressed = gameStage.getKeys().isPressed(gameCharacter.getJumpKey());
