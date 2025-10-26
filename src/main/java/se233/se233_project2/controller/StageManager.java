@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import se233.se233_project2.model.character.EnemyCharacter;
 import se233.se233_project2.model.GamePhase;
 import se233.se233_project2.model.character.EnemyType;
-import se233.se233_project2.model.character.StaticBoss;
+import se233.se233_project2.model.character.Boss1;
 import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;
 import se233.se233_project2.view.TitleScreen;
@@ -68,10 +68,9 @@ public class StageManager {
     // Stage 1
     public void handleStage1() {
         if (!phaseInitialized) {
-            gameStage.getMainCharacter().spawnSFX();
-            Platform.runLater(() -> {
-                gameStage.initStage1Environment();
-            });
+            logger.warn("Initializing Stage 1.");
+            gameStage.initStage1Environment();
+
             logger.info("Stage 1 has been initialized");
             phaseInitialized = false;
             gameStage.setCurrentGamePhase(GamePhase.MINION1);
@@ -107,7 +106,7 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter boss1 = new StaticBoss(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_1);
+            EnemyCharacter boss1 = new Boss1(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_1);
             logger.info("{} spawns at X:{}, Y:{}.", boss1.getType(), boss1.getX(), boss1.getY());
 
             gameStage.getEnemyList().add(boss1);
@@ -128,10 +127,9 @@ public class StageManager {
     // Stage 2
     public void handleStage2() {
         if (!phaseInitialized) {
-            Platform.runLater(() -> {
-                logger.debug("Initializing Stage 2.");
-                gameStage.initStage2Environment();
-            });
+            logger.warn("Initializing Stage 2.");
+            gameStage.initStage2Environment();
+
             logger.info("Stage 2 has been initialized.");
             phaseInitialized = false;
             gameStage.setCurrentGamePhase(GamePhase.MINION2);
@@ -168,7 +166,7 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter boss2 = new StaticBoss(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_2);
+            EnemyCharacter boss2 = new Boss1(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_2);
             logger.info("{} spawns at X:{}, Y:{}.", boss2.getType(), boss2.getX(), boss2.getY());
 
             gameStage.getEnemyList().add(boss2);
@@ -189,10 +187,9 @@ public class StageManager {
     // Stage 3
     public void handleStage3() {
         if (!phaseInitialized) {
-            Platform.runLater(() -> {
-                logger.warn("Initializing Stage 3.");
-                gameStage.initStage3Environment();
-            });
+            logger.warn("Initializing Stage 3.");
+            gameStage.initStage3Environment();
+
             logger.debug("Stage 3 has been initialized.");
             phaseInitialized = false;
             gameStage.setCurrentGamePhase(GamePhase.MINION3);
@@ -231,7 +228,7 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter boss3 = new StaticBoss(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_1);
+            EnemyCharacter boss3 = new Boss1(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_1);
             logger.info("{} spawns at X:{}, Y:{}.", boss3.getType(), boss3.getX(), boss3.getY());
 
             gameStage.getEnemyList().add(boss3);
@@ -252,10 +249,9 @@ public class StageManager {
     // Defeat & Victory
     public void handleDefeat() {
         if (!phaseInitialized) {
-            Platform.runLater(() -> {
-                logger.warn("Initializing Defeat Screen.");
-                gameStage.initDefeatScreen();
-            });
+            logger.warn("Initializing Defeat Screen.");
+            gameStage.initDefeatScreen();
+
             logger.debug("Defeat Screen has been initialized.");
             phaseInitialized = true;
         }
@@ -270,10 +266,9 @@ public class StageManager {
     }
     public void handleVictory() {
         if (!phaseInitialized) {
-            Platform.runLater(() -> {
-                logger.warn("Initializing Victory Screen.");
-                gameStage.initVictoryScreen();
-            });
+            logger.warn("Initializing Victory Screen.");
+            gameStage.initVictoryScreen();
+
             logger.debug("Victory Screen has been initialized.");
             phaseInitialized = true;
         }

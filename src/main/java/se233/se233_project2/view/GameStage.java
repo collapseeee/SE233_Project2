@@ -1,6 +1,7 @@
 package se233.se233_project2.view;
 
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -25,7 +26,7 @@ public class GameStage extends Pane {
     private static final AudioManager audioManager = new AudioManager();
     private final SceneUpdateQueue sceneUpdateQueue;
 
-    private List<Platform> platforms = new CopyOnWriteArrayList<>();
+    private List<GamePlatform> platforms = new CopyOnWriteArrayList<>();
     private List<EnemyCharacter> enemyList = new CopyOnWriteArrayList<>();
     private List<Bullet> bulletList = new CopyOnWriteArrayList<>();
 
@@ -58,111 +59,117 @@ public class GameStage extends Pane {
 
     public void initStage1Environment() {
         setCurrentGamePhase(GamePhase.STAGE1);
-        getChildren().clear();
         enemyList.clear();
         bulletList.clear();
         platforms.clear();
+        sceneUpdateQueue.queueClear();
+        mainCharacter.respawn();
 
         gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/Stage1_Background.png"));
         ImageView backgroundImg = new ImageView(gameStageImg);
         backgroundImg.setFitHeight(HEIGHT);
         backgroundImg.setFitWidth(WIDTH);
-        getChildren().add(backgroundImg);
+        sceneUpdateQueue.queueAdd(backgroundImg);
 
-        platforms.add(new Platform(0,500,WIDTH,20)); // Floor
-        platforms.add(new Platform(0,650,400,20)); // Bottom-left
-        platforms.add(new Platform(795,650,405,20)); // Bottom-right
-        platforms.add(new Platform(437,260,345,20)); // Top
-        getChildren().addAll(platforms);
+        platforms.add(new GamePlatform(0,500,WIDTH,20)); // Floor
+        platforms.add(new GamePlatform(0,650,400,20)); // Bottom-left
+        platforms.add(new GamePlatform(795,650,405,20)); // Bottom-right
+        platforms.add(new GamePlatform(437,260,345,20)); // Top
+        sceneUpdateQueue.queueAddAll(platforms);
 
-        getChildren().add(mainCharacter);
-        getChildren().add(playerLife);
-        getChildren().add(score);
+        sceneUpdateQueue.queueAdd(mainCharacter);
+        sceneUpdateQueue.queueAdd(playerLife);
+        sceneUpdateQueue.queueAdd(score);
+        score.setTranslateX(300);
+        score.setTranslateY(30);
 
-        audioManager.playLoopBGM("assets/bgm/Stage1.wav");
-
-        FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), backgroundImg);
-        fadeIn.setFromValue(0);
-        fadeIn.setToValue(1);
-        fadeIn.play();
+        Platform.runLater(() -> {
+            audioManager.playLoopBGM("assets/bgm/Stage1.wav");
+            FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), backgroundImg);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+            fadeIn.play();
+        });
     }
 
     public void initStage2Environment() {
         setCurrentGamePhase(GamePhase.STAGE2);
-        getChildren().clear();
         bulletList.clear();
         platforms.clear();
+        sceneUpdateQueue.queueClear();
+        mainCharacter.respawn();
 
         gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/Stage2_Background.png"));
         ImageView backgroundImg = new ImageView(gameStageImg);
         backgroundImg.setFitHeight(HEIGHT);
         backgroundImg.setFitWidth(WIDTH);
-        getChildren().add(backgroundImg);
+        sceneUpdateQueue.queueAdd(backgroundImg);
 
-        platforms.add(new Platform(0,525,WIDTH,10)); // Floor
-        platforms.add(new Platform(0,680,120,10)); // Under-left
-        platforms.add(new Platform(238,675,600,10)); // Under-middle
-        platforms.add(new Platform(900,675, 300,10)); // Under-right
-        getChildren().addAll(platforms);
+        platforms.add(new GamePlatform(0,525,WIDTH,10)); // Floor
+        platforms.add(new GamePlatform(0,680,120,10)); // Under-left
+        platforms.add(new GamePlatform(238,675,600,10)); // Under-middle
+        platforms.add(new GamePlatform(900,675, 300,10)); // Under-right
+        sceneUpdateQueue.queueAddAll(platforms);
 
-        getChildren().add(mainCharacter);
-        getChildren().add(playerLife);
-        getChildren().add(score);
+        sceneUpdateQueue.queueAdd(mainCharacter);
+        sceneUpdateQueue.queueAdd(playerLife);
+        sceneUpdateQueue.queueAdd(score);
 
-        audioManager.playLoopBGM("assets/bgm/Stage2.wav");
-
-        FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), backgroundImg);
-        fadeIn.setFromValue(0);
-        fadeIn.setToValue(1);
-        fadeIn.play();
+        Platform.runLater(() -> {
+            audioManager.playLoopBGM("assets/bgm/Stage2.wav");
+            FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), backgroundImg);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+            fadeIn.play();
+        });
     }
 
     public void initStage3Environment() {
         setCurrentGamePhase(GamePhase.STAGE3);
-        getChildren().clear();
         bulletList.clear();
         platforms.clear();
+        sceneUpdateQueue.queueClear();
+        mainCharacter.respawn();
 
         gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/Stage3_Background.png"));
         ImageView backgroundImg = new ImageView(gameStageImg);
         backgroundImg.setFitHeight(HEIGHT);
         backgroundImg.setFitWidth(WIDTH);
-        getChildren().add(backgroundImg);
+        sceneUpdateQueue.queueAdd(backgroundImg);
 
-        platforms.add(new Platform(0,620,445,40)); // Floor-left
-        platforms.add(new Platform(740,620,460,40)); // Floor-right
-        platforms.add(new Platform(635,435,327,15)); // Floating
-        platforms.add(new Platform(156,232, 234,10)); // Roof-left
-        platforms.add(new Platform(800,232, 350,10)); // Roof-right
-        getChildren().addAll(platforms);
+        platforms.add(new GamePlatform(0,620,445,40)); // Floor-left
+        platforms.add(new GamePlatform(740,620,460,40)); // Floor-right
+        platforms.add(new GamePlatform(635,435,327,15)); // Floating
+        platforms.add(new GamePlatform(156,232, 234,10)); // Roof-left
+        platforms.add(new GamePlatform(800,232, 350,10)); // Roof-right
+        sceneUpdateQueue.queueAddAll(platforms);
 
-        getChildren().add(mainCharacter);
-        getChildren().add(playerLife);
-        getChildren().add(score);
+        sceneUpdateQueue.queueAdd(mainCharacter);
+        sceneUpdateQueue.queueAdd(playerLife);
+        sceneUpdateQueue.queueAdd(score);
 
-        audioManager.playLoopBGM("assets/bgm/Stage3.wav");
-
-        FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), backgroundImg);
-        fadeIn.setFromValue(0);
-        fadeIn.setToValue(1);
-        fadeIn.play();
+        Platform.runLater(() -> {
+            audioManager.playLoopBGM("assets/bgm/Stage3.wav");
+            FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), backgroundImg);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+            fadeIn.play();
+        });
     }
 
     public void initVictoryScreen() {
         setCurrentGamePhase(GamePhase.VICTORY);
-        getChildren().clear();
         bulletList.clear();
         platforms.clear();
-        getChildren().remove(mainCharacter);
+        sceneUpdateQueue.queueClear();
 
         gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/Victory_Screen.png"));
-        audioManager.playBGM("assets/bgm/Victory.wav");
         ImageView backgroundImg = new ImageView(gameStageImg);
         backgroundImg.setFitHeight(HEIGHT);
         backgroundImg.setFitWidth(WIDTH);
-        getChildren().add(backgroundImg);
+        sceneUpdateQueue.queueAdd(backgroundImg);
 
-        getChildren().add(score);
+        sceneUpdateQueue.queueAdd(score);
         score.setTranslateX(520);
         score.setTranslateY(335);
 
@@ -172,24 +179,26 @@ public class GameStage extends Pane {
         arrow.setFill(Color.YELLOW);
         arrow.setX(370);
         arrow.setY(585);
-        getChildren().add(arrow);
+        sceneUpdateQueue.queueAdd(arrow);
+
+        Platform.runLater(() -> {
+            audioManager.playBGM("assets/bgm/Victory.wav");
+        });
     }
 
     public void initDefeatScreen() {
         setCurrentGamePhase(GamePhase.DEFEAT);
-        getChildren().clear();
         bulletList.clear();
         platforms.clear();
-        getChildren().remove(mainCharacter);
+        sceneUpdateQueue.queueClear();
 
         gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/Defeat_Screen.png"));
-        audioManager.playBGM("assets/bgm/Defeated.wav");
         ImageView backgroundImg = new ImageView(gameStageImg);
         backgroundImg.setFitHeight(HEIGHT);
         backgroundImg.setFitWidth(WIDTH);
-        getChildren().add(backgroundImg);
+        sceneUpdateQueue.queueAdd(backgroundImg);
 
-        getChildren().add(score);
+        sceneUpdateQueue.queueAdd(score);
         score.setTranslateX(520);
         score.setTranslateY(335);
 
@@ -199,14 +208,17 @@ public class GameStage extends Pane {
         arrow.setFill(Color.YELLOW);
         arrow.setX(370);
         arrow.setY(585);
-        getChildren().add(arrow);
+        sceneUpdateQueue.queueAdd(arrow);
+
+        Platform.runLater(() -> {
+            audioManager.playBGM("assets/bgm/Defeated.wav");
+        });
     }
 
     public GameCharacter getMainCharacter() { return mainCharacter; }
     public List<EnemyCharacter> getEnemyList() {
         return enemyList;
     }
-    public void removeEnemyFromList(EnemyCharacter enemy) { enemyList.remove(enemy); }
     public List<Bullet> getBulletList() { return bulletList; }
     public Keys getKeys() {
         return keys;
@@ -215,6 +227,6 @@ public class GameStage extends Pane {
     public Life getLife() { return playerLife; }
     public GamePhase getCurrentGamePhase() { return currentGamePhase; }
     public void setCurrentGamePhase(GamePhase currentGamePhase) { this.currentGamePhase = currentGamePhase; }
-    public List<Platform> getPlatformList() { return platforms; }
+    public List<GamePlatform> getPlatformList() { return platforms; }
     public SceneUpdateQueue getSceneUpdateQueue() { return sceneUpdateQueue; }
 }

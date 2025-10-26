@@ -191,26 +191,21 @@ public class GameLoop implements Runnable {
             stageManager.update();
 
             if (gameStage.getMainCharacter() != null
-                && gameStage.getCurrentGamePhase() != GamePhase.START_MENU
-                && gameStage.getCurrentGamePhase() != GamePhase.VICTORY
-                && gameStage.getCurrentGamePhase() != GamePhase.DEFEAT) {
+                    && gameStage.getCurrentGamePhase() != GamePhase.START_MENU
+                    && gameStage.getCurrentGamePhase() != GamePhase.VICTORY
+                    && gameStage.getCurrentGamePhase() != GamePhase.DEFEAT) {
                 updateMainCharacter(gameStage.getMainCharacter());
                 updateEnemyCharacter(gameStage.getEnemyList());
                 updateBullets(gameStage.getMainCharacter());
             }
 
+            // ✅ CRITICAL: Process queue EVERY frame, even in menu
             gameStage.getSceneUpdateQueue().processPendingUpdates();
 
             time = System.currentTimeMillis() - time;
             if (time < interval) {
                 try {
                     Thread.sleep((long) (interval - time));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    Thread.sleep((long) (interval - (interval % time)));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
-import se233.se233_project2.model.Platform;
+import se233.se233_project2.model.GamePlatform;
 import se233.se233_project2.model.sprite.AnimatedSprite;
 import se233.se233_project2.view.GameStage;
 
@@ -188,14 +188,14 @@ public class GameCharacter extends Pane {
             yVelocity = 0;
         }
     }
-    public void checkReachPlatform(List<Platform> platforms) {
+    public void checkReachPlatform(List<GamePlatform> platforms) {
         double bottomY = this.y + (isCrawling ? this.characterHeight * 0.6 : this.characterHeight);
         double nextBottomY = bottomY + yVelocity;
 
-        Platform landedPlatform = null;
+        GamePlatform landedPlatform = null;
         double landingY = GameStage.HEIGHT;
 
-        for (Platform platform : platforms) {
+        for (GamePlatform platform : platforms) {
             double platTop = platform.getY();
             double platLeft = platform.getX();
             double platRight = platLeft + platform.getWidth();

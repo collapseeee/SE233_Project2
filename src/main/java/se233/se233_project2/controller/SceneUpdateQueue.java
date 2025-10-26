@@ -2,11 +2,14 @@ package se233.se233_project2.controller;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se233.se233_project2.view.GameStage;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SceneUpdateQueue {
+    private final Logger logger = LogManager.getLogger(SceneUpdateQueue.class);
     private final ConcurrentLinkedQueue<Runnable> updateQueue = new ConcurrentLinkedQueue<>();
     private final GameStage gameStage;
 
@@ -44,16 +47,33 @@ public class SceneUpdateQueue {
         });
     }
 
+    public void queueClear() {
+        updateQueue.offer(() -> {
+            gameStage.getChildren().clear();
+        });
+    }
+
+    public void queueAction(Runnable action) {
+        updateQueue.offer(action);
+    }
+
     public void processPendingUpdates() {
+        if (updateQueue.isEmpty()) return;  // Skip if nothing to do
+
         Platform.runLater(() -> {
             Runnable update;
+            int count = 0;
             while ((update = updateQueue.poll()) != null) {
                 try {
                     update.run();
+                    count++;
                 } catch (Exception e) {
-                    // Log but don't crash
-                    System.err.println("Scene update failed: " + e.getMessage());
+                   logger.error("Scene update failed: {}", e.getMessage());
+                    e.printStackTrace();
                 }
+            }
+            if (count > 0) {
+                logger.debug("Processed {} scene updates",  count);
             }
         });
     }

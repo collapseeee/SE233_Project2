@@ -1,13 +1,13 @@
 package se233.se233_project2.model.character;
 
-import se233.se233_project2.model.Platform;
+import se233.se233_project2.model.GamePlatform;
 import se233.se233_project2.view.GameStage;
 
 import java.util.List;
 
-public class StaticBoss extends EnemyCharacter {
+public class Boss1 extends EnemyCharacter {
 
-    public StaticBoss(int x, int y, EnemyType enemyType) {
+    public Boss1(int x, int y, EnemyType enemyType) {
         super(x, y, enemyType);
 
         setScaleX(1);
@@ -36,7 +36,7 @@ public class StaticBoss extends EnemyCharacter {
     }
 
     @Override
-    public void checkReachPlatform(List<Platform> platforms) {
+    public void checkReachPlatform(List<GamePlatform> platforms) {
         // Boss doesn’t interact with platforms
     }
 

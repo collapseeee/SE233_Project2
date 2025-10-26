@@ -69,11 +69,10 @@ public class TitleScreen extends Pane {
         switch (selectedIndex) {
             case 0 -> {
                 logger.info("START selected");
-                gameStage.setCurrentGamePhase(GamePhase.STAGE1);
                 Platform.runLater(() -> {
                     gameStage.getChildren().remove(this);
-                    gameStage.setCurrentGamePhase(GamePhase.STAGE1);
                 });
+                gameStage.setCurrentGamePhase(GamePhase.STAGE1);
             }
             case 1 -> {
                 logger.debug("STAGE selected");
