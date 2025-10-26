@@ -76,17 +76,18 @@ public class Bullet extends Pane {
         explodeSprite.setFitWidth(64);
         explodeSprite.setFitHeight(64);
 
-        Platform.runLater(() -> {
-            gameStage.getChildren().add(explodeSprite);
-        });
+        // Queue add
+        gameStage.getSceneUpdateQueue().queueAdd(explodeSprite);
 
         FadeTransition fade = new FadeTransition(Duration.seconds(0.5), explodeSprite);
         fade.setFromValue(1);
         fade.setToValue(0);
-        fade.setOnFinished(e ->
-                Platform.runLater(() -> gameStage.getChildren().remove(explodeSprite))
-        );
-        fade.play();
+        fade.setOnFinished(e -> {
+            // Queue remove
+            gameStage.getSceneUpdateQueue().queueRemove(explodeSprite);
+        });
+
+        Platform.runLater(fade::play);
     }
 
     public void gunshotVFX() {

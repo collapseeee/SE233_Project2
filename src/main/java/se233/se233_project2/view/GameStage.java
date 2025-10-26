@@ -10,6 +10,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
+import se233.se233_project2.controller.SceneUpdateQueue;
 import se233.se233_project2.model.*;
 import se233.se233_project2.model.character.EnemyCharacter;
 import se233.se233_project2.model.character.GameCharacter;
@@ -22,6 +23,7 @@ public class GameStage extends Pane {
     public static final int WIDTH = 1200;
     public static final int HEIGHT = 800;
     private static final AudioManager audioManager = new AudioManager();
+    private final SceneUpdateQueue sceneUpdateQueue;
 
     private List<Platform> platforms = new CopyOnWriteArrayList<>();
     private List<EnemyCharacter> enemyList = new CopyOnWriteArrayList<>();
@@ -37,6 +39,7 @@ public class GameStage extends Pane {
     public GameStage() {
         keys = new Keys();
         currentGamePhase = GamePhase.START_MENU;
+        sceneUpdateQueue = new SceneUpdateQueue(this);
 
         SpriteAsset playerAsset = SpriteAsset.PLAYER_IDLE;
         mainCharacter = new GameCharacter(30, 30,
@@ -199,9 +202,7 @@ public class GameStage extends Pane {
         getChildren().add(arrow);
     }
 
-    public GameCharacter getMainCharacter() {
-        return mainCharacter;
-    }
+    public GameCharacter getMainCharacter() { return mainCharacter; }
     public List<EnemyCharacter> getEnemyList() {
         return enemyList;
     }
@@ -215,4 +216,5 @@ public class GameStage extends Pane {
     public GamePhase getCurrentGamePhase() { return currentGamePhase; }
     public void setCurrentGamePhase(GamePhase currentGamePhase) { this.currentGamePhase = currentGamePhase; }
     public List<Platform> getPlatformList() { return platforms; }
+    public SceneUpdateQueue getSceneUpdateQueue() { return sceneUpdateQueue; }
 }

@@ -80,26 +80,26 @@ public class GameLoop implements Runnable {
 
     // Enemy Character
     private void updateEnemyCharacter(List<EnemyCharacter> enemyCharacterList) {
-        List<EnemyCharacter> enemies = new ArrayList<>(enemyCharacterList);
-        List<EnemyCharacter> enemiesToRemove = new ArrayList<>();
-        for (EnemyCharacter enemy : enemies) {
+        List<EnemyCharacter> snapshot = new ArrayList<>(enemyCharacterList);
+        List<EnemyCharacter> toRemove = new ArrayList<>();
+
+        for (EnemyCharacter enemy : snapshot) {
             if (!enemy.getIsAlive()) {
                 enemy.deadSFX();
-                enemiesToRemove.add(enemy);
+                toRemove.add(enemy);
             } else {
                 enemy.updateMovingAI(gameStage.getMainCharacter());
             }
         }
-        if (!enemiesToRemove.isEmpty()) {
-            Platform.runLater(() -> {
-                synchronized (gameStage.getChildren()) {
-                    for (EnemyCharacter enemy : enemiesToRemove) {
-                        logger.info("{} is killed and removed.", enemy.getType());
-                        gameStage.getChildren().remove(enemy);
-                        gameStage.removeEnemyFromList(enemy);
-                    }
-                }
-            });
+
+        if (!toRemove.isEmpty()) {
+            // Remove from data list immediately
+            for (EnemyCharacter enemy : toRemove) {
+                logger.info("{} is killed and removed.", enemy.getType());
+                gameStage.getEnemyList().remove(enemy);
+            }
+            // Queue scene removal
+            gameStage.getSceneUpdateQueue().queueRemoveAll(toRemove);
         }
     }
 
@@ -122,9 +122,9 @@ public class GameLoop implements Runnable {
             if (leftPressed) speedX = -bulletSpeed;
             if (rightPressed) speedX = bulletSpeed;
 
-            if (speedX == 0 && speedY == 0) { // Idling and shoot
+            if (speedX == 0 && speedY == 0) {
                 speedX = bulletSpeed*direction;
-            } else if (speedX != 0 && speedY != 0) { // Walking and aim up or down
+            } else if (speedX != 0 && speedY != 0) {
                 speedX = (int) (speedX / 1.4);
                 speedY = (int) (speedY / 1.4);
             }
@@ -134,10 +134,11 @@ public class GameLoop implements Runnable {
 
             Bullet bullet = new Bullet(bulletX, bulletY, speedX, speedY, 1);
             gameStage.getBulletList().add(bullet);
-            Platform.runLater(() -> {
-                gameStage.getChildren().add(bullet);
-                bullet.gunshotVFX();
-            });
+
+            // Queue scene addition
+            gameStage.getSceneUpdateQueue().queueAdd(bullet);
+            bullet.gunshotVFX();
+
             logger.info("Bullet fires at X: {}, Y {}", bulletX, bulletY);
             gameCharacter.markShoot();
         }
@@ -146,22 +147,18 @@ public class GameLoop implements Runnable {
         for (Bullet bullet : bullets) {
             bullet.move();
 
-            // Bullet hit a bound
             if (bullet.collidesWithBound()) {
                 toRemove.add(bullet);
                 continue;
             }
 
-            // Bullet hit an enemy
             List<EnemyCharacter> enemies = new ArrayList<>(gameStage.getEnemyList());
             for (EnemyCharacter enemy : enemies) {
                 if (bullet.collidesWithEnemy(enemy)) {
                     logger.info("Bullet hits {} at X:{}, Y:{}.", enemy.getType(), bullet.getX(), bullet.getY());
 
-                    Platform.runLater(() -> {
-                        bullet.explodeVFX();
-                        bullet.explode(gameStage);
-                    });
+                    bullet.explodeVFX();
+                    bullet.explode(gameStage);
 
                     enemy.takeDamage(bullet.getDamage());
                     toRemove.add(bullet);
@@ -177,12 +174,12 @@ public class GameLoop implements Runnable {
         }
 
         if (!toRemove.isEmpty()) {
+            // Remove from data list
             gameStage.getBulletList().removeAll(toRemove);
 
-            Platform.runLater(() -> {
-                logger.info("Remove {} bullet from the stage.", toRemove.size());
-                gameStage.getChildren().removeAll(toRemove);
-            });
+            // Queue scene removal
+            logger.info("Remove {} bullet from the stage.", toRemove.size());
+            gameStage.getSceneUpdateQueue().queueRemoveAll(toRemove);
         }
     }
 
@@ -201,6 +198,8 @@ public class GameLoop implements Runnable {
                 updateEnemyCharacter(gameStage.getEnemyList());
                 updateBullets(gameStage.getMainCharacter());
             }
+
+            gameStage.getSceneUpdateQueue().processPendingUpdates();
 
             time = System.currentTimeMillis() - time;
             if (time < interval) {

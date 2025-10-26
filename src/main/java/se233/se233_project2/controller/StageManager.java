@@ -12,6 +12,8 @@ import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;
 import se233.se233_project2.view.TitleScreen;
 
+import java.util.List;
+
 public class StageManager {
     Logger logger = LogManager.getLogger(StageManager.class);
 
@@ -87,10 +89,11 @@ public class StageManager {
             EnemyCharacter minion6 = spawnMinion(EnemyType.MINION_1, 1000, 350);
             EnemyCharacter minion7 = spawnMinion(EnemyType.MINION_1, 1100, 350);
 
-            Platform.runLater(() -> {
-                logger.warn("Adding Minion Phase 1 to the Scene.");
-                gameStage.getChildren().addAll(minion1, minion2, minion3, minion4, minion5, minion6, minion7);
-            });
+            List<EnemyCharacter> minions = List.of(minion1, minion2, minion3, minion4, minion5, minion6, minion7);
+
+            logger.warn("Adding Minion Phase 1 to the Scene.");
+            gameStage.getSceneUpdateQueue().queueAddAll(minions);
+
             logger.debug("Minion Phase 1 has been added to the screen.");
             phaseInitialized = true;
         }
@@ -109,10 +112,9 @@ public class StageManager {
 
             gameStage.getEnemyList().add(boss1);
 
-            Platform.runLater(() -> {
-                logger.warn("Adding Boss 1 to the Scene.");
-                gameStage.getChildren().add(boss1);
-            });
+            logger.warn("Adding Boss 1 to the Scene.");
+            gameStage.getSceneUpdateQueue().queueAdd(boss1);
+
             logger.debug("Boss 1 has been added to the screen.");
             phaseInitialized = true;
         }
@@ -139,15 +141,20 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter minion1 = spawnMinion(EnemyType.MINION_2, 500, 150);
-            EnemyCharacter minion2 = spawnMinion(EnemyType.MINION_2, 700, 150);
-            EnemyCharacter minion3 = spawnMinion(EnemyType.MINION_2, 750, 150);
-            EnemyCharacter minion4 = spawnMinion(EnemyType.MINION_2, 950, 150);
+            EnemyCharacter minion1 = spawnMinion(EnemyType.MINION_2, 800, 350);
+            EnemyCharacter minion2 = spawnMinion(EnemyType.MINION_2, 900, 350);
+            EnemyCharacter minion3 = spawnMinion(EnemyType.MINION_2, 1000, 350);
+            EnemyCharacter minion4 = spawnMinion(EnemyType.MINION_2, 1100, 350);
+            EnemyCharacter minion5 = spawnMinion(EnemyType.MINION_2, 550, 550);
+            EnemyCharacter minion6 = spawnMinion(EnemyType.MINION_2, 650, 550);
+            EnemyCharacter minion7 = spawnMinion(EnemyType.MINION_2, 1050, 550);
+            EnemyCharacter minion8 = spawnMinion(EnemyType.MINION_2, 1150, 550);
 
-            Platform.runLater(() -> {
-                logger.warn("Add Minion Phase 2 to the Scene");
-                gameStage.getChildren().addAll(minion1, minion2, minion3, minion4);
-            });
+            List<EnemyCharacter> minions = List.of(minion1, minion2, minion3, minion4, minion5, minion6, minion7, minion8);
+
+            logger.warn("Add Minion Phase 2 to the Scene");
+            gameStage.getSceneUpdateQueue().queueAddAll(minions);
+
             logger.debug("Minion Phase 2 has been added to the screen.");
             phaseInitialized = true;
         }
@@ -166,10 +173,9 @@ public class StageManager {
 
             gameStage.getEnemyList().add(boss2);
 
-            Platform.runLater(() -> {
-                logger.warn("Adding Boss 2 to the Scene.");
-                gameStage.getChildren().add(boss2);
-            });
+            logger.warn("Adding Boss 2 to the Scene.");
+            gameStage.getSceneUpdateQueue().queueAdd(boss2);
+
             logger.debug("Boss 2 has been added to the screen.");
             phaseInitialized = true;
         }
@@ -196,15 +202,22 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter minion1 = spawnMinion(EnemyType.MINION_3, 150, 150);
-            EnemyCharacter minion2 = spawnMinion(EnemyType.MINION_3, 350, 150);
-            EnemyCharacter minion3 = spawnMinion(EnemyType.MINION_3, 750, 150);
-            EnemyCharacter minion4 = spawnMinion(EnemyType.MINION_3, 950, 150);
+            EnemyCharacter minion1 = spawnMinion(EnemyType.MINION_3, 200, 150);
+            EnemyCharacter minion2 = spawnMinion(EnemyType.MINION_3, 300, 150);
+            EnemyCharacter minion3 = spawnMinion(EnemyType.MINION_3, 900, 150);
+            EnemyCharacter minion4 = spawnMinion(EnemyType.MINION_3, 1000, 150);
+            EnemyCharacter minion5 = spawnMinion(EnemyType.MINION_3, 850, 500);
+            EnemyCharacter minion6 = spawnMinion(EnemyType.MINION_3, 950, 500);
+            EnemyCharacter minion7 = spawnMinion(EnemyType.MINION_3, 1050, 500);
+            EnemyCharacter minion8 = spawnMinion(EnemyType.MINION_3, 1150, 500);
+            EnemyCharacter minion9 = spawnMinion(EnemyType.MINION_3, 750, 300);
+            EnemyCharacter minion10 = spawnMinion(EnemyType.MINION_3, 850, 300);
 
-            Platform.runLater(() -> {
-                logger.warn("Adding Minion Phase 3 to the Scene");
-                gameStage.getChildren().addAll(minion1, minion2, minion3, minion4);
-            });
+            List<EnemyCharacter> minions = List.of(minion1, minion2, minion3, minion4, minion5, minion6, minion7, minion8, minion9, minion10);
+
+            logger.warn("Adding Minion Phase 3 to the Scene");
+            gameStage.getSceneUpdateQueue().queueAddAll(minions);
+
             logger.debug("Minion Phase 3 has been added to the screen.");
             phaseInitialized = true;
         }
@@ -223,10 +236,9 @@ public class StageManager {
 
             gameStage.getEnemyList().add(boss3);
 
-            Platform.runLater(() -> {
-                logger.warn("Adding Boss 3 to the Scene.");
-                gameStage.getChildren().add(boss3);
-            });
+            logger.warn("Adding Boss 3 to the Scene.");
+            gameStage.getSceneUpdateQueue().queueAdd(boss3);
+
             logger.debug("Boss 3 has been added to the screen.");
             phaseInitialized = true;
         }
