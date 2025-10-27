@@ -60,10 +60,12 @@ public class DrawingLoop implements Runnable {
         while (running) {
             float time = System.currentTimeMillis();
 
+            GamePhase phase = gameStage.getCurrentGamePhase();
             if (gameStage.getMainCharacter() != null
-                    && gameStage.getCurrentGamePhase() != GamePhase.START_MENU
-                    && gameStage.getCurrentGamePhase() != GamePhase.VICTORY
-                    && gameStage.getCurrentGamePhase() != GamePhase.DEFEAT) {
+                    && phase != GamePhase.START_MENU
+                    && phase != GamePhase.STAGE_SELECT
+                    && phase != GamePhase.VICTORY
+                    && phase != GamePhase.DEFEAT) {
                 checkMainCharacterDrawCollisions(gameStage.getMainCharacter());
                 paintMainCharacter(gameStage.getMainCharacter());
 

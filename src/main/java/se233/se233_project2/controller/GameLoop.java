@@ -190,11 +190,12 @@ public class GameLoop implements Runnable {
 
             stageManager.update();
 
+            GamePhase phase = gameStage.getCurrentGamePhase();
             if (gameStage.getMainCharacter() != null
-                    && gameStage.getCurrentGamePhase() != GamePhase.START_MENU
-                    && gameStage.getCurrentGamePhase() != GamePhase.STAGE_SELECT
-                    && gameStage.getCurrentGamePhase() != GamePhase.VICTORY
-                    && gameStage.getCurrentGamePhase() != GamePhase.DEFEAT) {
+                    && phase != GamePhase.START_MENU
+                    && phase != GamePhase.STAGE_SELECT
+                    && phase != GamePhase.VICTORY
+                    && phase != GamePhase.DEFEAT) {
                 updateMainCharacter(gameStage.getMainCharacter());
                 updateEnemyCharacter(gameStage.getEnemyList());
                 updateBullets(gameStage.getMainCharacter());
