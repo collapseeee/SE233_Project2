@@ -317,4 +317,6 @@ public class GameCharacter extends Pane {
     public int getLife() { return this.life; }
     public int getFacing() { return this.facing; }
     public void setFacing(int facing) { this.facing = facing; }
+    public void setScore(int score) { this.score = score; }
+    public void setLife(int life) { this.life = life; }
 }

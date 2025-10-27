@@ -10,6 +10,7 @@ import se233.se233_project2.model.character.EnemyType;
 import se233.se233_project2.model.character.Boss1;
 import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;
+import se233.se233_project2.view.StageScreen;
 import se233.se233_project2.view.TitleScreen;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class StageManager {
 
         switch (phase) {
             case START_MENU -> handleStartMenu();
+            case STAGE_SELECT -> handleStageSelect();
             case STAGE1 -> handleStage1();
             case STAGE2 -> handleStage2();
             case STAGE3 -> handleStage3();
@@ -61,6 +63,19 @@ public class StageManager {
             });
             GameStage.playTitleScreenBGM();
             logger.info("Title Screen has been initialized");
+            phaseInitialized = true;
+        }
+    }
+
+    public void handleStageSelect() {
+        if (!phaseInitialized) {
+            Platform.runLater(() -> {
+                StageScreen stageScreen = new StageScreen(gameStage);
+                gameStage.getChildren().clear();
+                gameStage.getChildren().add(stageScreen);
+                stageScreen.requestFocus();
+            });
+            logger.info("Stage Select Screen has been initialized");
             phaseInitialized = true;
         }
     }
@@ -255,11 +270,10 @@ public class StageManager {
             logger.debug("Defeat Screen has been initialized.");
             phaseInitialized = true;
         }
-        boolean spacePressed = gameStage.getKeys().isPressed(KeyCode.SPACE);
         boolean enterPressed = gameStage.getKeys().isPressed(KeyCode.ENTER);
         boolean escPressed = gameStage.getKeys().isPressed(KeyCode.ESCAPE);
 
-        if (spacePressed || enterPressed || escPressed) {
+        if (enterPressed || escPressed) {
             logger.info("Returning to start menu from defeat screen");
             gameStage.setCurrentGamePhase(GamePhase.START_MENU);
         }
@@ -272,11 +286,10 @@ public class StageManager {
             logger.debug("Victory Screen has been initialized.");
             phaseInitialized = true;
         }
-        boolean spacePressed = gameStage.getKeys().isPressed(KeyCode.SPACE);
         boolean enterPressed = gameStage.getKeys().isPressed(KeyCode.ENTER);
         boolean escPressed = gameStage.getKeys().isPressed(KeyCode.ESCAPE);
 
-        if (spacePressed || enterPressed || escPressed) {
+        if (enterPressed || escPressed) {
             logger.info("Returning to start menu from victory screen");
             gameStage.setCurrentGamePhase(GamePhase.START_MENU);
         }

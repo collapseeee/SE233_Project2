@@ -83,6 +83,9 @@ public class GameStage extends Pane {
         score.setTranslateX(300);
         score.setTranslateY(30);
 
+        mainCharacter.setLife(3);
+        mainCharacter.setScore(0);
+
         Platform.runLater(() -> {
             audioManager.playLoopBGM("assets/bgm/Stage1.wav");
             FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), backgroundImg);

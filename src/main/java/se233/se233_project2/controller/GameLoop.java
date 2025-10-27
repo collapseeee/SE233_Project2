@@ -192,6 +192,7 @@ public class GameLoop implements Runnable {
 
             if (gameStage.getMainCharacter() != null
                     && gameStage.getCurrentGamePhase() != GamePhase.START_MENU
+                    && gameStage.getCurrentGamePhase() != GamePhase.STAGE_SELECT
                     && gameStage.getCurrentGamePhase() != GamePhase.VICTORY
                     && gameStage.getCurrentGamePhase() != GamePhase.DEFEAT) {
                 updateMainCharacter(gameStage.getMainCharacter());
@@ -199,7 +200,6 @@ public class GameLoop implements Runnable {
                 updateBullets(gameStage.getMainCharacter());
             }
 
-            // ✅ CRITICAL: Process queue EVERY frame, even in menu
             gameStage.getSceneUpdateQueue().processPendingUpdates();
 
             time = System.currentTimeMillis() - time;
