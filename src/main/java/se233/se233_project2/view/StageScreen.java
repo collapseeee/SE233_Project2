@@ -41,8 +41,7 @@ public class StageScreen extends Pane {
         gameStage.getScore().setTranslateX(300);
         gameStage.getScore().setTranslateY(30);
 
-        gameStage.getSceneUpdateQueue().queueAdd(background);
-        gameStage.getSceneUpdateQueue().queueAdd(arrow);
+        getChildren().addAll(background, arrow);
 
         setFocusTraversable(true);
         setOnKeyPressed(key -> handleKey(key.getCode()));

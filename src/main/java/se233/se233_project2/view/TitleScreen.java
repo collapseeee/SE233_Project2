@@ -38,8 +38,7 @@ public class TitleScreen extends Pane {
         arrow.setX(OPTION_X);
         arrow.setY(OPTION_Y[selectedIndex]);
 
-        gameStage.getSceneUpdateQueue().queueAdd(background);
-        gameStage.getSceneUpdateQueue().queueAdd(arrow);
+        getChildren().addAll(background, arrow);
 
         setFocusTraversable(true);
         setOnKeyPressed(key -> handleKey(key.getCode()));
