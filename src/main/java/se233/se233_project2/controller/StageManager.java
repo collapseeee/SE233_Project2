@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import se233.se233_project2.model.character.EnemyCharacter;
 import se233.se233_project2.model.GamePhase;
 import se233.se233_project2.model.character.EnemyType;
-import se233.se233_project2.model.character.Boss1;
+import se233.se233_project2.model.character.Boss;
 import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;
 import se233.se233_project2.view.StageScreen;
@@ -121,7 +121,7 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter boss1 = new Boss1(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_1);
+            EnemyCharacter boss1 = new Boss(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_1);
             logger.info("{} spawns at X:{}, Y:{}.", boss1.getType(), boss1.getX(), boss1.getY());
 
             gameStage.getEnemyList().add(boss1);
@@ -181,7 +181,7 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter boss2 = new Boss1(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_2);
+            EnemyCharacter boss2 = new Boss(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_2);
             logger.info("{} spawns at X:{}, Y:{}.", boss2.getType(), boss2.getX(), boss2.getY());
 
             gameStage.getEnemyList().add(boss2);
@@ -243,7 +243,7 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter boss3 = new Boss1(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_1);
+            EnemyCharacter boss3 = new Boss(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_1);
             logger.info("{} spawns at X:{}, Y:{}.", boss3.getType(), boss3.getX(), boss3.getY());
 
             gameStage.getEnemyList().add(boss3);

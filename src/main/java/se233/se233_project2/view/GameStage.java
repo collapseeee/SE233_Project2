@@ -13,6 +13,7 @@ import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
 import se233.se233_project2.controller.SceneUpdateQueue;
 import se233.se233_project2.model.*;
+import se233.se233_project2.model.bullet.Bullet;
 import se233.se233_project2.model.character.EnemyCharacter;
 import se233.se233_project2.model.character.GameCharacter;
 import se233.se233_project2.model.sprite.SpriteAsset;

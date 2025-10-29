@@ -8,6 +8,7 @@ public enum SpriteAsset {
     PLAYER_CRAWL("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
     PLAYER_SHOOT("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
     BULLET_AMMO("assets/character/player/Bullet.png",30, 30),
+    BULLET_SPECIAL("assets/character/player/Special_Bullet.png",30, 30),
     BULLET_EXPLODE("assets/character/player/Bullet_Effect.png",3, 3, 1, 0, 0,32, 32),
 
     // Enemy
@@ -18,7 +19,9 @@ public enum SpriteAsset {
     ENEMY_BOSS2("assets/character/boss/Boss2_IDLE.png", 112, 96),
     ENEMY_BOSS2_SHOOT("assets/character/boss/Boss2_SHOOT.png", 112, 113),
     ENEMY_MINION3("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
-    ENEMY_BOSS3("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
+    ENEMY_BOSS3_WALK("assets/character/enemy/Boss3_WALK.png", 10, 5, 2, 0, 0, 120, 105),
+    ENEMY_BOSS3_SHOOT("assets/character/enemy/Boss3_SHOOT.png", 8, 4, 2, 0, 0, 120, 105),
+    ENEMY_BOSS3_BULLET("assets/character/enemy/Boss3_BULLET.png", 16, 16),
 
     // UI
     HEART_FILLED("assets/character/player/filled_heart.png", 16, 16),

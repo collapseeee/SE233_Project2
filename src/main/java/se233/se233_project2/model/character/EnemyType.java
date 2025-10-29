@@ -12,7 +12,7 @@ public enum EnemyType {
     // BOSS
     BOSS_1(SpriteAsset.ENEMY_BOSS1, 0, 1, 700, 5),
     BOSS_2(SpriteAsset.ENEMY_BOSS2, 0, 1, 500, 5),
-    BOSS_3(SpriteAsset.ENEMY_BOSS3, 0, 2, 400, 5);
+    BOSS_3(SpriteAsset.ENEMY_BOSS3_WALK, 0, 2, 400, 5);
 
     private final SpriteAsset spriteAsset;
     private final int speed;

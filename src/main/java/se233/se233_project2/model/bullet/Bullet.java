@@ -1,4 +1,4 @@
-package se233.se233_project2.model;
+package se233.se233_project2.model.bullet;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -15,7 +15,6 @@ import se233.se233_project2.view.GameStage;
 
 public class Bullet extends Pane {
     private final AudioManager audioManager = new AudioManager();
-    private final Image bulletImage = new Image(Launcher.class.getResourceAsStream("assets/character/player/Bullet.png"));;
     private final ImageView imageView;
     private int x;
     private int y;
@@ -23,18 +22,17 @@ public class Bullet extends Pane {
     private int speedY;
     private int damage;
 
-    SpriteAsset explodeAsset = SpriteAsset.BULLET_EXPLODE;
 
-    public Bullet(int x, int y, int speedX, int speedY, int damage) {
+    public Bullet(int x, int y, int speedX, int speedY, Image bulletImage) {
         this.x = x;
         this.y = y;
         this.speedX = speedX;
         this.speedY = speedY;
-        this.damage = damage;
+        this.damage = 1;
 
         imageView = new ImageView(bulletImage);
-        imageView.setFitWidth(15);
-        imageView.setFitHeight(15);
+        imageView.setFitWidth(10);
+        imageView.setFitHeight(10);
         getChildren().add(imageView);
         setLayoutX(x);
         setLayoutY(y);

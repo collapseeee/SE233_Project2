@@ -282,20 +282,22 @@ public class GameCharacter extends Pane {
     // Attacking
     private long lastShootTime = 0;
     private final long shootCooldown = 500; // ms
+    private int shootCount = 0;
+    private static final int SHOT_FOR_SPECIAL = 3;
     public boolean canShoot() {
         return System.currentTimeMillis() - lastShootTime > shootCooldown;
     }
     public void markShoot() {
         lastShootTime =  System.currentTimeMillis();
     }
-
-    private long lastSpecialTime = 0;
-    private final long specialCooldown = 5000; //ms
     public boolean canSpecial() {
-        return System.currentTimeMillis() - lastSpecialTime > specialCooldown;
-    }
-    public void markSpecial() {
-        lastSpecialTime = System.currentTimeMillis();
+        if (shootCount == 3) {
+            shootCount = 0;
+            return true;
+        } else {
+            shootCount++;
+            return false;
+        }
     }
 
     // Getter Setter

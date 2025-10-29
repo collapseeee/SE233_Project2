@@ -5,9 +5,9 @@ import se233.se233_project2.view.GameStage;
 
 import java.util.List;
 
-public class Boss1 extends EnemyCharacter {
+public class Boss extends EnemyCharacter {
 
-    public Boss1(int x, int y, EnemyType enemyType) {
+    public Boss(int x, int y, EnemyType enemyType) {
         super(x, y, enemyType);
 
         setScaleX(1);

@@ -1,11 +1,15 @@
 package se233.se233_project2.controller;
 
-import javafx.application.Platform;
+import javafx.scene.image.Image;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import se233.se233_project2.Launcher;
 import se233.se233_project2.model.*;
+import se233.se233_project2.model.bullet.Bullet;
+import se233.se233_project2.model.bullet.SpecialBullet;
 import se233.se233_project2.model.character.EnemyCharacter;
 import se233.se233_project2.model.character.GameCharacter;
+import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;
 
 import java.util.ArrayList;
@@ -114,7 +118,7 @@ public class GameLoop implements Runnable {
 
         if (shooting && gameCharacter.canShoot()) {
             int direction = gameStage.getMainCharacter().getFacing();
-            final int bulletSpeed = 75;
+            final int bulletSpeed = 50;
             int speedX = 0, speedY = 0;
 
             if (upPressed) speedY = -bulletSpeed;
@@ -131,16 +135,42 @@ public class GameLoop implements Runnable {
 
             int bulletX = (int)(gameStage.getMainCharacter().getX() + gameStage.getMainCharacter().getWidth()/2);
             int bulletY = (int)(gameStage.getMainCharacter().getY() + gameStage.getMainCharacter().getHeight()/2);
+            Image normalBulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.BULLET_AMMO.getPath()));
+            Image specialBulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.BULLET_SPECIAL.getPath()));
 
-            Bullet bullet = new Bullet(bulletX, bulletY, speedX, speedY, 1);
-            gameStage.getBulletList().add(bullet);
+            if (gameCharacter.canSpecial()) {
+                for (int i = 0; i < 3; i++) {
+                    int delay = i * 200; // 200 ms between each bullet
+                    int finalSpeedX = speedX;
+                    int finalSpeedY = speedY;
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(delay);
+                            int sx = (int) (finalSpeedX * 1.2);
+                            int sy = (int) (finalSpeedY * 1.2);
 
-            // Queue scene addition
-            gameStage.getSceneUpdateQueue().queueAdd(bullet);
-            bullet.gunshotVFX();
+                            SpecialBullet special = new SpecialBullet(bulletX, bulletY, sx, sy, specialBulletImage);
+                            gameStage.getBulletList().add(special);
+                            gameStage.getSceneUpdateQueue().queueAdd(special);
+                            special.gunshotVFX();
 
-            logger.info("Bullet fires at X: {}, Y {}", bulletX, bulletY);
-            gameCharacter.markShoot();
+                            logger.info("Special bullets fires at X: {}, Y {}", bulletX, bulletY);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }).start();
+                }
+            } else {
+                Bullet bullet = new Bullet(bulletX, bulletY, speedX, speedY, normalBulletImage);
+                gameStage.getBulletList().add(bullet);
+
+                // Queue scene addition
+                gameStage.getSceneUpdateQueue().queueAdd(bullet);
+                bullet.gunshotVFX();
+
+                logger.info("Normal bullet fires at X: {}, Y {}", bulletX, bulletY);
+                gameCharacter.markShoot();
+            }
         }
 
         List<Bullet> toRemove = new ArrayList<>();

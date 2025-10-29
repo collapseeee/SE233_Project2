@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
-import se233.se233_project2.model.Bullet;
+import se233.se233_project2.model.bullet.Bullet;
 import se233.se233_project2.model.GamePlatform;
 import se233.se233_project2.model.sprite.AnimatedSprite;
 import se233.se233_project2.model.sprite.SpriteAsset;
@@ -218,7 +218,8 @@ public class EnemyCharacter extends Pane {
         int velocityY = (int) (dy * speed);
 
         // create and add bullet
-        Bullet bullet = new Bullet(bulletX, bulletY, velocityX, velocityY, 1);
+        Image bulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.BULLET_AMMO.getPath()));
+        Bullet bullet = new Bullet(bulletX, bulletY, velocityX, velocityY, bulletImage);
 
         javafx.application.Platform.runLater(() -> {
             gameStage.getBulletList().add(bullet);
