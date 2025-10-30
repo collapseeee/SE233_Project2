@@ -27,7 +27,7 @@ public class EnemyCharacter extends Pane {
     private int y;
     private final int startX;
     private final int startY;
-    private final int PATROL_RANGE = 100;
+    private final int PATROL_RANGE = 50;
     private final int leftPatrolRange;
     private final int rightPatrolRange;
     private final int enemyWidth;
@@ -75,9 +75,9 @@ public class EnemyCharacter extends Pane {
 
         this.shootRange = switch (enemyType) {
             case MINION_1 -> 400;
-            case MINION_2 -> 600;
-            case MINION_3 -> 700;
-            case BOSS_1, BOSS_2, BOSS_3 -> 900;
+            case MINION_2 -> 450;
+            case MINION_3 -> 500;
+            case BOSS_1, BOSS_2, BOSS_3 -> 1200;
         };
     }
 
@@ -132,20 +132,19 @@ public class EnemyCharacter extends Pane {
             if (isMoveRight && x < rightPatrolRange) {
                 moveRight();
             } else if (isMoveRight && x >= rightPatrolRange) {
-                moveLeft(); // turn around at right bound
+                moveLeft();
             } else if (isMoveLeft && x > leftPatrolRange) {
                 moveLeft();
             } else if (isMoveLeft && x <= leftPatrolRange) {
-                moveRight(); // turn around at left bound
+                moveRight();
             } else {
-                // if idle initially, start patrolling to the right
                 moveRight();
             }
         }
         else {
-            stop(); // stop walking before shooting
-            facePlayer(gameCharacter); // face toward player
-            shoot(gameStage, gameCharacter); // fire toward player
+            stop();
+            facePlayer(gameCharacter);
+            shoot(gameStage, gameCharacter);
         }
     }
     private void facePlayer(GameCharacter gameCharacter) {
@@ -224,33 +223,27 @@ public class EnemyCharacter extends Pane {
         return false;
     }
     public void shoot(GameStage gameStage, GameCharacter target) {
-        // shoot only if delay passed
         if (!canShoot()) return;
 
-        // bullet starting position (enemy center)
         int bulletX = (int) (this.x + this.enemyWidth / 2);
         int bulletY = (int) (this.y + this.enemyHeight / 2);
 
-        // target position (player center)
         int targetX = (int) (target.getX() + target.getCharacterWidth() / 2);
         int targetY = (int) (target.getY() + target.getCharacterHeight() / 2);
 
-        // direction vector toward player
         double dx = targetX - bulletX;
         double dy = targetY - bulletY;
         double distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance == 0) return; // avoid divide by zero
+        if (distance == 0) return;
         dx /= distance;
         dy /= distance;
 
-        // bullet speed (pixels per tick)
         int speed = 50;
         int velocityX = (int) (dx * speed);
         int velocityY = (int) (dy * speed);
 
-        // create and add bullet
-        Image bulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.BULLET_AMMO.getPath()));
-        Bullet bullet = new Bullet(bulletX, bulletY, velocityX, velocityY, bulletImage);
+        Image bulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.ENEMY_MINION1_BULLET.getPath()));
+        Bullet bullet = new Bullet(bulletX, bulletY, velocityX, velocityY, bulletImage, false);
 
         gameStage.getBulletList().add(bullet);
         gameStage.getSceneUpdateQueue().queueAdd(bullet);

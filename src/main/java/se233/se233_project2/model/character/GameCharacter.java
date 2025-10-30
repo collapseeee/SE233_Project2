@@ -1,5 +1,6 @@
 package se233.se233_project2.model.character;
 
+import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -56,6 +57,10 @@ public class GameCharacter extends Pane {
     boolean isDead = false;
     boolean isRunning = false;
 
+    private boolean isInvincible = false;
+    private long invincibleStartTime = 0;
+    private static final long INVINCIBLE_DURATION = 3000; // 3 seconds
+
     public GameCharacter(int x, int y, String imgName, int count, int column, int row, int width, int height,
                          KeyCode leftKey, KeyCode rightKey, KeyCode upKey, KeyCode downKey,
                          KeyCode shootKey, KeyCode jumpKey, KeyCode crawlKey, KeyCode runKey, int life) {
@@ -74,6 +79,9 @@ public class GameCharacter extends Pane {
         this.imageView.setFitWidth((int) (width));
         this.imageView.setFitHeight((int) (height));
         this.getChildren().addAll(this.imageView);
+
+        this.isInvincible = true;
+        this.invincibleStartTime = System.currentTimeMillis();
 
         this.leftKey = leftKey;
         this.rightKey = rightKey;
@@ -126,6 +134,8 @@ public class GameCharacter extends Pane {
     }
     public void jump() {
         if (canJump) {
+            imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_JUMP.getPath())));
+            imageView.tick();
             yVelocity = JUMP_SPEED;
             canJump = false;
             isJumping = true;
@@ -135,13 +145,12 @@ public class GameCharacter extends Pane {
     }
     public void crawl() {
         if (canCrawl && !isCrawling) {
+            imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_CRAWL.getPath())));
+            imageView.tick();
             double oldHeight = characterHeight;
             isCrawling = true;
             canCrawl = false;
             xVelocity = CRAWL_SPEED;
-            imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_CRAWL.getPath())));
-            imageView.setFitHeight(characterHeight*0.6);
-            imageView.tick();
             y += (int)(oldHeight * 0.4);
             setTranslateY(y);
         }
@@ -153,7 +162,6 @@ public class GameCharacter extends Pane {
             canCrawl = true;
             xVelocity = WALK_SPEED;
             imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_WALK.getPath())));
-            imageView.setFitHeight(characterHeight);
             imageView.tick();
             y -= (int)(oldHeight * 0.4);
             setTranslateY(y);
@@ -239,12 +247,31 @@ public class GameCharacter extends Pane {
         }
     }
 
-    // SFX
+    // FX
     public void deadSFX() {
         audioManager.playSFX("assets/character/player/Dead.wav");
     }
     public void spawnSFX() {
         audioManager.playSFX("assets/character/player/Spawn.wav");
+    }
+    public void startInvincibleFlash() {
+        isInvincible = true;
+        invincibleStartTime = System.currentTimeMillis();
+
+        FadeTransition flash = new FadeTransition(Duration.millis(200), this.imageView);
+        flash.setFromValue(1.0);
+        flash.setToValue(0.3);
+        flash.setAutoReverse(true);
+        flash.setCycleCount(FadeTransition.INDEFINITE);
+        flash.play();
+
+        PauseTransition end = new PauseTransition(Duration.millis(INVINCIBLE_DURATION));
+        end.setOnFinished(e -> {
+            isInvincible = false;
+            this.imageView.setOpacity(1.0);
+            flash.stop();
+        });
+        end.play();
     }
 
     // Painting
@@ -275,9 +302,9 @@ public class GameCharacter extends Pane {
         this.canJump = false;
         this.isJumping = false;
         this.isDead = false;
+        startInvincibleFlash();
     }
     public void loseLife() {
-
         life--;
         if (life <= 0) isDead = true;
     }
@@ -317,13 +344,18 @@ public class GameCharacter extends Pane {
         imageView.setImage(new Image(Launcher.class.getResourceAsStream(sprite.getPath())));
         imageView.tick();
 
-        javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(Duration.millis(250));
+        PauseTransition delay = new PauseTransition(Duration.millis(250));
         delay.setOnFinished(e -> {
             imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_WALK.getPath())));
         });
         delay.play();
     }
-
+    public boolean isInvincible() {
+        if (isInvincible && (System.currentTimeMillis() - invincibleStartTime >= INVINCIBLE_DURATION)) {
+            isInvincible = false;
+        }
+        return isInvincible;
+    }
 
     // Getter Setter
     public KeyCode getLeftKey() { return leftKey; }

@@ -33,6 +33,7 @@ public class StageManager {
             phaseInitialized = false;
             lastPhase = phase;
             logger.warn("Phase changed to: {}", phase);
+            gameStage.getMainCharacter().startInvincibleFlash();
         }
 
         switch (phase) {

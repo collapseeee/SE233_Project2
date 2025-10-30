@@ -134,7 +134,7 @@ public class GameLoop implements Runnable {
                 speedY = (int) (speedY / 1.4);
             }
 
-            int bulletX = gameCharacter.getFacing() == -1 ? gameStage.getMainCharacter().getX() : (int) (gameStage.getMainCharacter().getX() + gameStage.getMainCharacter().getWidth());
+            int bulletX = gameCharacter.getFacing() == 1 ? gameStage.getMainCharacter().getX() : (int) (gameStage.getMainCharacter().getX() + gameStage.getMainCharacter().getWidth());
             int bulletY = (gameStage.getMainCharacter().getY() + 32);
             Image normalBulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.BULLET_AMMO.getPath()));
             Image specialBulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.BULLET_SPECIAL.getPath()));
@@ -172,7 +172,7 @@ public class GameLoop implements Runnable {
                 gameCharacter.resetShotCounter();
             } else {
                 // Fire normal bullet
-                Bullet bullet = new Bullet(bulletX, bulletY, speedX, speedY, normalBulletImage);
+                Bullet bullet = new Bullet(bulletX, bulletY, speedX, speedY, normalBulletImage, true);
                 gameStage.getBulletList().add(bullet);
                 gameStage.getSceneUpdateQueue().queueAdd(bullet);
                 bullet.gunshotVFX();
@@ -191,8 +191,8 @@ public class GameLoop implements Runnable {
 
             List<EnemyCharacter> enemies = new ArrayList<>(gameStage.getEnemyList());
             for (EnemyCharacter enemy : enemies) {
-                if (bullet.collidesWithEnemy(enemy)) {
-                    logger.info("Bullet hits {} at X:{}, Y:{}.", enemy.getType(), bullet.getX(), bullet.getY());
+                if (bullet.collidesWithEnemy(enemy) && bullet.isFriendly()) {
+                    logger.info("Friendly Bullet hits {} at X:{}, Y:{}.", enemy.getType(), bullet.getX(), bullet.getY());
 
                     bullet.explodeVFX();
                     bullet.explode(gameStage);
@@ -208,6 +208,20 @@ public class GameLoop implements Runnable {
                     break;
                 }
             }
+
+            if (bullet.collidesWithCharacter(gameCharacter) && !bullet.isFriendly()) {
+                if (!gameCharacter.isInvincible()) {
+                    logger.info("Enemy bullet hit player! Life -1, Current life: {}.", gameCharacter.getLife());
+                    bullet.explodeVFX();
+                    gameCharacter.deadSFX();
+                    gameCharacter.loseLife();
+                    gameCharacter.respawn();
+                } else {
+                    logger.debug("Bullet ignored: player is invincible.");
+                }
+                toRemove.add(bullet);
+            }
+
         }
 
         if (!toRemove.isEmpty()) {

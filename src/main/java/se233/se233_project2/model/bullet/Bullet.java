@@ -9,6 +9,7 @@ import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
 import se233.se233_project2.model.character.EnemyCharacter;
+import se233.se233_project2.model.character.GameCharacter;
 import se233.se233_project2.model.sprite.AnimatedSprite;
 import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;
@@ -21,14 +22,16 @@ public class Bullet extends Pane {
     private int speedX;
     private int speedY;
     private int damage;
+    private boolean friendly;
 
 
-    public Bullet(int x, int y, int speedX, int speedY, Image bulletImage) {
+    public Bullet(int x, int y, int speedX, int speedY, Image bulletImage, boolean friendly) {
         this.x = x;
         this.y = y;
         this.speedX = speedX;
         this.speedY = speedY;
         this.damage = 1;
+        this.friendly = friendly;
 
         imageView = new ImageView(bulletImage);
         imageView.setFitWidth(10);
@@ -46,10 +49,17 @@ public class Bullet extends Pane {
     }
 
     public boolean collidesWithEnemy(EnemyCharacter enemy) {
-        return (this.getX() + this.getWidth() > enemy.getX() &&
-                this.getX() < enemy.getX() + enemy.getWidth()) &&
-                (this.getY() + this.getHeight() > enemy.getY() &&
-                        this.getY() < enemy.getY() + enemy.getHeight());
+        return (this.x + this.getWidth() > enemy.getX() &&
+                this.x < enemy.getX() + enemy.getEnemyWidth()) &&
+                (this.y + this.getHeight() > enemy.getY() &&
+                        this.y < enemy.getY() + enemy.getEnemyHeight());
+    }
+
+    public boolean collidesWithCharacter(GameCharacter gameCharacter) {
+        return (this.x + this.getWidth() > gameCharacter.getX() &&
+                this.x < gameCharacter.getX() + gameCharacter.getCharacterWidth()) &&
+                (this.y + this.getHeight() > gameCharacter.getY() &&
+                        this.y < gameCharacter.getY() + gameCharacter.getCharacterHeight());
     }
 
     public boolean collidesWithBound() {
@@ -105,4 +115,5 @@ public class Bullet extends Pane {
     public void setSpeedY(int speedY) { this.speedY = speedY; }
     public int getDamage() { return  damage; }
     public void setDamage(int damage) { this.damage = damage; }
+    public boolean isFriendly() { return friendly; }
 }
