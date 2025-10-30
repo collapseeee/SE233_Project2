@@ -27,6 +27,9 @@ public class EnemyCharacter extends Pane {
     private int y;
     private final int startX;
     private final int startY;
+    private final int PATROL_RANGE = 100;
+    private final int leftPatrolRange;
+    private final int rightPatrolRange;
     private final int enemyWidth;
     private final int enemyHeight;
     private final int score;
@@ -36,6 +39,7 @@ public class EnemyCharacter extends Pane {
     private int yVelocity = 0;
     private int speed;
     private long lastShotTime = 0;
+    private final int shootRange;
 
     boolean isAlive = true;
     boolean isMoveLeft = false;
@@ -48,6 +52,8 @@ public class EnemyCharacter extends Pane {
         SpriteAsset spriteAsset = enemyType.getSpriteAsset();
         this.startX = x;
         this.startY = y;
+        this.leftPatrolRange = startX - PATROL_RANGE;
+        this.rightPatrolRange = startX + PATROL_RANGE;
         this.x = x;
         this.y = y;
         this.type = enemyType;
@@ -66,6 +72,13 @@ public class EnemyCharacter extends Pane {
         this.imageView.setFitWidth(spriteAsset.getWidth());
         this.imageView.setFitHeight(spriteAsset.getHeight());
         this.getChildren().addAll(this.imageView);
+
+        this.shootRange = switch (enemyType) {
+            case MINION_1 -> 400;
+            case MINION_2 -> 600;
+            case MINION_3 -> 700;
+            case BOSS_1, BOSS_2, BOSS_3 -> 900;
+        };
     }
 
     // Movement
@@ -112,18 +125,36 @@ public class EnemyCharacter extends Pane {
             isFalling = false;
         }
     }
-    public void updateMovingAI(GameCharacter gameCharacter) { // For MINION_2 and MINION_3
-        if (x > gameCharacter.getX() + (gameCharacter.getCharacterWidth()/2) + 150) {
+    public void updateMovingAI(GameStage gameStage, GameCharacter gameCharacter) {
+        if (!isPlayerInRange(gameCharacter)) {
             this.getImageView().tick();
-            this.moveLeft();
-        } else if (x < gameCharacter.getX() - (gameCharacter.getCharacterWidth()/2) - 150) {
-            this.getImageView().tick();
-            this.moveRight();
-        } else {
-            this.stop();
+
+            if (isMoveRight && x < rightPatrolRange) {
+                moveRight();
+            } else if (isMoveRight && x >= rightPatrolRange) {
+                moveLeft(); // turn around at right bound
+            } else if (isMoveLeft && x > leftPatrolRange) {
+                moveLeft();
+            } else if (isMoveLeft && x <= leftPatrolRange) {
+                moveRight(); // turn around at left bound
+            } else {
+                // if idle initially, start patrolling to the right
+                moveRight();
+            }
         }
-        if (y < gameCharacter.getY() - gameCharacter.getCharacterHeight() - 5) {
-            this.jump();
+        else {
+            stop(); // stop walking before shooting
+            facePlayer(gameCharacter); // face toward player
+            shoot(gameStage, gameCharacter); // fire toward player
+        }
+    }
+    private void facePlayer(GameCharacter gameCharacter) {
+        if (gameCharacter.getX() + gameCharacter.getCharacterWidth()/2.0 < x + enemyWidth/2.0) {
+            setScaleX(-1);
+            facing = -1;
+        } else {
+            setScaleX(1);
+            facing = 1;
         }
     }
 
@@ -221,10 +252,14 @@ public class EnemyCharacter extends Pane {
         Image bulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.BULLET_AMMO.getPath()));
         Bullet bullet = new Bullet(bulletX, bulletY, velocityX, velocityY, bulletImage);
 
-        javafx.application.Platform.runLater(() -> {
-            gameStage.getBulletList().add(bullet);
-            gameStage.getChildren().add(bullet);
-        });
+        gameStage.getBulletList().add(bullet);
+        gameStage.getSceneUpdateQueue().queueAdd(bullet);
+    }
+    private boolean isPlayerInRange(GameCharacter player) {
+        double dx = (player.getX() + player.getCharacterWidth() / 2.0) - (x + enemyWidth / 2.0);
+        double dy = (player.getY() + player.getCharacterHeight() / 2.0) - (y + enemyHeight / 2.0);
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        return distance <= shootRange;
     }
 
     // Damage
@@ -243,7 +278,7 @@ public class EnemyCharacter extends Pane {
         }
     }
     public void deadSFX() {
-        audioManager.playSFX("assets/character/enemy/Dead.wav");
+        audioManager.playSFX("assets/character/minion/Dead.wav");
     }
 
     // Painting

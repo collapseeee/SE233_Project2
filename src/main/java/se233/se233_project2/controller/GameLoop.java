@@ -92,7 +92,7 @@ public class GameLoop implements Runnable {
                 enemy.deadSFX();
                 toRemove.add(enemy);
             } else {
-                enemy.updateMovingAI(gameStage.getMainCharacter());
+                enemy.updateMovingAI(gameStage ,gameStage.getMainCharacter());
             }
         }
 
@@ -117,6 +117,7 @@ public class GameLoop implements Runnable {
         boolean rightPressed = gameStage.getKeys().isPressed(gameCharacter.getRightKey());
 
         if (shooting && gameCharacter.canShoot()) {
+            gameCharacter.playShootingAnimation(upPressed, downPressed, leftPressed, rightPressed, gameStage);
             int direction = gameStage.getMainCharacter().getFacing();
             final int bulletSpeed = 50;
             int speedX = 0, speedY = 0;
@@ -127,52 +128,58 @@ public class GameLoop implements Runnable {
             if (rightPressed) speedX = bulletSpeed;
 
             if (speedX == 0 && speedY == 0) {
-                speedX = bulletSpeed*direction;
+                speedX = bulletSpeed * direction;
             } else if (speedX != 0 && speedY != 0) {
                 speedX = (int) (speedX / 1.4);
                 speedY = (int) (speedY / 1.4);
             }
 
-            int bulletX = (int)(gameStage.getMainCharacter().getX() + gameStage.getMainCharacter().getWidth()/2);
-            int bulletY = (int)(gameStage.getMainCharacter().getY() + gameStage.getMainCharacter().getHeight()/2);
+            int bulletX = gameCharacter.getFacing() == -1 ? gameStage.getMainCharacter().getX() : (int) (gameStage.getMainCharacter().getX() + gameStage.getMainCharacter().getWidth());
+            int bulletY = (gameStage.getMainCharacter().getY() + 32);
             Image normalBulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.BULLET_AMMO.getPath()));
             Image specialBulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.BULLET_SPECIAL.getPath()));
 
-            if (gameCharacter.canSpecial()) {
-                for (int i = 0; i < 3; i++) {
-                    int delay = i * 200; // 200 ms between each bullet
-                    int finalSpeedX = speedX;
-                    int finalSpeedY = speedY;
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(delay);
-                            int sx = (int) (finalSpeedX * 1.2);
-                            int sy = (int) (finalSpeedY * 1.2);
+            if (gameCharacter.shouldFireSpecial()) {
+                // Calculate spread angle (15 degrees between bullets)
+                double baseAngle = Math.atan2(speedY, speedX);
+                double spreadAngle = Math.toRadians(15);
 
-                            SpecialBullet special = new SpecialBullet(bulletX, bulletY, sx, sy, specialBulletImage);
-                            gameStage.getBulletList().add(special);
-                            gameStage.getSceneUpdateQueue().queueAdd(special);
-                            special.gunshotVFX();
+                // Center bullet
+                int centerSpeedX = (int) (bulletSpeed * Math.cos(baseAngle));
+                int centerSpeedY = (int) (bulletSpeed * Math.sin(baseAngle));
+                SpecialBullet centerBullet = new SpecialBullet(bulletX, bulletY, centerSpeedX, centerSpeedY, specialBulletImage);
+                gameStage.getBulletList().add(centerBullet);
+                gameStage.getSceneUpdateQueue().queueAdd(centerBullet);
 
-                            logger.info("Special bullets fires at X: {}, Y {}", bulletX, bulletY);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }).start();
-                }
+                // Upper bullet (rotated upward)
+                double upperAngle = baseAngle - spreadAngle;
+                int upperSpeedX = (int) (bulletSpeed * Math.cos(upperAngle));
+                int upperSpeedY = (int) (bulletSpeed * Math.sin(upperAngle));
+                SpecialBullet upperBullet = new SpecialBullet(bulletX, bulletY, upperSpeedX, upperSpeedY, specialBulletImage);
+                gameStage.getBulletList().add(upperBullet);
+                gameStage.getSceneUpdateQueue().queueAdd(upperBullet);
+
+                // Lower bullet (rotated downward)
+                double lowerAngle = baseAngle + spreadAngle;
+                int lowerSpeedX = (int) (bulletSpeed * Math.cos(lowerAngle));
+                int lowerSpeedY = (int) (bulletSpeed * Math.sin(lowerAngle));
+                SpecialBullet lowerBullet = new SpecialBullet(bulletX, bulletY, lowerSpeedX, lowerSpeedY, specialBulletImage);
+                gameStage.getBulletList().add(lowerBullet);
+                gameStage.getSceneUpdateQueue().queueAdd(lowerBullet);
+
+                centerBullet.gunshotVFX();
+                logger.info("SPECIAL TRIPLE SHOT fired at X: {}, Y: {}", bulletX, bulletY);
+                gameCharacter.resetShotCounter();
             } else {
+                // Fire normal bullet
                 Bullet bullet = new Bullet(bulletX, bulletY, speedX, speedY, normalBulletImage);
                 gameStage.getBulletList().add(bullet);
-
-                // Queue scene addition
                 gameStage.getSceneUpdateQueue().queueAdd(bullet);
                 bullet.gunshotVFX();
-
-                logger.info("Normal bullet fires at X: {}, Y {}", bulletX, bulletY);
-                gameCharacter.markShoot();
+                logger.info("Normal bullet fires at X: {}, Y: {}", bulletX, bulletY);
             }
+            gameCharacter.markShoot();
         }
-
         List<Bullet> toRemove = new ArrayList<>();
         for (Bullet bullet : bullets) {
             bullet.move();

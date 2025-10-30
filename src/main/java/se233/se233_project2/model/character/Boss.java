@@ -31,7 +31,7 @@ public class Boss extends EnemyCharacter {
     }
 
     @Override
-    public void updateMovingAI(GameCharacter gameCharacter) {
+    public void updateMovingAI(GameStage gameStage, GameCharacter gameCharacter) {
         // Disable moving AI
     }
 

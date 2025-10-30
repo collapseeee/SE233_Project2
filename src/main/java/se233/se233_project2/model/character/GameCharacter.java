@@ -9,6 +9,7 @@ import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
 import se233.se233_project2.model.GamePlatform;
 import se233.se233_project2.model.sprite.AnimatedSprite;
+import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;
 
 import java.util.List;
@@ -138,10 +139,11 @@ public class GameCharacter extends Pane {
             isCrawling = true;
             canCrawl = false;
             xVelocity = CRAWL_SPEED;
+            imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_CRAWL.getPath())));
             imageView.setFitHeight(characterHeight*0.6);
-            // Move character DOWN by the difference in height
-            y += (int)(oldHeight * 0.4); // Move down by 40% of height
-            setTranslateY(y); // Update position immediately
+            imageView.tick();
+            y += (int)(oldHeight * 0.4);
+            setTranslateY(y);
         }
     }
     public void stopCrawl() {
@@ -150,10 +152,11 @@ public class GameCharacter extends Pane {
             isCrawling = false;
             canCrawl = true;
             xVelocity = WALK_SPEED;
+            imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_WALK.getPath())));
             imageView.setFitHeight(characterHeight);
-            // Move character UP by the difference in height
-            y -= (int)(oldHeight * 0.4); // Move up by 40% of height
-            setTranslateY(y); // Update position immediately
+            imageView.tick();
+            y -= (int)(oldHeight * 0.4);
+            setTranslateY(y);
         }
     }
     public void run() {
@@ -282,23 +285,45 @@ public class GameCharacter extends Pane {
     // Attacking
     private long lastShootTime = 0;
     private final long shootCooldown = 500; // ms
-    private int shootCount = 0;
-    private static final int SHOT_FOR_SPECIAL = 3;
+    private int shotsFired = 0;
+    private static final int SHOTS_FOR_SPECIAL = 3;
     public boolean canShoot() {
         return System.currentTimeMillis() - lastShootTime > shootCooldown;
     }
     public void markShoot() {
-        lastShootTime =  System.currentTimeMillis();
+        lastShootTime = System.currentTimeMillis();
+        shotsFired++;
     }
-    public boolean canSpecial() {
-        if (shootCount == 3) {
-            shootCount = 0;
-            return true;
-        } else {
-            shootCount++;
-            return false;
+    public boolean shouldFireSpecial() {
+        return shotsFired >= SHOTS_FOR_SPECIAL;
+    }
+    public void resetShotCounter() {
+        shotsFired = 0;
+    }
+    public void playShootingAnimation(boolean up, boolean down, boolean left, boolean right, GameStage gameStage) {
+        SpriteAsset sprite;
+
+        if (up) {
+            sprite = SpriteAsset.PLAYER_SHOOT_UP;
+        } else if (down) {
+            sprite = SpriteAsset.PLAYER_SHOOT_DOWN_45;
+        } else if (up && left || up && right) {
+            sprite = SpriteAsset.PLAYER_SHOOT_UP_45;
         }
+        else {
+            sprite = SpriteAsset.PLAYER_SHOOT_HORIZONTAL;
+        }
+
+        imageView.setImage(new Image(Launcher.class.getResourceAsStream(sprite.getPath())));
+        imageView.tick();
+
+        javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(Duration.millis(250));
+        delay.setOnFinished(e -> {
+            imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_WALK.getPath())));
+        });
+        delay.play();
     }
+
 
     // Getter Setter
     public KeyCode getLeftKey() { return leftKey; }

@@ -16,27 +16,29 @@ public enum SpriteAsset {
     BULLET_EXPLODE("assets/character/player/sprite/Bullet_Effect.png",3, 3, 1, 0, 0,32, 32),
 
     // Enemy
-    ENEMY_MINION1_IDLE("assets/character/enemy/Minion1_IDLE.png", 6, 3, 2, 0, 0, 32, 64),
-    ENEMY_MINION1_AIM_HORIZONTAL("assets/character/enemy/Minion1_IDLE.png", 6, 3, 2, 0, 0, 32, 64),
+    ENEMY_MINION1_IDLE("assets/character/minion/Minion1_IDLE.png", 6, 3, 2, 0, 0, 32, 64),
+    ENEMY_MINION1_AIM_HORIZONTAL("assets/character/minion/Minion1_IDLE.png", 6, 3, 2, 0, 0, 32, 64),
     ENEMY_BOSS1("assets/character/boss/Boss1_IDLE.png", 168, 800),
-    ENEMY_MINION2("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
+
+    ENEMY_MINION2("assets/character/minion/Minion.png", 6, 6, 1, 0, 0, 64, 64),
     ENEMY_BOSS2("assets/character/boss/Boss2_IDLE.png", 112, 96),
     ENEMY_BOSS2_SHOOT("assets/character/boss/Boss2_SHOOT.png", 112, 113),
-    ENEMY_MINION3("assets/character/enemy/Minion.png", 6, 6, 1, 0, 0, 64, 64),
-    ENEMY_BOSS3_WALK("assets/character/enemy/Boss3_WALK.png", 10, 5, 2, 0, 0, 120, 105),
-    ENEMY_BOSS3_SHOOT("assets/character/enemy/Boss3_SHOOT.png", 8, 4, 2, 0, 0, 120, 105),
-    ENEMY_BOSS3_BULLET("assets/character/enemy/Boss3_BULLET.png", 16, 16),
+
+    ENEMY_MINION3("assets/character/minion/Minion.png", 6, 6, 1, 0, 0, 64, 64),
+    ENEMY_BOSS3_WALK("assets/character/boss/Boss3_WALK.png", 10, 5, 2, 0, 0, 120, 105),
+    ENEMY_BOSS3_SHOOT("assets/character/boss/Boss3_SHOOT.png", 8, 4, 2, 0, 0, 120, 105),
+    ENEMY_BOSS3_BULLET("assets/character/boss/Boss3_BULLET.png", 16, 16),
 
     // UI
     HEART_FILLED("assets/character/player/heart/filled_heart.png", 16, 16),
     HEART_EMPTY("assets/character/player/heart/empty_heart.png", 16, 16);
 
     private final String path;
-    private int frameCount;
-    private int columns;
-    private int rows;
-    private int offsetX;
-    private int offsetY;
+    private final int frameCount;
+    private final int columns;
+    private final int rows;
+    private final int offsetX;
+    private final int offsetY;
     private final int width;
     private final int height;
 
