@@ -43,7 +43,7 @@ public class GameStage extends Pane {
         currentGamePhase = GamePhase.START_MENU;
         sceneUpdateQueue = new SceneUpdateQueue(this);
 
-        SpriteAsset playerAsset = SpriteAsset.PLAYER_IDLE;
+        SpriteAsset playerAsset = SpriteAsset.PLAYER_WALK;
         mainCharacter = new GameCharacter(30, 30,
                 playerAsset.getPath(), playerAsset.getFrameCount(), playerAsset.getColumns(), playerAsset.getRows(), playerAsset.getWidth(), playerAsset.getHeight(),
                 KeyCode.A, KeyCode.D, KeyCode.W, KeyCode.S, KeyCode.SPACE, KeyCode.Z, KeyCode.X, KeyCode.SHIFT, 3);

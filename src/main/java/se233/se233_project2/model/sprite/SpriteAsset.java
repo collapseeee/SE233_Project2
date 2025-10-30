@@ -2,14 +2,18 @@ package se233.se233_project2.model.sprite;
 
 public enum SpriteAsset {
     // Player
-    PLAYER_IDLE("assets/character/player/Player_Idle.png", 6, 3, 2, 0, 0, 32, 64),
-    PLAYER_RUN("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
-    PLAYER_JUMP("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
-    PLAYER_CRAWL("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
-    PLAYER_SHOOT("assets/character/player/Character.png", 6, 6, 1, 0, 0, 64, 64),
-    BULLET_AMMO("assets/character/player/Bullet.png",30, 30),
-    BULLET_SPECIAL("assets/character/player/Special_Bullet.png",30, 30),
-    BULLET_EXPLODE("assets/character/player/Bullet_Effect.png",3, 3, 1, 0, 0,32, 32),
+    PLAYER_WALK("assets/character/player/sprite/Player_WALK.png", 6, 3, 2, 0, 0, 48, 64),
+    PLAYER_RUN("assets/character/player/sprite/Player_SHOOT_HORIZONTAL.png", 6, 3, 2, 0, 0, 48, 64),
+    PLAYER_JUMP("assets/character/player/sprite/Player_JUMP.png", 4, 2, 2, 0, 0, 48, 64),
+    PLAYER_CRAWL("assets/character/player/sprite/Player_CRAWL.png", 2, 2, 1, 0, 0, 48, 64),
+    PLAYER_SHOOT_HORIZONTAL("assets/character/player/sprite/Player_SHOOT_HORIZONTAL.png", 6, 3, 2, 0, 0, 48, 64),
+    PLAYER_SHOOT_UP("assets/character/player/sprite/Player_SHOOT_UP.png", 2, 2, 1, 0, 0, 48, 64),
+    PLAYER_SHOOT_UP_45("assets/character/player/sprite/Player_SHOOT_UP_45.png", 6, 3, 2, 0, 0, 48, 64),
+    PLAYER_SHOOT_DOWN_45("assets/character/player/sprite/Player_SHOOT_DOWN_45.png", 2, 2, 1, 0, 0, 48, 64),
+
+    BULLET_AMMO("assets/character/player/sprite/Bullet.png",30, 30),
+    BULLET_SPECIAL("assets/character/player/sprite/Special_Bullet.png",30, 30),
+    BULLET_EXPLODE("assets/character/player/sprite/Bullet_Effect.png",3, 3, 1, 0, 0,32, 32),
 
     // Enemy
     ENEMY_MINION1_IDLE("assets/character/enemy/Minion1_IDLE.png", 6, 3, 2, 0, 0, 32, 64),
@@ -24,8 +28,8 @@ public enum SpriteAsset {
     ENEMY_BOSS3_BULLET("assets/character/enemy/Boss3_BULLET.png", 16, 16),
 
     // UI
-    HEART_FILLED("assets/character/player/filled_heart.png", 16, 16),
-    HEART_EMPTY("assets/character/player/empty_heart.png", 16, 16);
+    HEART_FILLED("assets/character/player/heart/filled_heart.png", 16, 16),
+    HEART_EMPTY("assets/character/player/heart/empty_heart.png", 16, 16);
 
     private final String path;
     private int frameCount;
