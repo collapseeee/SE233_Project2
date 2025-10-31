@@ -2,6 +2,7 @@ package se233.se233_project2.model.character;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -47,11 +48,11 @@ public class GameCharacter extends Pane {
     private int xVelocity = 0;
     private int yVelocity = 0;
 
-    boolean isMoveLeft = false;
-    boolean isMoveRight = false;
+    public boolean isMoveLeft = false;
+    public boolean isMoveRight = false;
     boolean isFalling = true;
     boolean canJump = false;
-    boolean isJumping = false;
+    public boolean isJumping = false;
     boolean canCrawl = false;
     boolean isCrawling = false;
     boolean isDead = false;
@@ -60,6 +61,8 @@ public class GameCharacter extends Pane {
     private boolean isInvincible = false;
     private long invincibleStartTime = 0;
     private static final long INVINCIBLE_DURATION = 3000; // 3 seconds
+    private FadeTransition invincibleFlash;
+    private PauseTransition invincibleTimer;
 
     public GameCharacter(int x, int y, String imgName, int count, int column, int row, int width, int height,
                          KeyCode leftKey, KeyCode rightKey, KeyCode upKey, KeyCode downKey,
@@ -80,9 +83,6 @@ public class GameCharacter extends Pane {
         this.imageView.setFitHeight((int) (height));
         this.getChildren().addAll(this.imageView);
 
-        this.isInvincible = true;
-        this.invincibleStartTime = System.currentTimeMillis();
-
         this.leftKey = leftKey;
         this.rightKey = rightKey;
         this.upKey = upKey;
@@ -96,13 +96,11 @@ public class GameCharacter extends Pane {
 
     // Movement
     public void moveLeft() {
-        setScaleX(-1);
         facing = -1;
         isMoveLeft = true;
         isMoveRight = false;
     }
     public void moveRight() {
-        setScaleX(1);
         facing = 1;
         isMoveLeft = false;
         isMoveRight = true;
@@ -112,7 +110,6 @@ public class GameCharacter extends Pane {
         isMoveRight = false;
     }
     public void moveX() {
-        setTranslateX(x);
         if(isMoveLeft) {
             x = x - xVelocity;
         }
@@ -121,7 +118,6 @@ public class GameCharacter extends Pane {
         }
     }
     public void moveY() {
-        setTranslateY(y);
         // Apply gravity when falling or jumping
         if(isFalling) {
             yVelocity += GRAVITY;
@@ -135,6 +131,7 @@ public class GameCharacter extends Pane {
     public void jump() {
         if (canJump) {
             imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_JUMP.getPath())));
+            imageView.resetFrame();
             imageView.tick();
             yVelocity = JUMP_SPEED;
             canJump = false;
@@ -144,29 +141,33 @@ public class GameCharacter extends Pane {
         }
     }
     public void crawl() {
-        if (canCrawl && !isCrawling) {
-            imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_CRAWL.getPath())));
-            imageView.tick();
-            double oldHeight = characterHeight;
+        if (!isCrawling && canCrawl) {
             isCrawling = true;
             canCrawl = false;
             xVelocity = CRAWL_SPEED;
-            y += (int)(oldHeight * 0.4);
-            setTranslateY(y);
+
+            double oldHeight = characterHeight;
+            double newHeight = oldHeight * 0.6;
+            y += (oldHeight - newHeight);
+
+            imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_CRAWL.getPath())));
+            imageView.setFitHeight(newHeight);
         }
     }
     public void stopCrawl() {
         if (isCrawling) {
-            double oldHeight = characterHeight;
             isCrawling = false;
             canCrawl = true;
             xVelocity = WALK_SPEED;
+
+            double oldHeight = imageView.getFitHeight();
+            imageView.setFitHeight(characterHeight);
+            y -= (characterHeight - oldHeight);
+
             imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_WALK.getPath())));
-            imageView.tick();
-            y -= (int)(oldHeight * 0.4);
-            setTranslateY(y);
         }
     }
+
     public void run() {
         if (!isRunning) {
             isRunning = true;
@@ -197,6 +198,8 @@ public class GameCharacter extends Pane {
             isJumping = false;
             isFalling = true;
             yVelocity = 0;
+            imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_WALK.getPath())));
+            imageView.tick();
         }
     }
     public void checkReachPlatform(List<GamePlatform> platforms) {
@@ -254,30 +257,41 @@ public class GameCharacter extends Pane {
     public void spawnSFX() {
         audioManager.playSFX("assets/character/player/Spawn.wav");
     }
-    public void startInvincibleFlash() {
+    public void startInvincibleFlash(boolean reset) {
+        if (invincibleFlash != null) invincibleFlash.stop();
+        if (invincibleTimer != null) invincibleTimer.stop();
+
+        if (reset) {
+            this.imageView.setOpacity(1.0);
+        }
+
         isInvincible = true;
         invincibleStartTime = System.currentTimeMillis();
 
-        FadeTransition flash = new FadeTransition(Duration.millis(200), this.imageView);
-        flash.setFromValue(1.0);
-        flash.setToValue(0.3);
-        flash.setAutoReverse(true);
-        flash.setCycleCount(FadeTransition.INDEFINITE);
-        flash.play();
+        invincibleFlash = new FadeTransition(Duration.millis(200), this.imageView);
+        invincibleFlash.setFromValue(1.0);
+        invincibleFlash.setToValue(0.3);
+        invincibleFlash.setAutoReverse(true);
+        invincibleFlash.setCycleCount(FadeTransition.INDEFINITE);
+        invincibleFlash.play();
 
-        PauseTransition end = new PauseTransition(Duration.millis(INVINCIBLE_DURATION));
-        end.setOnFinished(e -> {
+        invincibleTimer = new PauseTransition(Duration.millis(INVINCIBLE_DURATION));
+        invincibleTimer.setOnFinished(e -> {
             isInvincible = false;
             this.imageView.setOpacity(1.0);
-            flash.stop();
+            invincibleFlash.stop();
         });
-        end.play();
+        invincibleTimer.playFromStart();
     }
+
+    public void activateInvincible() {
+        Platform.runLater(() -> startInvincibleFlash(true)); // run after attached
+    }
+
 
     // Painting
     public void repaint() {
-        moveX();
-        moveY();
+        imageView.tick();
     }
     public void collapsed() {
         double oldHeight = this.imageView.getFitHeight();
@@ -302,7 +316,7 @@ public class GameCharacter extends Pane {
         this.canJump = false;
         this.isJumping = false;
         this.isDead = false;
-        startInvincibleFlash();
+        Platform.runLater(this::activateInvincible);
     }
     public void loseLife() {
         life--;
@@ -329,7 +343,7 @@ public class GameCharacter extends Pane {
     }
     public void playShootingAnimation(boolean up, boolean down, boolean left, boolean right, GameStage gameStage) {
         SpriteAsset sprite;
-
+        if (isCrawling) return;
         if (up) {
             sprite = SpriteAsset.PLAYER_SHOOT_UP;
         } else if (down) {

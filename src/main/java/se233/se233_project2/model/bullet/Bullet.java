@@ -34,8 +34,8 @@ public class Bullet extends Pane {
         this.friendly = friendly;
 
         imageView = new ImageView(bulletImage);
-        imageView.setFitWidth(10);
-        imageView.setFitHeight(10);
+        imageView.setFitWidth(15);
+        imageView.setFitHeight(15);
         getChildren().add(imageView);
         setLayoutX(x);
         setLayoutY(y);

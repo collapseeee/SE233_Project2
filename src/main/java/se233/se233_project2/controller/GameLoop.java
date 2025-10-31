@@ -134,8 +134,10 @@ public class GameLoop implements Runnable {
                 speedY = (int) (speedY / 1.4);
             }
 
-            int bulletX = gameCharacter.getFacing() == 1 ? gameStage.getMainCharacter().getX() : (int) (gameStage.getMainCharacter().getX() + gameStage.getMainCharacter().getWidth());
-            int bulletY = (gameStage.getMainCharacter().getY() + 32);
+            int bulletX = gameCharacter.getFacing() == 1
+                    ? (gameCharacter.getX() + gameCharacter.getCharacterWidth())  // from right edge
+                    : (gameCharacter.getX());  // from left edge (offset)
+            int bulletY = (gameCharacter.getY() + gameCharacter.getCharacterHeight() / 2);
             Image normalBulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.BULLET_AMMO.getPath()));
             Image specialBulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.BULLET_SPECIAL.getPath()));
 
@@ -184,11 +186,13 @@ public class GameLoop implements Runnable {
         for (Bullet bullet : bullets) {
             bullet.move();
 
+            // A Bullet hits bound
             if (bullet.collidesWithBound()) {
                 toRemove.add(bullet);
                 continue;
             }
 
+            // A Bullet hits an enemy
             List<EnemyCharacter> enemies = new ArrayList<>(gameStage.getEnemyList());
             for (EnemyCharacter enemy : enemies) {
                 if (bullet.collidesWithEnemy(enemy) && bullet.isFriendly()) {
@@ -209,10 +213,10 @@ public class GameLoop implements Runnable {
                 }
             }
 
+            // A Bullet hits a player
             if (bullet.collidesWithCharacter(gameCharacter) && !bullet.isFriendly()) {
                 if (!gameCharacter.isInvincible()) {
                     logger.info("Enemy bullet hit player! Life -1, Current life: {}.", gameCharacter.getLife());
-                    bullet.explodeVFX();
                     gameCharacter.deadSFX();
                     gameCharacter.loseLife();
                     gameCharacter.respawn();

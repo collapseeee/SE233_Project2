@@ -41,12 +41,12 @@ public class EnemyCharacter extends Pane {
     private long lastShotTime = 0;
     private final int shootRange;
 
-    boolean isAlive = true;
-    boolean isMoveLeft = false;
-    boolean isMoveRight = false;
-    boolean isFalling = true;
-    boolean canJump = false;
-    boolean isJumping = false;
+    public boolean isAlive = true;
+    public boolean isMoveLeft = false;
+    public boolean isMoveRight = false;
+    public boolean isFalling = true;
+    public boolean canJump = false;
+    public boolean isJumping = false;
 
     public EnemyCharacter(int x, int y, EnemyType enemyType) {
         SpriteAsset spriteAsset = enemyType.getSpriteAsset();
@@ -83,14 +83,12 @@ public class EnemyCharacter extends Pane {
 
     // Movement
     public void moveLeft() {
-        setScaleX(-1);
         facing = -1;
         isMoveLeft = true;
         isMoveRight = false;
     }
     public void moveRight() {
         facing = 1;
-        setScaleX(1);
         isMoveLeft = false;
         isMoveRight = true;
     }
@@ -99,7 +97,6 @@ public class EnemyCharacter extends Pane {
         isMoveRight = false;
     }
     public void moveX() {
-        setTranslateX(x);
         if(isMoveLeft) {
             x = x - speed;
         }
@@ -108,7 +105,6 @@ public class EnemyCharacter extends Pane {
         }
     }
     public void moveY() {
-        setTranslateY(y);
         if(isFalling) {
             yVelocity = yVelocity >= JUMP_SPEED ? JUMP_SPEED : yVelocity+GRAVITY;
             y = y + yVelocity;
@@ -127,8 +123,6 @@ public class EnemyCharacter extends Pane {
     }
     public void updateMovingAI(GameStage gameStage, GameCharacter gameCharacter) {
         if (!isPlayerInRange(gameCharacter)) {
-            this.getImageView().tick();
-
             if (isMoveRight && x < rightPatrolRange) {
                 moveRight();
             } else if (isMoveRight && x >= rightPatrolRange) {
@@ -148,13 +142,7 @@ public class EnemyCharacter extends Pane {
         }
     }
     private void facePlayer(GameCharacter gameCharacter) {
-        if (gameCharacter.getX() + gameCharacter.getCharacterWidth()/2.0 < x + enemyWidth/2.0) {
-            setScaleX(-1);
-            facing = -1;
-        } else {
-            setScaleX(1);
-            facing = 1;
-        }
+        facing = (gameCharacter.getX() + gameCharacter.getCharacterWidth() / 2.0 < x + enemyWidth / 2.0) ? -1 : 1;
     }
 
     // Check
@@ -238,11 +226,11 @@ public class EnemyCharacter extends Pane {
         dx /= distance;
         dy /= distance;
 
-        int speed = 50;
+        int speed = 30;
         int velocityX = (int) (dx * speed);
         int velocityY = (int) (dy * speed);
 
-        Image bulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.ENEMY_MINION1_BULLET.getPath()));
+        Image bulletImage = new Image(Launcher.class.getResourceAsStream(SpriteAsset.ENEMY_MINION_BULLET.getPath()));
         Bullet bullet = new Bullet(bulletX, bulletY, velocityX, velocityY, bulletImage, false);
 
         gameStage.getBulletList().add(bullet);
@@ -274,16 +262,11 @@ public class EnemyCharacter extends Pane {
         audioManager.playSFX("assets/character/minion/Dead.wav");
     }
 
-    // Painting
-    public void repaint() {
-        moveX();
-        moveY();
-    }
+
     public void collapsed() {
         int oldHeight = (int) this.imageView.getFitHeight();
         this.imageView.setFitHeight(oldHeight * 0.4);
         this.y += oldHeight * 0.6;
-        this.repaint();
         PauseTransition delay = new PauseTransition(Duration.millis(300));
         delay.setOnFinished(e -> this.imageView.setFitHeight(oldHeight));
         delay.play();
@@ -313,4 +296,5 @@ public class EnemyCharacter extends Pane {
     public EnemyType getType() { return type; }
     public int getScore() { return score; }
     public void setFacing(int facing) { this.facing = facing; }
+    public void setX(int x) { this.x = x; }
 }

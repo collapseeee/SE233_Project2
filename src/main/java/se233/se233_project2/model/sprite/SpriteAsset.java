@@ -5,7 +5,7 @@ public enum SpriteAsset {
     PLAYER_WALK("assets/character/player/sprite/Player_WALK.png", 6, 3, 2, 0, 0, 48, 64),
     PLAYER_RUN("assets/character/player/sprite/Player_SHOOT_HORIZONTAL.png", 6, 3, 2, 0, 0, 48, 64),
     PLAYER_JUMP("assets/character/player/sprite/Player_JUMP.png", 4, 2, 2, 0, 0, 48, 64),
-    PLAYER_CRAWL("assets/character/player/sprite/Player_CRAWL.png", 2, 2, 1, 0, 0, 48, 64),
+    PLAYER_CRAWL("assets/character/player/sprite/Player_CRAWL.png", 2, 2, 1, 0, 0, 48, 26),
     PLAYER_SHOOT_HORIZONTAL("assets/character/player/sprite/Player_SHOOT_HORIZONTAL.png", 6, 3, 2, 0, 0, 48, 64),
     PLAYER_SHOOT_UP("assets/character/player/sprite/Player_SHOOT_UP.png", 2, 2, 1, 0, 0, 48, 64),
     PLAYER_SHOOT_UP_45("assets/character/player/sprite/Player_SHOOT_UP_45.png", 6, 3, 2, 0, 0, 48, 64),
@@ -13,19 +13,20 @@ public enum SpriteAsset {
 
     BULLET_AMMO("assets/character/player/sprite/Bullet.png",30, 30),
     BULLET_SPECIAL("assets/character/player/sprite/Special_Bullet.png",30, 30),
-    BULLET_EXPLODE("assets/character/player/sprite/Bullet_Effect.png",3, 3, 1, 0, 0,32, 32),
+    BULLET_EXPLODE("assets/character/player/sprite/Bullet_Effect.png",7, 7, 1, 0, 0,32, 32),
 
     // Enemy
-    ENEMY_MINION1_IDLE("assets/character/minion/Minion1_IDLE.png", 6, 3, 2, 0, 0, 32, 64),
-    ENEMY_MINION1_AIM_HORIZONTAL("assets/character/minion/Minion1_IDLE.png", 6, 3, 2, 0, 0, 32, 64),
-    ENEMY_MINION1_BULLET("assets/character/minion/Minion1_BULLET.png", 3, 3),
-    ENEMY_BOSS1("assets/character/boss/Boss1_IDLE.png", 168, 800),
+    ENEMY_MINION_BULLET("assets/character/minion/Minion_BULLET.png", 3, 3),
+    ENEMY_BOSS_BULLET("assets/character/minion/Boss_BULLET.png", 3, 3),
 
-    ENEMY_MINION2("assets/character/minion/Minion.png", 6, 6, 1, 0, 0, 64, 64),
+    ENEMY_MINION1("assets/character/minion/Minion1.png", 6, 3, 2, 0, 0, 48, 48),
+    ENEMY_BOSS1("assets/character/boss/Boss1_IDLE.png", 112, 800),
+
+    ENEMY_MINION2("assets/character/minion/Minion2.png", 6, 3, 2, 0, 0, 48, 48),
     ENEMY_BOSS2("assets/character/boss/Boss2_IDLE.png", 112, 96),
     ENEMY_BOSS2_SHOOT("assets/character/boss/Boss2_SHOOT.png", 112, 113),
 
-    ENEMY_MINION3("assets/character/minion/Minion.png", 6, 6, 1, 0, 0, 64, 64),
+    ENEMY_MINION3("assets/character/minion/Minion3.png", 6, 3, 2, 0, 0, 48, 48),
     ENEMY_BOSS3_WALK("assets/character/boss/Boss3_WALK.png", 10, 5, 2, 0, 0, 120, 105),
     ENEMY_BOSS3_SHOOT("assets/character/boss/Boss3_SHOOT.png", 8, 4, 2, 0, 0, 120, 105),
     ENEMY_BOSS3_BULLET("assets/character/boss/Boss3_BULLET.png", 16, 16),

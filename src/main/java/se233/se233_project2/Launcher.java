@@ -21,27 +21,29 @@ public class Launcher extends Application {
     @Override
     public void start(Stage primaryStage) {
         GameStage gameStage = new GameStage();
-        GameLoop gameLoop = new GameLoop(gameStage);
-        DrawingLoop drawingLoop = new DrawingLoop(gameStage);
-        AudioManager audioManager = new AudioManager();
-
         Scene scene = new Scene(gameStage, gameStage.WIDTH, gameStage.HEIGHT);
-        scene.setOnKeyPressed(event-> gameStage.getKeys().add(event.getCode()));
-        scene.setOnKeyReleased(event ->  gameStage.getKeys().remove(event.getCode()));
+
+        // Keyboard handling
+        scene.setOnKeyPressed(event -> gameStage.getKeys().add(event.getCode()));
+        scene.setOnKeyReleased(event -> gameStage.getKeys().remove(event.getCode()));
 
         primaryStage.setTitle("Contiam");
         primaryStage.getIcons().add(new Image(Launcher.class.getResourceAsStream("assets/icon.png")));
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        executorService = Executors.newFixedThreadPool(2);
-        executorService.submit(gameLoop);
-        executorService.submit(drawingLoop);
+        // Delay loop start slightly to allow JavaFX to finish first frame
+        Platform.runLater(() -> {
+            executorService = Executors.newFixedThreadPool(2);
+            executorService.submit(new GameLoop(gameStage));
+            executorService.submit(new DrawingLoop(gameStage));
+        });
 
+        AudioManager audioManager = new AudioManager();
         primaryStage.setOnCloseRequest(event -> {
-            primaryStage.close();
-            Platform.exit();
             audioManager.shutdown();
+            if (executorService != null) executorService.shutdownNow();
+            Platform.exit();
             System.exit(0);
         });
     }

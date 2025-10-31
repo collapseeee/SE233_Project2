@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import se233.se233_project2.model.character.Boss1;
 import se233.se233_project2.model.character.EnemyCharacter;
 import se233.se233_project2.model.GamePhase;
 import se233.se233_project2.model.character.EnemyType;
@@ -33,7 +34,6 @@ public class StageManager {
             phaseInitialized = false;
             lastPhase = phase;
             logger.warn("Phase changed to: {}", phase);
-            gameStage.getMainCharacter().startInvincibleFlash();
         }
 
         switch (phase) {
@@ -96,15 +96,13 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter minion1 = spawnMinion(EnemyType.MINION_1, 150, 150);
-            EnemyCharacter minion2 = spawnMinion(EnemyType.MINION_1, 350, 150);
             EnemyCharacter minion3 = spawnMinion(EnemyType.MINION_1, 330, 540);
             EnemyCharacter minion4 = spawnMinion(EnemyType.MINION_1, 1080, 540);
             EnemyCharacter minion5 = spawnMinion(EnemyType.MINION_1, 900, 350);
             EnemyCharacter minion6 = spawnMinion(EnemyType.MINION_1, 1000, 350);
             EnemyCharacter minion7 = spawnMinion(EnemyType.MINION_1, 1100, 350);
 
-            List<EnemyCharacter> minions = List.of(minion1, minion2, minion3, minion4, minion5, minion6, minion7);
+            List<EnemyCharacter> minions = List.of(minion3, minion4, minion5, minion6, minion7);
 
             logger.warn("Adding Minion Phase 1 to the Scene.");
             gameStage.getSceneUpdateQueue().queueAddAll(minions);
@@ -122,7 +120,7 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter boss1 = new Boss(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_1);
+            EnemyCharacter boss1 = new Boss1(gameStage);
             logger.info("{} spawns at X:{}, Y:{}.", boss1.getType(), boss1.getX(), boss1.getY());
 
             gameStage.getEnemyList().add(boss1);
@@ -154,17 +152,14 @@ public class StageManager {
     public void handleMinionPhase2() {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
-
-            EnemyCharacter minion1 = spawnMinion(EnemyType.MINION_2, 800, 350);
             EnemyCharacter minion2 = spawnMinion(EnemyType.MINION_2, 900, 350);
-            EnemyCharacter minion3 = spawnMinion(EnemyType.MINION_2, 1000, 350);
             EnemyCharacter minion4 = spawnMinion(EnemyType.MINION_2, 1100, 350);
             EnemyCharacter minion5 = spawnMinion(EnemyType.MINION_2, 550, 550);
             EnemyCharacter minion6 = spawnMinion(EnemyType.MINION_2, 650, 550);
             EnemyCharacter minion7 = spawnMinion(EnemyType.MINION_2, 1050, 550);
             EnemyCharacter minion8 = spawnMinion(EnemyType.MINION_2, 1150, 550);
 
-            List<EnemyCharacter> minions = List.of(minion1, minion2, minion3, minion4, minion5, minion6, minion7, minion8);
+            List<EnemyCharacter> minions = List.of(minion2, minion4, minion5, minion6, minion7, minion8);
 
             logger.warn("Add Minion Phase 2 to the Scene");
             gameStage.getSceneUpdateQueue().queueAddAll(minions);
@@ -215,18 +210,14 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter minion1 = spawnMinion(EnemyType.MINION_3, 200, 150);
             EnemyCharacter minion2 = spawnMinion(EnemyType.MINION_3, 300, 150);
-            EnemyCharacter minion3 = spawnMinion(EnemyType.MINION_3, 900, 150);
             EnemyCharacter minion4 = spawnMinion(EnemyType.MINION_3, 1000, 150);
-            EnemyCharacter minion5 = spawnMinion(EnemyType.MINION_3, 850, 500);
-            EnemyCharacter minion6 = spawnMinion(EnemyType.MINION_3, 950, 500);
             EnemyCharacter minion7 = spawnMinion(EnemyType.MINION_3, 1050, 500);
             EnemyCharacter minion8 = spawnMinion(EnemyType.MINION_3, 1150, 500);
             EnemyCharacter minion9 = spawnMinion(EnemyType.MINION_3, 750, 300);
             EnemyCharacter minion10 = spawnMinion(EnemyType.MINION_3, 850, 300);
 
-            List<EnemyCharacter> minions = List.of(minion1, minion2, minion3, minion4, minion5, minion6, minion7, minion8, minion9, minion10);
+            List<EnemyCharacter> minions = List.of(minion2, minion4, minion7, minion8, minion9, minion10);
 
             logger.warn("Adding Minion Phase 3 to the Scene");
             gameStage.getSceneUpdateQueue().queueAddAll(minions);

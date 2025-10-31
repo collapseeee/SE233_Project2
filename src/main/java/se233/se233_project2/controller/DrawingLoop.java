@@ -38,56 +38,70 @@ public class DrawingLoop implements Runnable {
         }
     }
 
-    private void paintMainCharacter(GameCharacter gameCharacter) {
-        gameCharacter.repaint();
-    }
-    private void paintEnemy(List<EnemyCharacter> enemyCharacterList) {
-        for (EnemyCharacter enemyCharacter : enemyCharacterList) {
-            enemyCharacter.repaint();
-        }
-    }
-
-    private void updateScoreDisplay(Score score, GameCharacter mainCharacter) {
-        Platform.runLater(() -> score.setScore(mainCharacter.getScore()));
-    }
-
-    private void updateLifeDisplay(Life life, GameCharacter mainCharacter) {
-        Platform.runLater(() -> life.updateHearts(mainCharacter.getLife()));
-    }
-
     @Override
     public void run() {
         while (running) {
-            float time = System.currentTimeMillis();
+            long start = System.currentTimeMillis();
 
             GamePhase phase = gameStage.getCurrentGamePhase();
-            if (gameStage.getMainCharacter() != null
-                    && phase != GamePhase.START_MENU
-                    && phase != GamePhase.STAGE_SELECT
-                    && phase != GamePhase.VICTORY
-                    && phase != GamePhase.DEFEAT) {
-                checkMainCharacterDrawCollisions(gameStage.getMainCharacter());
-                paintMainCharacter(gameStage.getMainCharacter());
+            if (phase != GamePhase.START_MENU &&
+                    phase != GamePhase.STAGE_SELECT &&
+                    phase != GamePhase.VICTORY &&
+                    phase != GamePhase.DEFEAT) {
 
-                updateScoreDisplay(gameStage.getScore(), gameStage.getMainCharacter());
-                updateLifeDisplay(gameStage.getLife(), gameStage.getMainCharacter());
-                Platform.runLater(() -> gameStage.getLife().tick());
+                // PHYSICS + COLLISIONS (game thread)
+                GameCharacter mc = gameStage.getMainCharacter();
+                if (mc != null) {
+                    mc.moveX();
+                    mc.moveY();
+                    checkMainCharacterDrawCollisions(mc);
+                }
+
+                for (EnemyCharacter e : gameStage.getEnemyList()) {
+                    e.moveX();
+                    e.moveY();
+                    checkEnemyCharacterDrawCollisions(List.of(e)); // only check self collisions
+
+                    // Immediately sync sprite visual to physics position
+                    Platform.runLater(() -> {
+                        e.setTranslateX(e.getX());
+                        e.setTranslateY(e.getY());
+                    });
+                }
+
+                // RENDERING (FX thread)
+                Platform.runLater(() -> {
+                    if (mc != null) {
+                        mc.setTranslateX(mc.getX());
+                        mc.setTranslateY(mc.getY());
+                        mc.setScaleX(mc.getFacing() < 0 ? -1 : 1);
+
+                        if (mc.isMoveLeft || mc.isMoveRight || mc.isJumping) {
+                            mc.getImageView().tick();
+                        }
+
+                        gameStage.getScore().setScore(mc.getScore());
+                        gameStage.getLife().updateHearts(mc.getLife());
+                        gameStage.getLife().tick();
+                    }
+
+
+                    for (EnemyCharacter e : gameStage.getEnemyList()) {
+                        e.setScaleX(e.getFacing() < 0 ? -1 : 1);
+
+                        if (e.getIsAlive() && (e.isMoveLeft || e.isMoveRight)) {
+                            e.getImageView().tick();
+                        }
+                    }
+
+                });
             }
 
-            checkEnemyCharacterDrawCollisions(gameStage.getEnemyList());
-            paintEnemy(gameStage.getEnemyList());
-
-            time = System.currentTimeMillis() - time;
-            if (time < interval) {
+            long frameTime = System.currentTimeMillis() - start;
+            if (frameTime < interval) {
                 try {
-                    Thread.sleep((long) (interval - time));
-                } catch (InterruptedException e) {
-                }
-            } else {
-                try {
-                    Thread.sleep((long) (interval - (interval % time)));
-                } catch (InterruptedException e) {
-                }
+                    Thread.sleep((long) (interval - frameTime));
+                } catch (InterruptedException ignored) {}
             }
         }
     }

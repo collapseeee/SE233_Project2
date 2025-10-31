@@ -43,7 +43,9 @@ public class SceneUpdateQueue {
 
     public void queueRemoveAll(Iterable<? extends Node> nodes) {
         updateQueue.offer(() -> {
-            gameStage.getChildren().removeAll((java.util.Collection<?>) nodes);
+            for (Node node : nodes) {
+                gameStage.getChildren().remove(node);
+            }
         });
     }
 
@@ -73,7 +75,7 @@ public class SceneUpdateQueue {
                 }
             }
             if (count > 0) {
-                logger.debug("Processed {} scene updates",  count);
+                //logger.debug("Processed {} scene updates",  count);
             }
         });
     }

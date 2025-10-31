@@ -17,11 +17,6 @@ public class Boss extends EnemyCharacter {
     }
 
     @Override
-    public void repaint() {
-        // Boss no movement or gravity
-    }
-
-    @Override
     public void moveX() {
         // Disable horizontal movement completely
     }
