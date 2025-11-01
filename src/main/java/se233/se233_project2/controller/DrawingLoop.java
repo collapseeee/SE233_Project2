@@ -1,6 +1,8 @@
 package se233.se233_project2.controller;
 
 import javafx.application.Platform;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se233.se233_project2.model.character.EnemyCharacter;
 import se233.se233_project2.model.character.GameCharacter;
 import se233.se233_project2.model.GamePhase;
@@ -15,6 +17,8 @@ public class DrawingLoop implements Runnable {
     private final int frameRate;
     private final float interval;
     private boolean running;
+
+    private Logger logger = LogManager.getLogger(DrawingLoop.class);
 
     public DrawingLoop(GameStage gameStage) {
         this.gameStage = gameStage;
@@ -77,6 +81,7 @@ public class DrawingLoop implements Runnable {
                         mc.setScaleX(mc.getFacing() < 0 ? -1 : 1);
 
                         if (mc.isMoveLeft || mc.isMoveRight || mc.isJumping) {
+                            logger.trace("Player moves to X:{}, Y:{}", mc.getX(), mc.getY());
                             mc.getImageView().tick();
                         }
 

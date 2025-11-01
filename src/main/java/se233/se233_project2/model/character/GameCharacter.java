@@ -50,13 +50,13 @@ public class GameCharacter extends Pane {
 
     public boolean isMoveLeft = false;
     public boolean isMoveRight = false;
-    boolean isFalling = true;
-    boolean canJump = false;
+    public boolean isFalling = true;
+    public boolean canJump = false;
     public boolean isJumping = false;
-    boolean canCrawl = false;
-    boolean isCrawling = false;
-    boolean isDead = false;
-    boolean isRunning = false;
+    public boolean canCrawl = false;
+    public boolean isCrawling = false;
+    public boolean isDead = false;
+    public boolean isRunning = false;
 
     private boolean isInvincible = false;
     private long invincibleStartTime = 0;
