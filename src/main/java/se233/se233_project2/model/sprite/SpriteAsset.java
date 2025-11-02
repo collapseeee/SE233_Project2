@@ -5,7 +5,7 @@ public enum SpriteAsset {
     PLAYER_WALK("assets/character/player/sprite/Player_WALK.png", 6, 3, 2, 0, 0, 48, 64),
     PLAYER_RUN("assets/character/player/sprite/Player_SHOOT_HORIZONTAL.png", 6, 3, 2, 0, 0, 48, 64),
     PLAYER_JUMP("assets/character/player/sprite/Player_JUMP.png", 4, 2, 2, 0, 0, 48, 64),
-    PLAYER_CRAWL("assets/character/player/sprite/Player_CRAWL.png", 2, 2, 1, 0, 0, 48, 26),
+    PLAYER_CRAWL("assets/character/player/sprite/Player_CRAWL.png", 6, 3, 2, 0, 0, 48, 26),
     PLAYER_SHOOT_HORIZONTAL("assets/character/player/sprite/Player_SHOOT_HORIZONTAL.png", 6, 3, 2, 0, 0, 48, 64),
     PLAYER_SHOOT_UP("assets/character/player/sprite/Player_SHOOT_UP.png", 2, 2, 1, 0, 0, 48, 64),
     PLAYER_SHOOT_UP_45("assets/character/player/sprite/Player_SHOOT_UP_45.png", 6, 3, 2, 0, 0, 48, 64),
@@ -27,8 +27,8 @@ public enum SpriteAsset {
     ENEMY_BOSS2_SHOOT("assets/character/boss/Boss2_SHOOT.png", 224, 226),
 
     ENEMY_MINION3("assets/character/minion/Minion3.png", 6, 3, 2, 0, 0, 48, 48),
-    ENEMY_BOSS3_WALK("assets/character/boss/Boss3_WALK.png", 10, 5, 2, 0, 0, 120, 105),
-    ENEMY_BOSS3_SHOOT("assets/character/boss/Boss3_SHOOT.png", 8, 4, 2, 0, 0, 120, 105),
+    ENEMY_BOSS3_WALK("assets/character/boss/Boss3_WALK.png", 6, 3, 2, 0, 0, 120, 105),
+    ENEMY_BOSS3_SHOOT("assets/character/boss/Boss3_SHOOT.png", 6, 3, 2, 0, 0, 120, 105),
     ENEMY_BOSS3_BULLET("assets/character/boss/Boss3_BULLET.png", 16, 16),
 
     // UI

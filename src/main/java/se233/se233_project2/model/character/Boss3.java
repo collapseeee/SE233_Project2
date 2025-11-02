@@ -2,7 +2,6 @@ package se233.se233_project2.model.character;
 
 import javafx.application.Platform;
 import javafx.scene.image.Image;
-import javafx.util.Duration;
 import se233.se233_project2.Launcher;
 import se233.se233_project2.audio.AudioManager;
 import se233.se233_project2.model.GamePlatform;
@@ -22,7 +21,7 @@ public class Boss3 extends EnemyCharacter {
     private boolean hasLanded = false;
 
     public Boss3(GameStage gameStage) {
-        super(1100, 400, EnemyType.BOSS_3);
+        super(1050, 400, EnemyType.BOSS_3);
         this.gameStage = gameStage;
 
         Platform.runLater(() -> {

@@ -80,7 +80,8 @@ public class DrawingLoop implements Runnable {
                     if (mc != null) {
                         mc.setTranslateX(mc.getX());
                         mc.setTranslateY(mc.getY());
-                        mc.setScaleX(mc.getFacing() < 0 ? -1 : 1);
+
+                        mc.getImageView().setScaleX(mc.getFacing() < 0 ? -1 : 1);
 
                         if (mc.isMoveLeft || mc.isMoveRight || mc.isJumping) {
                             logger.trace("Player moves to X:{}, Y:{}", mc.getX(), mc.getY());
@@ -94,7 +95,7 @@ public class DrawingLoop implements Runnable {
 
 
                     for (EnemyCharacter e : gameStage.getEnemyList()) {
-                        e.setScaleX(e.getFacing() < 0 ? -1 : 1);
+                        e.getImageView().setScaleX(e.getFacing() < 0 ? -1 : 1);
 
                         if (e.getIsAlive() && (e.isMoveLeft || e.isMoveRight)) {
                             e.getImageView().tick();

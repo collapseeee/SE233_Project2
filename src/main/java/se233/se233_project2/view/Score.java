@@ -1,5 +1,6 @@
 package se233.se233_project2.view;
 
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -18,6 +19,6 @@ public class Score extends Pane {
     }
 
     public void setScore(int score) {
-        this.score.setText("Score: " + score);
+        Platform.runLater(() -> this.score.setText("Score: " + score));
     }
 }

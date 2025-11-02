@@ -148,12 +148,23 @@ public class GameCharacter extends Pane {
             canCrawl = false;
             xVelocity = CRAWL_SPEED;
 
-            double oldHeight = characterHeight;
-            double newHeight = oldHeight * 0.6;
-            y += (oldHeight - newHeight);
+            int oldHeight = characterHeight;
+            characterHeight = SpriteAsset.PLAYER_CRAWL.getHeight();
+            y += (oldHeight - characterHeight + 10);
 
-            imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_CRAWL.getPath())));
-            imageView.setFitHeight(newHeight);
+            Platform.runLater(() -> {
+                Image crawlImg = new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_CRAWL.getPath()));
+                imageView.setSprite(
+                        crawlImg,
+                        SpriteAsset.PLAYER_CRAWL.getFrameCount(),
+                        SpriteAsset.PLAYER_CRAWL.getColumns(),
+                        SpriteAsset.PLAYER_CRAWL.getRows(),
+                        SpriteAsset.PLAYER_CRAWL.getWidth(),
+                        SpriteAsset.PLAYER_CRAWL.getHeight()
+                );
+                imageView.setFitWidth(SpriteAsset.PLAYER_CRAWL.getWidth());
+                imageView.setFitHeight(SpriteAsset.PLAYER_CRAWL.getHeight());
+            });
         }
     }
     public void stopCrawl() {
@@ -162,11 +173,23 @@ public class GameCharacter extends Pane {
             canCrawl = true;
             xVelocity = WALK_SPEED;
 
-            double oldHeight = imageView.getFitHeight();
-            imageView.setFitHeight(characterHeight);
-            y -= (characterHeight - oldHeight);
+            int oldHeight = characterHeight;
+            characterHeight = SpriteAsset.PLAYER_WALK.getHeight();
+            y -= (characterHeight - oldHeight + 10);
 
-            imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_WALK.getPath())));
+            Platform.runLater(() -> {
+                Image walkImg = new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_WALK.getPath()));
+                imageView.setSprite(
+                        walkImg,
+                        SpriteAsset.PLAYER_WALK.getFrameCount(),
+                        SpriteAsset.PLAYER_WALK.getColumns(),
+                        SpriteAsset.PLAYER_WALK.getRows(),
+                        SpriteAsset.PLAYER_WALK.getWidth(),
+                        SpriteAsset.PLAYER_WALK.getHeight()
+                );
+                imageView.setFitWidth(SpriteAsset.PLAYER_WALK.getWidth());
+                imageView.setFitHeight(SpriteAsset.PLAYER_WALK.getHeight());
+            });
         }
     }
 
@@ -288,12 +311,6 @@ public class GameCharacter extends Pane {
 
     public void activateInvincible() {
         Platform.runLater(() -> startInvincibleFlash(true)); // run after attached
-    }
-
-
-    // Painting
-    public void repaint() {
-        imageView.tick();
     }
 
     // Life

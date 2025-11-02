@@ -35,4 +35,15 @@ public class AnimatedSprite extends ImageView {
         curRowIndex = 0;
         setViewport(new Rectangle2D(offsetX, offsetY, width, height));
     }
+    public void setSprite(Image newImage, int frameCount, int columns, int rows, int width, int height) {
+        this.setImage(newImage);
+        this.count = frameCount;
+        this.columns = columns;
+        this.rows = rows;
+        this.width = width;
+        this.height = height;
+        this.curColumnIndex = 0;
+        this.curRowIndex = 0;
+        this.setViewport(new Rectangle2D(offsetX, offsetY, width, height));
+    }
 }
