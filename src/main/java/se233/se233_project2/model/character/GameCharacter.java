@@ -386,10 +386,23 @@ public class GameCharacter extends Pane {
         }
         return isInvincible;
     }
+    public void setFacing(int dir) {
+        if (dir != -1 && dir != 1) return;
+        if (this.facing == dir) return;
+        this.facing = dir;
+
+        if (Platform.isFxApplicationThread()) {
+            applyFacingMirror();
+        } else {
+            Platform.runLater(this::applyFacingMirror);
+        }
+    }
+
     private void applyFacingMirror() {
+        double w = imageView.getFitWidth();        // width after any sprite swap
         if (facing == -1) {
             imageView.setScaleX(-1);
-            imageView.setTranslateX(imageView.getFitWidth());
+            imageView.setTranslateX(w);            // keep origin consistent when mirrored
         } else {
             imageView.setScaleX(1);
             imageView.setTranslateX(0);
@@ -414,7 +427,6 @@ public class GameCharacter extends Pane {
     public void addScore(int score) { this.score+=score; }
     public int getLife() { return this.life; }
     public int getFacing() { return this.facing; }
-    public void setFacing(int facing) { this.facing = facing; }
     public void setScore(int score) { this.score = score; }
     public void setLife(int life) { this.life = life; }
     public int getMaxLife() { return this.maxLife; }

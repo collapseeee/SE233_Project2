@@ -38,6 +38,10 @@ public class Boss3 extends EnemyCharacter {
 
     @Override
     public void updateMovingAI(GameStage gameStage, GameCharacter target) {
+        if (target != null && getIsAlive()) {
+            setFacing(target.getX() < getX() ? 1 : -1);
+        }
+
         if (isFalling) {
             fallDownToPlatform(gameStage.getPlatformList());
         } else if (hasLanded) {
@@ -80,8 +84,8 @@ public class Boss3 extends EnemyCharacter {
     public void shoot(GameStage gameStage, GameCharacter target) {
         if (!canShoot()) return;
 
-        int bulletX = getX() + 33;
-        int bulletY = getY() + 51;
+        int bulletX = getX() + (getFacing() == 1 ? 60 : -10);
+        int bulletY = getY() + 50;
 
         double dx = target.getX() + target.getCharacterWidth() / 2.0 - bulletX;
         double dy = target.getY() + target.getCharacterHeight() / 2.0 - bulletY;
