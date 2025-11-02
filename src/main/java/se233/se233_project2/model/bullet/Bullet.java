@@ -44,8 +44,10 @@ public class Bullet extends Pane {
     public void move() {
         x += speedX;
         y += speedY;
-        setLayoutX(x);
-        setLayoutY(y);
+        Platform.runLater(() -> {
+            setLayoutX(x);
+            setLayoutY(y);
+        });
     }
 
     public boolean collidesWithEnemy(EnemyCharacter enemy) {
@@ -95,7 +97,7 @@ public class Bullet extends Pane {
             gameStage.getSceneUpdateQueue().queueRemove(explodeSprite);
         });
 
-        Platform.runLater(fade::play);
+        fade.play();  // run directly
     }
 
     public void gunshotVFX() {

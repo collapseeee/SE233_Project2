@@ -23,6 +23,7 @@ import se233.se233_project2.model.character.GameCharacter;
 import se233.se233_project2.model.sprite.SpriteAsset;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameStage extends Pane {
@@ -42,6 +43,8 @@ public class GameStage extends Pane {
     private final Keys keys;
     private GamePhase currentGamePhase;
     private boolean justClearedBoss = false;
+
+    private PauseTransition rampageSpawnTimer;
 
     public GameStage() {
         keys = new Keys();
@@ -208,8 +211,6 @@ public class GameStage extends Pane {
         sceneUpdateQueue.queueAdd(backgroundImg);
 
         sceneUpdateQueue.queueAdd(score);
-        score.setTranslateX(520);
-        score.setTranslateY(335);
 
         Text arrow = new Text("▶");
         arrow.setScaleX(5);
@@ -221,6 +222,82 @@ public class GameStage extends Pane {
 
         Platform.runLater(() -> {
             audioManager.playBGM("assets/bgm/Defeated.wav");
+            score.setTranslateX(520);
+            score.setTranslateY(335);
+        });
+    }
+
+    public void initRampageEnvironment() {
+        setCurrentGamePhase(GamePhase.RAMPAGE);
+        enemyList.clear();
+        bulletList.clear();
+        platforms.clear();
+        sceneUpdateQueue.queueClear();
+        mainCharacter.respawn();
+
+        gameStageImg = new Image(Launcher.class.getResourceAsStream("assets/background/Stage1_Background.png"));
+        ImageView backgroundImg = new ImageView(gameStageImg);
+        backgroundImg.setFitHeight(HEIGHT);
+        backgroundImg.setFitWidth(WIDTH);
+        sceneUpdateQueue.queueAdd(backgroundImg);
+
+        platforms.add(new GamePlatform(0,500,WIDTH,20)); // Floor
+        platforms.add(new GamePlatform(0,650,400,20)); // Bottom-left
+        platforms.add(new GamePlatform(795,650,405,20)); // Bottom-right
+        platforms.add(new GamePlatform(437,260,345,20)); // Top
+        sceneUpdateQueue.queueAddAll(platforms);
+
+        sceneUpdateQueue.queueAdd(mainCharacter);
+        sceneUpdateQueue.queueAdd(playerLife);
+        sceneUpdateQueue.queueAdd(score);
+        score.setTranslateX(300);
+        score.setTranslateY(30);
+
+        mainCharacter.setLife(3);
+        mainCharacter.setScore(0);
+
+        Platform.runLater(() -> {
+            audioManager.playLoopBGM("assets/bgm/Stage1.wav");
+            FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), backgroundImg);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+            fadeIn.play();
+        });
+    }
+
+    public void rewardPlayerAfterBossKilled() { // For Rampage Mode
+        GameCharacter player = getMainCharacter();
+        if (player == null) return;
+
+        // Increase HP but cap at max
+        int newHp = Math.min(player.getLife() + 1, player.getMaxLife());
+        player.setLife(newHp);
+
+        // Show text
+        Platform.runLater(() -> {
+            Text rewardText = new Text("Boss killed! \n+1 HP Recovered");
+            rewardText.setFont(Font.font("Consolas", FontWeight.BOLD, 30));
+            rewardText.setFill(Color.web("#FFF"));
+            rewardText.setStrokeWidth(2);
+            rewardText.setTranslateX(GameStage.WIDTH / 2.0 - 120);
+            rewardText.setTranslateY(GameStage.HEIGHT / 2.0 - 200);
+            rewardText.setOpacity(0);
+
+            getChildren().add(rewardText);
+
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(400), rewardText);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+
+            PauseTransition hold = new PauseTransition(Duration.seconds(1.2));
+
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(400), rewardText);
+            fadeOut.setFromValue(1);
+            fadeOut.setToValue(0);
+            fadeOut.setOnFinished(e -> getChildren().remove(rewardText));
+
+            SequentialTransition sequence = new SequentialTransition(fadeIn, hold, fadeOut);
+            sequence.play();
         });
     }
 

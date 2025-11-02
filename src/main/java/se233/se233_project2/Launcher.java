@@ -32,17 +32,22 @@ public class Launcher extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // Delay loop start slightly to allow JavaFX to finish first frame
+        GameLoop gameLoop = new GameLoop(gameStage);
+        DrawingLoop drawingLoop = new DrawingLoop(gameStage);
         Platform.runLater(() -> {
             executorService = Executors.newFixedThreadPool(2);
-            executorService.submit(new GameLoop(gameStage));
-            executorService.submit(new DrawingLoop(gameStage));
+            executorService.submit(gameLoop);
+            executorService.submit(drawingLoop);
         });
 
         AudioManager audioManager = new AudioManager();
         primaryStage.setOnCloseRequest(event -> {
             audioManager.shutdown();
             if (executorService != null) executorService.shutdownNow();
+
+            gameLoop.stop();
+            drawingLoop.stop();
+
             Platform.exit();
             System.exit(0);
         });

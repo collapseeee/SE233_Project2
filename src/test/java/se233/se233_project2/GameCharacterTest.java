@@ -20,6 +20,15 @@ public class GameCharacterTest {
     private static final int CHAR_HEIGHT = 64;
     private static final int INITIAL_LIFE = 3;
 
+    @BeforeAll
+    static void initFX() {
+        try {
+            javafx.application.Platform.startup(() -> {});
+        } catch (IllegalStateException ignored) {
+            // JavaFX already started
+        }
+    }
+
     @BeforeEach
     void setUp() {
         // Initialize character before each test

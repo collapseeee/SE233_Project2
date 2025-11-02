@@ -10,5 +10,6 @@ public enum GamePhase {
     STAGE3,
     MINION3, BOSS3,
     DEFEAT,
-    VICTORY;
+    VICTORY,
+    RAMPAGE;
 }

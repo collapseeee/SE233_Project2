@@ -1,5 +1,6 @@
 package se233.se233_project2.controller;
 
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,8 +15,6 @@ import se233.se233_project2.view.GameStage;
 
 import java.util.ArrayList;
 import java.util.List;
-
-// TODO: Parallelize update logic using executor.
 
 public class GameLoop implements Runnable {
     private GameStage gameStage;
@@ -101,6 +100,9 @@ public class GameLoop implements Runnable {
             for (EnemyCharacter enemy : toRemove) {
                 logger.info("{} is killed and removed.", enemy.getType());
                 gameStage.getEnemyList().remove(enemy);
+                if (gameStage.getCurrentGamePhase() == GamePhase.RAMPAGE && enemy.getType().toString().startsWith("BOSS")) {
+                    Platform.runLater(() -> gameStage.rewardPlayerAfterBossKilled());
+                }
             }
             // Queue scene removal
             gameStage.getSceneUpdateQueue().queueRemoveAll(toRemove);
@@ -238,6 +240,10 @@ public class GameLoop implements Runnable {
         }
     }
 
+    public void stop() {
+        running = false;
+        Thread.currentThread().interrupt();
+    }
     @Override
     public void run() {
         while (running) {
@@ -263,7 +269,10 @@ public class GameLoop implements Runnable {
                 try {
                     Thread.sleep((long) (interval - time));
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.info("GameLoop interrupted, shutting down gracefully.");
+                    running = false; // stop the loop
+                    Thread.currentThread().interrupt();
+                    break;
                 }
             }
         }

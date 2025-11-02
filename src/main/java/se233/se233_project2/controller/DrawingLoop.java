@@ -42,6 +42,10 @@ public class DrawingLoop implements Runnable {
         }
     }
 
+    public void stop() {
+        running = false;
+        Thread.currentThread().interrupt();
+    }
     @Override
     public void run() {
         while (running) {

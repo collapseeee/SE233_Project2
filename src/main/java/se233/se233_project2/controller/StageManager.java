@@ -14,6 +14,7 @@ import se233.se233_project2.view.StageScreen;
 import se233.se233_project2.view.TitleScreen;
 
 import java.util.List;
+import java.util.Random;
 
 public class StageManager {
     Logger logger = LogManager.getLogger(StageManager.class);
@@ -21,6 +22,12 @@ public class StageManager {
     private final GameStage gameStage;
     private GamePhase lastPhase = null;
     private boolean phaseInitialized = false;
+
+    private PauseTransition rampageSpawnTimer;
+    private boolean boss1Spawned = false;
+    private boolean boss2Spawned = false;
+    private boolean boss3Spawned = false;
+    private final Random random = new Random();
 
     public StageManager(GameStage gameStage) {
         this.gameStage = gameStage;
@@ -49,6 +56,7 @@ public class StageManager {
             case BOSS3 ->  handleBossPhase3();
             case DEFEAT -> handleDefeat();
             case VICTORY -> handleVictory();
+            case RAMPAGE ->  handleRampage();
         }
     }
 
@@ -266,6 +274,113 @@ public class StageManager {
             logger.info("Boss 3 cleared!");
             gameStage.setCurrentGamePhase(GamePhase.VICTORY);
         }
+    }
+    public void handleRampage() {
+        if (!phaseInitialized) {
+            logger.warn("Initializing Rampage Mode.");
+            gameStage.initRampageEnvironment();
+            resetBossFlags();
+
+            // Start spawning minions every 3 seconds
+            rampageSpawnTimer = new PauseTransition(Duration.seconds(1.5));
+            rampageSpawnTimer.setOnFinished(e -> {
+                spawnRandomMinion();
+                rampageSpawnTimer.playFromStart(); // restart every 1.5s
+            });
+            rampageSpawnTimer.playFromStart();
+
+            logger.info("Rampage Mode has been initialized");
+            phaseInitialized = true;
+        }
+
+        // Spawn bosses only once per milestone
+        int score = gameStage.getMainCharacter().getScore();
+        if (!boss1Spawned && score >= 15) {
+            spawnRampageBoss(EnemyType.BOSS_1);
+            boss1Spawned = true;
+        }
+
+        if (!boss2Spawned && score >= 30) {
+            spawnRampageBoss(EnemyType.BOSS_2);
+            boss2Spawned = true;
+        }
+
+        if (!boss3Spawned && score >= 45) {
+            spawnRampageBoss(EnemyType.BOSS_3);
+            boss3Spawned = true;
+        }
+        if (score % 50 == 0) {
+            resetBossFlags();
+        }
+    }
+    private void spawnRandomMinion() {
+        if (hasBoss1() || hasBoss2() || hasBoss3()) {
+            return;
+        }
+        if (gameStage.getCurrentGamePhase() != GamePhase.RAMPAGE) {
+            if (rampageSpawnTimer != null) {
+                rampageSpawnTimer.stop();
+            }
+            return;
+        }
+
+        // Randomly choose minion type (1, 2, or 3)
+        EnemyType[] minionTypes = {EnemyType.MINION_1, EnemyType.MINION_2, EnemyType.MINION_3};
+        EnemyType chosenType = minionTypes[random.nextInt(3)];
+
+        // Random spawn positions
+        int[] spawnXOptions = {150, 1050};
+
+        int spawnX = spawnXOptions[random.nextInt(spawnXOptions.length)];
+        int spawnY = 250;
+
+        EnemyCharacter minion = spawnMinion(chosenType, spawnX, spawnY);
+        gameStage.getSceneUpdateQueue().queueAdd(minion);
+
+        logger.info("Rampage: Spawned {} at X:{}, Y:{}", chosenType, spawnX, spawnY);
+    }
+    private void spawnRampageBoss(EnemyType bossType) {
+        EnemyCharacter boss = null;
+
+        switch (bossType) {
+            case BOSS_1 -> {
+                boss = new Boss1(gameStage);
+                logger.info("Rampage: Boss 1 spawned at divisible 15 scores.");
+            }
+            case BOSS_2 -> {
+                boss = new Boss2(gameStage);
+                logger.info("Rampage: Boss 2 spawned at divisible 30 scores.");
+            }
+            case BOSS_3 -> {
+                boss = new Boss3(gameStage);
+                logger.info("Rampage: Boss 3 spawned at divisible 45 scores.");
+            }
+        }
+
+        if (boss != null) {
+            gameStage.getEnemyList().add(boss);
+            gameStage.getSceneUpdateQueue().queueAdd(boss);
+        }
+    }
+    public void resetBossFlags() {
+        boss1Spawned = false;
+        boss2Spawned = false;
+        boss3Spawned = false;
+    }
+
+    private boolean hasBoss1() {
+        return gameStage.getEnemyList().stream()
+                .anyMatch(e -> e.getType() == EnemyType.BOSS_1);
+    }
+
+    private boolean hasBoss2() {
+        return gameStage.getEnemyList().stream()
+                .anyMatch(e -> e.getType() == EnemyType.BOSS_2);
+    }
+
+    private boolean hasBoss3() {
+        return gameStage.getEnemyList().stream()
+                .anyMatch(e -> e.getType() == EnemyType.BOSS_3);
     }
 
     // Defeat & Victory

@@ -4,9 +4,8 @@ import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import se233.se233_project2.model.character.EnemyCharacter;
-import se233.se233_project2.model.character.EnemyType;
-import se233.se233_project2.model.character.GameCharacter;
+import se233.se233_project2.model.character.*;
+import se233.se233_project2.view.GameStage;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,27 +31,75 @@ public class ScoringTest {
     }
 
     @Test
-    @DisplayName("Test player gains score from killing minion")
-     void testKillMinionScore() {
+    @DisplayName("Test player gains score from killing minion 1")
+     void testKillMinion1Score() {
         EnemyCharacter minion = new EnemyCharacter(200, 200, EnemyType.MINION_1);
         int scoreValue = minion.getScore();
 
         player.addScore(scoreValue);
 
         assertEquals(scoreValue, player.getScore(),
-                "Player should gain " + scoreValue + " points from killing minion");
+                "Player should gain " + scoreValue + " points from killing minion 1");
     }
 
     @Test
-    @DisplayName("Test player gains score from killing boss")
-    void testKillBossScore() {
-        EnemyCharacter boss = new EnemyCharacter(200, 200, EnemyType.BOSS_1);
+    @DisplayName("Test player gains score from killing minion 2")
+    void testKillMinion2Score() {
+        EnemyCharacter minion = new EnemyCharacter(200, 200, EnemyType.MINION_2);
+        int scoreValue = minion.getScore();
+
+        player.addScore(scoreValue);
+
+        assertEquals(scoreValue, player.getScore(),
+                "Player should gain " + scoreValue + " points from killing minion 2");
+    }
+
+    @Test
+    @DisplayName("Test player gains score from killing minion 3")
+    void testKillMinionScore() {
+        EnemyCharacter minion = new EnemyCharacter(200, 200, EnemyType.MINION_3);
+        int scoreValue = minion.getScore();
+
+        player.addScore(scoreValue);
+
+        assertEquals(scoreValue, player.getScore(),
+                "Player should gain " + scoreValue + " points from killing minion 3");
+    }
+
+    @Test
+    @DisplayName("Test player gains score from killing boss 1")
+    void testKillBoss1Score() {
+        Boss1 boss = new Boss1(new GameStage());
         int scoreValue = boss.getScore();
 
         player.addScore(scoreValue);
 
         assertEquals(scoreValue, player.getScore(),
-                "Player should gain " + scoreValue + " points from killing boss");
+                "Player should gain " + scoreValue + " points from killing boss 1");
+    }
+
+    @Test
+    @DisplayName("Test player gains score from killing boss 2")
+    void testKillBoss2Score() {
+        Boss2 boss = new Boss2(new GameStage());
+        int scoreValue = boss.getScore();
+
+        player.addScore(scoreValue);
+
+        assertEquals(scoreValue, player.getScore(),
+                "Player should gain " + scoreValue + " points from killing boss 2");
+    }
+
+    @Test
+    @DisplayName("Test player gains score from killing boss 1")
+    void testKillBoss3Score() {
+        Boss3 boss = new Boss3(new GameStage());
+        int scoreValue = boss.getScore();
+
+        player.addScore(scoreValue);
+
+        assertEquals(scoreValue, player.getScore(),
+                "Player should gain " + scoreValue + " points from killing boss 3");
     }
 
     @Test
@@ -60,13 +107,13 @@ public class ScoringTest {
     void testMultipleKillsAccumulation() {
         EnemyCharacter minion1 = new EnemyCharacter(200, 200, EnemyType.MINION_1);
         EnemyCharacter minion2 = new EnemyCharacter(300, 300, EnemyType.MINION_2);
-        EnemyCharacter boss = new EnemyCharacter(400, 400, EnemyType.BOSS_1);
+        Boss1 boss1 = new Boss1(new GameStage());
 
         player.addScore(minion1.getScore());
         player.addScore(minion2.getScore());
-        player.addScore(boss.getScore());
+        player.addScore(boss1.getScore());
 
-        int expectedTotal = minion1.getScore() + minion2.getScore() + boss.getScore();
+        int expectedTotal = minion1.getScore() + minion2.getScore() + boss1.getScore();
 
         assertEquals(expectedTotal, player.getScore(),
                 "Player score should accumulate from multiple kills");

@@ -64,7 +64,7 @@ public class Boss1 extends EnemyCharacter {
 
 
     private void shoot(int index) {
-        if (gameStage.getCurrentGamePhase() != GamePhase.BOSS1) {
+        if (gameStage.getCurrentGamePhase() != GamePhase.BOSS1 && gameStage.getCurrentGamePhase() != GamePhase.RAMPAGE) {
             stopFiring(); // Stop firing when phase changes
             return;
         }

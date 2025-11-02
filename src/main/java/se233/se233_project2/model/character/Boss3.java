@@ -21,7 +21,7 @@ public class Boss3 extends EnemyCharacter {
     private boolean hasLanded = false;
 
     public Boss3(GameStage gameStage) {
-        super(1050, 400, EnemyType.BOSS_3);
+        super(1050, 300, EnemyType.BOSS_3);
         this.gameStage = gameStage;
 
         Platform.runLater(() -> {

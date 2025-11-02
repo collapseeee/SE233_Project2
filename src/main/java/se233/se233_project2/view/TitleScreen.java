@@ -21,8 +21,8 @@ public class TitleScreen extends Pane {
     private final Text arrow;
     private int selectedIndex = 0;
 
-    private final int OPTION_X = 250;
-    private final int[] OPTION_Y = {530, 612, 698};
+    private final int OPTION_X = 276;
+    private final int[] OPTION_Y = {462, 540, 608, 682};
 
     private final GameStage gameStage;
 
@@ -57,7 +57,7 @@ public class TitleScreen extends Pane {
         if (direction == -1) { // UP
             selectedIndex = selectedIndex == 0 ? 0 : selectedIndex - 1;
         } else {
-            selectedIndex = selectedIndex == 2 ? 2 : selectedIndex + 1;
+            selectedIndex = selectedIndex == 3 ? 3 : selectedIndex + 1;
         }
         updateArrow();
     }
@@ -79,6 +79,11 @@ public class TitleScreen extends Pane {
                 gameStage.setCurrentGamePhase(GamePhase.STAGE_SELECT);
             }
             case 2 -> {
+                logger.info("RAMPAGE selected");
+                gameStage.getSceneUpdateQueue().queueRemove(this);
+                gameStage.setCurrentGamePhase(GamePhase.RAMPAGE);
+            }
+            case 3 -> {
                 logger.info("QUIT selected");
                 Platform.exit();
                 System.exit(0);

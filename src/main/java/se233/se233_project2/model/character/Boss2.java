@@ -51,7 +51,8 @@ public class Boss2 extends EnemyCharacter {
     }
 
     private void spawnBullet() {
-        if (gameStage.getCurrentGamePhase() != GamePhase.BOSS2 ||
+        if ((gameStage.getCurrentGamePhase() != GamePhase.BOSS2 &&
+                gameStage.getCurrentGamePhase() != GamePhase.RAMPAGE) ||
                 gameStage.getMainCharacter() == null ||
                 gameStage.getMainCharacter().isDead ||
                 !getIsAlive()) {
