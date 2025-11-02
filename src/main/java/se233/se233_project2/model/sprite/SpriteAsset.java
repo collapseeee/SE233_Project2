@@ -7,9 +7,9 @@ public enum SpriteAsset {
     PLAYER_JUMP("assets/character/player/sprite/Player_JUMP.png", 4, 2, 2, 0, 0, 48, 64),
     PLAYER_CRAWL("assets/character/player/sprite/Player_CRAWL.png", 6, 3, 2, 0, 0, 48, 26),
     PLAYER_SHOOT_HORIZONTAL("assets/character/player/sprite/Player_SHOOT_HORIZONTAL.png", 6, 3, 2, 0, 0, 48, 64),
-    PLAYER_SHOOT_UP("assets/character/player/sprite/Player_SHOOT_UP.png", 2, 2, 1, 0, 0, 48, 64),
+    PLAYER_SHOOT_UP("assets/character/player/sprite/Player_SHOOT_UP.png", 6, 3, 2, 0, 0, 48, 64),
     PLAYER_SHOOT_UP_45("assets/character/player/sprite/Player_SHOOT_UP_45.png", 6, 3, 2, 0, 0, 48, 64),
-    PLAYER_SHOOT_DOWN_45("assets/character/player/sprite/Player_SHOOT_DOWN_45.png", 2, 2, 1, 0, 0, 48, 64),
+    PLAYER_SHOOT_DOWN_45("assets/character/player/sprite/Player_SHOOT_DOWN_45.png", 6, 3, 2, 0, 0, 48, 64),
 
     BULLET_AMMO("assets/character/player/sprite/Bullet.png",30, 30),
     BULLET_SPECIAL("assets/character/player/sprite/Special_Bullet.png",30, 30),

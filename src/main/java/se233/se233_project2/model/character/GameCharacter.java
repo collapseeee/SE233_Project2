@@ -84,6 +84,7 @@ public class GameCharacter extends Pane {
         this.imageView.setFitWidth((int) (width));
         this.imageView.setFitHeight((int) (height));
         this.getChildren().addAll(this.imageView);
+        applyFacingMirror();
 
         this.leftKey = leftKey;
         this.rightKey = rightKey;
@@ -135,6 +136,7 @@ public class GameCharacter extends Pane {
             imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_JUMP.getPath())));
             imageView.resetFrame();
             imageView.tick();
+            applyFacingMirror();
             yVelocity = JUMP_SPEED;
             canJump = false;
             isJumping = true;
@@ -154,6 +156,7 @@ public class GameCharacter extends Pane {
 
             Platform.runLater(() -> {
                 Image crawlImg = new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_CRAWL.getPath()));
+                applyFacingMirror();
                 imageView.setSprite(
                         crawlImg,
                         SpriteAsset.PLAYER_CRAWL.getFrameCount(),
@@ -179,6 +182,7 @@ public class GameCharacter extends Pane {
 
             Platform.runLater(() -> {
                 Image walkImg = new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_WALK.getPath()));
+                applyFacingMirror();
                 imageView.setSprite(
                         walkImg,
                         SpriteAsset.PLAYER_WALK.getFrameCount(),
@@ -224,6 +228,7 @@ public class GameCharacter extends Pane {
             isFalling = true;
             yVelocity = 0;
             imageView.setImage(new Image(Launcher.class.getResourceAsStream(SpriteAsset.PLAYER_WALK.getPath())));
+            applyFacingMirror();
             imageView.tick();
         }
     }
@@ -326,6 +331,7 @@ public class GameCharacter extends Pane {
         this.canJump = false;
         this.isJumping = false;
         this.isDead = false;
+        applyFacingMirror();
         Platform.runLater(this::activateInvincible);
     }
     public void loseLife() {
@@ -379,6 +385,15 @@ public class GameCharacter extends Pane {
             isInvincible = false;
         }
         return isInvincible;
+    }
+    private void applyFacingMirror() {
+        if (facing == -1) {
+            imageView.setScaleX(-1);
+            imageView.setTranslateX(imageView.getFitWidth());
+        } else {
+            imageView.setScaleX(1);
+            imageView.setTranslateX(0);
+        }
     }
 
     // Getter Setter
