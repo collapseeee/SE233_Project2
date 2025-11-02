@@ -21,6 +21,7 @@ public class GameCharacter extends Pane {
     private final Image characterImg;
     private final AnimatedSprite imageView;
     private int life;
+    private final int maxLife;
     private int x;
     private int y;
     private final int startX;
@@ -72,6 +73,7 @@ public class GameCharacter extends Pane {
         this.x = x;
         this.y = y;
         this.life = life;
+        this.maxLife = life;
         this.xVelocity = WALK_SPEED;
         this.setTranslateX(x);
         this.setTranslateY(y);
@@ -383,4 +385,5 @@ public class GameCharacter extends Pane {
     public void setFacing(int facing) { this.facing = facing; }
     public void setScore(int score) { this.score = score; }
     public void setLife(int life) { this.life = life; }
+    public int getMaxLife() { return this.maxLife; }
 }

@@ -1,14 +1,13 @@
 package se233.se233_project2.controller;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
+import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import se233.se233_project2.model.character.Boss1;
-import se233.se233_project2.model.character.EnemyCharacter;
+import se233.se233_project2.model.character.*;
 import se233.se233_project2.model.GamePhase;
-import se233.se233_project2.model.character.EnemyType;
-import se233.se233_project2.model.character.Boss;
 import se233.se233_project2.model.sprite.SpriteAsset;
 import se233.se233_project2.view.GameStage;
 import se233.se233_project2.view.StageScreen;
@@ -134,6 +133,7 @@ public class StageManager {
 
         if (gameStage.getEnemyList().isEmpty()) {
             logger.info("Boss 1 cleared!");
+            gameStage.setJustClearedBoss(true);
             gameStage.setCurrentGamePhase(GamePhase.STAGE2);
         }
     }
@@ -143,6 +143,14 @@ public class StageManager {
         if (!phaseInitialized) {
             logger.warn("Initializing Stage 2.");
             gameStage.initStage2Environment();
+            gameStage.rewardPlayerAfterStageClear();
+
+            if (gameStage.isJustClearedBoss()) {
+                gameStage.setJustClearedBoss(false);
+                PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
+                delay.setOnFinished(e -> gameStage.rewardPlayerAfterStageClear());
+                delay.play();
+            }
 
             logger.info("Stage 2 has been initialized.");
             phaseInitialized = false;
@@ -153,13 +161,12 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
             EnemyCharacter minion2 = spawnMinion(EnemyType.MINION_2, 900, 350);
-            EnemyCharacter minion4 = spawnMinion(EnemyType.MINION_2, 1100, 350);
-            EnemyCharacter minion5 = spawnMinion(EnemyType.MINION_2, 550, 550);
+            EnemyCharacter minion4 = spawnMinion(EnemyType.MINION_2, 1050, 350);
             EnemyCharacter minion6 = spawnMinion(EnemyType.MINION_2, 650, 550);
-            EnemyCharacter minion7 = spawnMinion(EnemyType.MINION_2, 1050, 550);
-            EnemyCharacter minion8 = spawnMinion(EnemyType.MINION_2, 1150, 550);
+            EnemyCharacter minion7 = spawnMinion(EnemyType.MINION_2, 950, 550);
+            EnemyCharacter minion8 = spawnMinion(EnemyType.MINION_2, 1050, 550);
 
-            List<EnemyCharacter> minions = List.of(minion2, minion4, minion5, minion6, minion7, minion8);
+            List<EnemyCharacter> minions = List.of(minion2, minion4, minion6, minion7, minion8);
 
             logger.warn("Add Minion Phase 2 to the Scene");
             gameStage.getSceneUpdateQueue().queueAddAll(minions);
@@ -177,7 +184,7 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter boss2 = new Boss(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_2);
+            EnemyCharacter boss2 = new Boss2(gameStage);
             logger.info("{} spawns at X:{}, Y:{}.", boss2.getType(), boss2.getX(), boss2.getY());
 
             gameStage.getEnemyList().add(boss2);
@@ -191,6 +198,7 @@ public class StageManager {
 
         if (gameStage.getEnemyList().isEmpty()) {
             logger.info("Boss 2 cleared!");
+            gameStage.setJustClearedBoss(true);
             gameStage.setCurrentGamePhase(GamePhase.STAGE3);
         }
     }
@@ -200,6 +208,13 @@ public class StageManager {
         if (!phaseInitialized) {
             logger.warn("Initializing Stage 3.");
             gameStage.initStage3Environment();
+
+            if (gameStage.isJustClearedBoss()) {
+                gameStage.setJustClearedBoss(false);
+                PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
+                delay.setOnFinished(e -> gameStage.rewardPlayerAfterStageClear());
+                delay.play();
+            }
 
             logger.debug("Stage 3 has been initialized.");
             phaseInitialized = false;
@@ -212,8 +227,8 @@ public class StageManager {
 
             EnemyCharacter minion2 = spawnMinion(EnemyType.MINION_3, 300, 150);
             EnemyCharacter minion4 = spawnMinion(EnemyType.MINION_3, 1000, 150);
-            EnemyCharacter minion7 = spawnMinion(EnemyType.MINION_3, 1050, 500);
-            EnemyCharacter minion8 = spawnMinion(EnemyType.MINION_3, 1150, 500);
+            EnemyCharacter minion7 = spawnMinion(EnemyType.MINION_3, 1000, 500);
+            EnemyCharacter minion8 = spawnMinion(EnemyType.MINION_3, 1100, 500);
             EnemyCharacter minion9 = spawnMinion(EnemyType.MINION_3, 750, 300);
             EnemyCharacter minion10 = spawnMinion(EnemyType.MINION_3, 850, 300);
 
@@ -235,7 +250,7 @@ public class StageManager {
         if (!phaseInitialized) {
             gameStage.getEnemyList().clear();
 
-            EnemyCharacter boss3 = new Boss(GameStage.WIDTH - SpriteAsset.ENEMY_BOSS1.getWidth(), 0, EnemyType.BOSS_1);
+            EnemyCharacter boss3 = new Boss3(gameStage);
             logger.info("{} spawns at X:{}, Y:{}.", boss3.getType(), boss3.getX(), boss3.getY());
 
             gameStage.getEnemyList().add(boss3);

@@ -20,6 +20,8 @@ public class SceneUpdateQueue {
     public void queueAdd(Node node) {
         updateQueue.offer(() -> {
             if (!gameStage.getChildren().contains(node)) {
+                node.setVisible(true);
+                node.setManaged(false);
                 gameStage.getChildren().add(node);
             }
         });
@@ -35,6 +37,8 @@ public class SceneUpdateQueue {
         updateQueue.offer(() -> {
             for (Node node : nodes) {
                 if (!gameStage.getChildren().contains(node)) {
+                    node.setVisible(true);
+                    node.setManaged(false);
                     gameStage.getChildren().add(node);
                 }
             }
@@ -60,9 +64,9 @@ public class SceneUpdateQueue {
     }
 
     public void processPendingUpdates() {
-        if (updateQueue.isEmpty()) return;  // Skip if nothing to do
+        if (updateQueue.isEmpty()) return;
 
-        Platform.runLater(() -> {
+        Runnable processor = () -> {
             Runnable update;
             int count = 0;
             while ((update = updateQueue.poll()) != null) {
@@ -70,13 +74,19 @@ public class SceneUpdateQueue {
                     update.run();
                     count++;
                 } catch (Exception e) {
-                   logger.error("Scene update failed: {}", e.getMessage());
-                    e.printStackTrace();
+                    logger.error("Scene update failed: {}", e.getMessage(), e);
                 }
             }
-            if (count > 0) {
-                //logger.debug("Processed {} scene updates",  count);
+            if (count > 0 && logger.isTraceEnabled()) {
+                logger.trace("Processed {} scene updates", count);
             }
-        });
+        };
+
+        // Execute immediately if already on FX thread
+        if (Platform.isFxApplicationThread()) {
+            processor.run();
+        } else {
+            Platform.runLater(processor);
+        }
     }
 }

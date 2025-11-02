@@ -75,6 +75,8 @@ public class DrawingLoop implements Runnable {
 
                 // RENDERING (FX thread)
                 Platform.runLater(() -> {
+                    gameStage.getSceneUpdateQueue().processPendingUpdates();
+
                     if (mc != null) {
                         mc.setTranslateX(mc.getX());
                         mc.setTranslateY(mc.getY());

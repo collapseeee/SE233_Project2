@@ -1,12 +1,16 @@
 package se233.se233_project2.view;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
@@ -37,6 +41,7 @@ public class GameStage extends Pane {
     private final Score score;
     private final Keys keys;
     private GamePhase currentGamePhase;
+    private boolean justClearedBoss = false;
 
     public GameStage() {
         keys = new Keys();
@@ -219,6 +224,43 @@ public class GameStage extends Pane {
         });
     }
 
+    public void rewardPlayerAfterStageClear() {
+        GameCharacter player = getMainCharacter();
+        if (player == null) return;
+
+        // Increase HP but cap at max
+        int newHp = Math.min(player.getLife() + 1, player.getMaxLife());
+        player.setLife(newHp);
+
+        // Show text
+        Platform.runLater(() -> {
+            Text rewardText = new Text("Stage Cleared! \n+1 HP Recovered");
+            rewardText.setFont(Font.font("Consolas", FontWeight.BOLD, 30));
+            rewardText.setFill(Color.web("#FFF"));
+            rewardText.setStrokeWidth(2);
+            rewardText.setTranslateX(GameStage.WIDTH / 2.0 - 120);
+            rewardText.setTranslateY(GameStage.HEIGHT / 2.0 - 200);
+            rewardText.setOpacity(0);
+
+            getChildren().add(rewardText);
+
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(400), rewardText);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+
+            PauseTransition hold = new PauseTransition(Duration.seconds(1.2));
+
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(400), rewardText);
+            fadeOut.setFromValue(1);
+            fadeOut.setToValue(0);
+            fadeOut.setOnFinished(e -> getChildren().remove(rewardText));
+
+            SequentialTransition sequence = new SequentialTransition(fadeIn, hold, fadeOut);
+            sequence.play();
+        });
+    }
+
+
     public GameCharacter getMainCharacter() { return mainCharacter; }
     public List<EnemyCharacter> getEnemyList() {
         return enemyList;
@@ -233,4 +275,6 @@ public class GameStage extends Pane {
     public void setCurrentGamePhase(GamePhase currentGamePhase) { this.currentGamePhase = currentGamePhase; }
     public List<GamePlatform> getPlatformList() { return platforms; }
     public SceneUpdateQueue getSceneUpdateQueue() { return sceneUpdateQueue; }
+    public boolean isJustClearedBoss() { return justClearedBoss; }
+    public void setJustClearedBoss(boolean value) { this.justClearedBoss = value; }
 }

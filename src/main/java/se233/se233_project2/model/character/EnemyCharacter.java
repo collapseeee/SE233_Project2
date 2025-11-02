@@ -226,7 +226,7 @@ public class EnemyCharacter extends Pane {
         dx /= distance;
         dy /= distance;
 
-        int speed = 30;
+        int speed = 20;
         int velocityX = (int) (dx * speed);
         int velocityY = (int) (dy * speed);
 
@@ -297,4 +297,5 @@ public class EnemyCharacter extends Pane {
     public int getScore() { return score; }
     public void setFacing(int facing) { this.facing = facing; }
     public void setX(int x) { this.x = x; }
+    public void setY(int y) {  this.y = y; }
 }
