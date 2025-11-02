@@ -99,10 +99,10 @@ public class Bullet extends Pane {
     }
 
     public void gunshotVFX() {
-        audioManager.playSFX("assets/character/player/Gunshot.wav");
+        audioManager.playSFX("assets/character/player/sfx/Player_SHOOT_SFX.wav");
     }
     public void explodeVFX() {
-        audioManager.playSFX("assets/character/player/Explode.wav");
+        audioManager.playSFX("assets/character/player/sfx/Player_BULLET_EXPLODE.wav");
     }
 
     public int getX() { return x; }

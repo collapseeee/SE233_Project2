@@ -233,7 +233,7 @@ public class GameLoop implements Runnable {
             gameStage.getBulletList().removeAll(toRemove);
 
             // Queue scene removal
-            logger.info("Remove {} bullet from the stage.", toRemove.size());
+            logger.debug("Remove {} bullet from the stage.", toRemove.size());
             gameStage.getSceneUpdateQueue().queueRemoveAll(toRemove);
         }
     }

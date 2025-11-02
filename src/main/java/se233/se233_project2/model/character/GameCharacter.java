@@ -252,10 +252,10 @@ public class GameCharacter extends Pane {
 
     // FX
     public void deadSFX() {
-        audioManager.playSFX("assets/character/player/Dead.wav");
+        audioManager.playSFX("assets/character/player/sfx/Player_DEAD_SFX.wav");
     }
     public void spawnSFX() {
-        audioManager.playSFX("assets/character/player/Spawn.wav");
+        audioManager.playSFX("assets/character/player/sfx/Player_SPAWN_SFX.wav");
     }
     public void startInvincibleFlash(boolean reset) {
         if (invincibleFlash != null) invincibleFlash.stop();
@@ -292,15 +292,6 @@ public class GameCharacter extends Pane {
     // Painting
     public void repaint() {
         imageView.tick();
-    }
-    public void collapsed() {
-        double oldHeight = this.imageView.getFitHeight();
-        this.imageView.setFitHeight(oldHeight * 0.4);
-        this.y += (oldHeight * 0.6);
-        this.repaint();
-        PauseTransition delay = new PauseTransition(Duration.millis(300));
-        delay.setOnFinished(e -> this.imageView.setFitHeight(oldHeight));
-        delay.play();
     }
 
     // Life

@@ -10,5 +10,5 @@ public class SpecialBullet extends Bullet {
         this.setDamage(2);
     }
     @Override
-    public void gunshotVFX() { audioManager.playSFX("assets/character/player/Special_Gunshot.wav"); }
+    public void gunshotVFX() { audioManager.playSFX("assets/character/player/sfx/Player_SPECIAL_SFX.wav"); }
 }

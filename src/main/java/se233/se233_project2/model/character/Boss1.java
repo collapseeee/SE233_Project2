@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 import se233.se233_project2.Launcher;
+import se233.se233_project2.audio.AudioManager;
 import se233.se233_project2.model.GamePhase;
 import se233.se233_project2.model.GamePlatform;
 import se233.se233_project2.model.bullet.Bullet;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Boss1 extends EnemyCharacter {
+    private final AudioManager audioManager = new AudioManager();
     private static final int FIRE_DELAY_MS = 700;
     private static final int APPROACH_SPEED = 4;
     private final int[][] SPAWNER_POS = {
@@ -81,6 +83,7 @@ public class Boss1 extends EnemyCharacter {
 
         gameStage.getBulletList().add(bullet);
         gameStage.getSceneUpdateQueue().queueAdd(bullet);
+        audioManager.playSFX("assets/character/boss/sfx/Boss1_SHOOT_SFX.wav");
     }
 
     @Override
@@ -98,6 +101,7 @@ public class Boss1 extends EnemyCharacter {
         } else {
             isApproaching = false;
             Platform.runLater(() -> setVisible(true)); // ensure shown
+            audioManager.playSFX("assets/character/boss/sfx/Boss1_SPAWN_SFX.wav");
             fireTimeline.play();
         }
     }
