@@ -1,5 +1,3 @@
-Here’s a professional **README.md** for your *Contiam* JavaFX project:
-
 ---
 
 # 🎮 Contiam — SE233 Advanced Programming Project
@@ -72,7 +70,7 @@ STAGE 1 → BOSS 1
     ↓
 STAGE 2 (+1 HP reward) → BOSS 2
     ↓
-STAGE 3 → BOSS 3
+STAGE 3 (+1 HP reward) → BOSS 3
     ↓
 VICTORY SCREEN
 ```
