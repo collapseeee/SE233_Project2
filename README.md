@@ -25,7 +25,7 @@ It features multiple stages, boss fights, responsive character controls, scoring
 
 ✅ **Multi-Stage Progression**
 
-* Stage 1 → Boss 1 → Stage 2 (+1 HP reward) → Boss 2 → Stage 3 → Boss 3 → Victory
+* Stage 1 → Boss 1 → Stage 2 (+1 HP reward) → Boss 2 → Stage 3 (+1 HP reward) → Boss 3 → Victory
 
 ✅ **Character System**
 
